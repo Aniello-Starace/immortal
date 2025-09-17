@@ -112,3 +112,16 @@
       
       <label for="data-bonifico-5">Data del bonifico:</label>
       <input type="date" id="data-bonifico-5" name
+
+        <label for="importo">Importo versato (?):</label>
+      <input type="number" id="importo" name="importo" value="3000.000" required readonly>
+      
+      <label for="ricevuta">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
+      <input type="file" id="ricevuta" name="ricevuta" accept=".pdf,.jpg,.jpeg,.png" required>
+      
+      <input type="checkbox" id="manleva" name="manleva" required>
+      <label for="manleva">Confermo di accettare il contratto di manleva.</label>
+      
+      <button type="submit" class="cta-button">Invia conferma pagamento</button>
+    
+
