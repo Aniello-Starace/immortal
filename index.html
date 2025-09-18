@@ -176,8 +176,9 @@
   <div class="bank-info">
     <strong>Pagamento tramite bonifico bancario:</strong><br>
     IBAN: IT12A1234567890123456789012<br>
-    Intestato a: Dr. Aniello Starace<br>
-    Causale: "Pagamento Consulenza Breve - [Nome, Cognome e data di nascita Cliente]"
+    Intestato a: Dr. Aniello Starace<br>                                           
+    Causale: "Pagamento Consulenza Breve<br>                                          
+    [Eseguito da: Nome, Cognome e data di nascita Cliente]"
   </div>
   <p>Accettando la consulenza, il candidato <strong>accetta implicitamente il contratto di manleva</strong>, sollevando il Dr. Aniello Starace da qualsiasi responsabilità civile, legale o penale derivante dal processo.</p>
   <form action="submit-payment.php" method="post" enctype="multipart/form-data">
@@ -203,7 +204,8 @@
     <strong>Pagamento tramite bonifico bancario:</strong><br>
     IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
-    Causale: "Pagamento consulenze per cinque anni - [Nome, Cognome e data di nascita Cliente]"
+    Causale: "Pagamento consulenze per cinque anni<br>
+    [Eseguito da: Nome, Cognome e data di nascita Cliente]"
   </div>
   <p>Accettando le consulenze per cinque anni, il candidato <strong>accetta implicitamente il contratto di manleva</strong>, che tutela il Dr. Aniello Starace da qualsiasi responsabilità civile, legale o penale derivante dalle attività del processo.</p>
   <form action="submit-payment.php" method="post" enctype="multipart/form-data">
@@ -212,7 +214,7 @@
     <label for="data-bonifico-5">Data del bonifico:</label>
     <input type="date" id="data-bonifico-5" name="data-bonifico-5" required>
     <label for="importo-5">Importo versato:</label>
-    <input type="number" id="importo-5" name="importo-5" value="3000000" required readonly>
+    <input type="number" id="importo-5" name="importo-5" value="3.000.000" required readonly>
     <label for="ricevuta-5">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
     <input type="file" id="ricevuta-5" name="ricevuta-5" accept=".pdf,.jpg,.jpeg,.png" required>
     <input type="checkbox" id="manleva-5" name="manleva-5" required>
