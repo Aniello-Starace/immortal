@@ -3,148 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr. Aniello Starace - Metodo Esclusivo di Ringiovanimento</title>
+  <title>Dr. Aniello Starace - Processo Esclusivo di Ringiovanimento</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      background: #f4f4f4;
-      color: #222;
-    }
-    header {
-      background: linear-gradient(135deg, #0d1b2a, #1b263b);
-      color: #fff;
-      text-align: center;
-      padding: 80px 20px;
-    }
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      line-height: 1.2;
-    }
-    header p {
-      font-size: 1.3rem;
-      margin: 0 auto 30px;
-      max-width: 800px;
-    }
-    section {
-      padding: 60px 20px;
-      max-width: 1000px;
-      margin: 0 auto 30px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 25px;
-      color: #0d1b2a;
-    }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; background: #f4f4f4; color: #222; }
+    header { background: linear-gradient(135deg, #0d1b2a, #1b263b); color: #fff; text-align: center; padding: 80px 20px; }
+    header h1 { font-size: 3rem; margin-bottom: 20px; line-height: 1.2; }
+    header p { font-size: 1.3rem; margin: 0 auto 30px; max-width: 800px; }
+    section { padding: 60px 20px; max-width: 1000px; margin: 0 auto 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; }
+    h2 { font-size: 2rem; margin-bottom: 25px; color: #0d1b2a; }
     p { margin-bottom: 18px; font-size: 1.1rem; }
-    .price {
-      font-weight: bold;
-      color: #b22222;
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-    }
-    .bank-info {
-      background: #f0f0f0;
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin: 20px auto;
-      font-size: 1.1rem;
-      text-align: left;
-      max-width: 600px;
-    }
-    .cta-button {
-      background-color: #b22222;
-      padding: 18px 40px;
-      color: #fff;
-      font-weight: bold;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      display: inline-block;
-      margin: 20px 0;
-      text-decoration: none;
-    }
-    .cta-button:hover {
-      background-color: #d42e2e;
-      transform: scale(1.05);
-    }
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-    .gallery figure {
-      margin: 0;
-      text-align: center;
-    }
-    .gallery img {
-      width: 180px;
-      height: auto;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
-    }
+    .price { font-weight: bold; color: #b22222; font-size: 1.3rem; margin-bottom: 10px; }
+    .bank-info { background: #f0f0f0; padding: 15px 20px; border-radius: 8px; margin: 20px auto; font-size: 1.1rem; text-align: left; max-width: 600px; }
+    .cta-button { background-color: #b22222; padding: 18px 40px; color: #fff; font-weight: bold; border-radius: 8px; transition: all 0.3s ease; display: inline-block; margin: 20px 0; text-decoration: none; }
+    .cta-button:hover { background-color: #d42e2e; transform: scale(1.05); }
+    .gallery { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .gallery figure { margin: 0; text-align: center; }
+    .gallery img { width: 180px; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s ease; }
     .gallery img:hover { transform: scale(1.05); }
-    .gallery figcaption {
-      margin-top: 8px;
-      font-size: 0.95rem;
-      color: #444;
-    }
-    .video a {
-      display: block;
-      margin: 10px auto;
-      color: #0d1b2a;
-      font-weight: 600;
-      text-decoration: none;
-    }
+    .gallery figcaption { margin-top: 8px; font-size: 0.95rem; color: #444; }
+    .video a { display: block; margin: 10px auto; color: #0d1b2a; font-weight: 600; text-decoration: none; }
     .video a:hover { text-decoration: underline; }
-    form {
-      max-width: 600px;
-      margin: 0 auto;
-      text-align: left;
-    }
-    form input, form button, form label {
-      display: block;
-      width: 100%;
-      margin-bottom: 15px;
-      font-size: 1rem;
-    }
-    form input[type="checkbox"] {
-      width: auto;
-      display: inline-block;
-      margin: 0;
-    }
+    form { max-width: 600px; margin: 0 auto; text-align: left; }
+    form input, form button, form label { display: block; width: 100%; margin-bottom: 15px; font-size: 1rem; }
+    form input[type="checkbox"] { width: auto; display: inline-block; margin: 0; }
     form button { cursor: pointer; }
-
-    /* Sistema perfetto per checkbox + testo allineati */
-    .checkbox-wrapper {
-      display: flex;
-      align-items: center; /* perfetto allineamento verticale */
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .checkbox-wrapper input[type="checkbox"] {
-      margin: 0;
-    }
-
-    .checkbox-wrapper label {
-      margin: 0;
-      line-height: 1.2;
-    }
-
-    @media (max-width: 768px) {
-      header h1 { font-size: 2.2rem; }
-      header p { font-size: 1.1rem; }
-      section { padding: 40px 15px; }
-      .gallery img { width: 140px; }
-    }
+    .checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .checkbox-wrapper input[type="checkbox"] { margin: 0; }
+    .checkbox-wrapper label { margin: 0; line-height: 1.2; }
+    @media (max-width: 768px) { header h1 { font-size: 2.2rem; } header p { font-size: 1.1rem; } section { padding: 40px 15px; } .gallery img { width: 140px; } }
   </style>
 </head>
 <body>
@@ -185,7 +72,7 @@
   </div>
 </section>
 
-<!-- Consulenza breve -->
+<!-- Consulenza breve con OCR -->
 <section id="consulenza-breve">
   <h2>Consulenza Preliminare</h2>
   <p>Per valutare l'idoneità del candidato al processo esclusivo, è necessaria una consulenza preliminare:</p>
@@ -195,11 +82,10 @@
     <strong>Pagamento tramite bonifico bancario:</strong><br>
     IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>                                           
-    Causale: "Pagamento Consulenza Breve<br>                                          
-    [Eseguito da: Nome, Cognome e data di nascita Cliente]"
+    Causale: "Pagamento Consulenza Breve [Eseguito da: Nome, Cognome e data di nascita Cliente]"
   </div>
   <p>Accettando la consulenza, il candidato <strong>accetta implicitamente il contratto di manleva</strong>, sollevando il Dr. Aniello Starace da qualsiasi responsabilità civile, legale o penale derivante dal processo.</p>
-  <form action="submit-payment.php" method="post" enctype="multipart/form-data">
+  <form action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome">Nome completo:</label>
     <input type="text" id="nome" name="nome" required>
     <label for="data-bonifico">Data del bonifico:</label>
@@ -214,11 +100,11 @@
       <label for="manleva">Confermo di accettare il contratto di manleva.</label>
     </div>
     
-    <button type="submit" class="cta-button">Invia ricevuta di pagamento in attesa di conferma</button>
+    <button type="submit" class="cta-button">Invia ricevuta in attesa di conferma</button>
   </form>
 </section>
 
-<!-- Consulenze per cinque anni -->
+<!-- Consulenze per cinque anni con OCR -->
 <section id="consulenze-per-cinque-anni">
   <h2>Consulenze per cinque anni</h2>
   <p class="price">Costo: 3.000.000 euro</p>
@@ -226,11 +112,10 @@
     <strong>Pagamento tramite bonifico bancario:</strong><br>
     IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
-    Causale: "Pagamento consulenze per cinque anni<br>
-    [Eseguito da: Nome, Cognome e data di nascita Cliente]"
+    Causale: "Pagamento consulenze per cinque anni [Eseguito da: Nome, Cognome e data di nascita Cliente]"
   </div>
   <p>Accettando le consulenze per cinque anni, il candidato <strong>accetta implicitamente il contratto di manleva</strong>, che tutela il Dr. Aniello Starace da qualsiasi responsabilità civile, legale o penale derivante dalle attività del processo.</p>
-  <form action="submit-payment.php" method="post" enctype="multipart/form-data">
+  <form action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome-5">Nome completo:</label>
     <input type="text" id="nome-5" name="nome-5" required>
     <label for="data-bonifico-5">Data del bonifico:</label>
@@ -245,7 +130,7 @@
       <label for="manleva-5">Confermo di accettare il contratto di manleva.</label>
     </div>
     
-    <button type="submit" class="cta-button">Invia ricevuta di pagamento in attesa di conferma</button>
+    <button type="submit" class="cta-button">Invia ricevuta in attesa di conferma</button>
   </form>
 </section>
 
