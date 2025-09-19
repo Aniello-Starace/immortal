@@ -85,7 +85,6 @@
     IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
     Causale Cod: CB [Eseguito da: Nome, Cognome e data di nascita Cliente]<br>
-    
   </div>
   <form id="form-breve" action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome">Nome completo:</label>
@@ -96,7 +95,7 @@
            placeholder="gg-mm-aaaa"
            inputmode="numeric"
            pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$"
-           title="Inserisci la data nel formato gg-mm-aaaa, con anno a 4 cifre"
+           title="Inserisci la data nel formato gg-mm-aaaa (es. 25-12-2025)"
            required>
 
     <label for="importo">Importo versato:</label>
@@ -122,7 +121,6 @@
     IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
     Causale: Cod: C5 [Eseguito da: Nome, Cognome e data di nascita Cliente]<br>
-    
   </div>
   <form id="form-5anni" action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome-5">Nome completo:</label>
@@ -133,7 +131,7 @@
            placeholder="gg-mm-aaaa"
            inputmode="numeric"
            pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$"
-           title="Inserisci la data nel formato gg-mm-aaaa, con anno a 4 cifre"
+           title="Inserisci la data nel formato gg-mm-aaaa (es. 25-12-2025)"
            required>
 
     <label for="importo-5">Importo versato:</label>
@@ -152,28 +150,26 @@
 </section>
 
 <script>
-  // Validazione extra lato client
+  // Validazione lato client
   function validateDate(input) {
     const regex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$/;
     return regex.test(input);
   }
-
   function attachValidation(formId, dateId) {
     const form = document.getElementById(formId);
     const dateInput = document.getElementById(dateId);
     form.addEventListener('submit', e => {
       if (!validateDate(dateInput.value)) {
-        alert("La data non è valida. Usa il formato gg-mm-aaaa con anno a 4 cifre.");
+        alert("La data non è valida. Usa il formato gg-mm-aaaa con anno di 4 cifre.");
         e.preventDefault();
         dateInput.focus();
       }
     });
   }
-
   attachValidation('form-breve', 'data-bonifico');
   attachValidation('form-5anni', 'data-bonifico-5');
 </script>
 
-<!-- Nota: aggiungi sempre la stessa validazione lato server in upload.php -->
+<!-- Ricorda: valida sempre anche lato server in upload.php -->
 </body>
 </html>
