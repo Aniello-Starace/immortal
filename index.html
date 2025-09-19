@@ -31,7 +31,12 @@
     .checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
     .checkbox-wrapper input[type="checkbox"] { margin: 0; }
     .checkbox-wrapper label { margin: 0; line-height: 1.2; }
-    @media (max-width: 768px) { header h1 { font-size: 2.2rem; } header p { font-size: 1.1rem; } section { padding: 40px 15px; } .gallery img { width: 140px; } }
+    @media (max-width: 768px) {
+      header h1 { font-size: 2.2rem; }
+      header p { font-size: 1.1rem; }
+      section { padding: 40px 15px; }
+      .gallery img { width: 140px; }
+    }
   </style>
 </head>
 <body>
@@ -80,7 +85,7 @@
     IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
     Causale: Pagamento consulenze per cinque anni<br>
-   [Eseguito da: Nome, Cognome e data di nascita Cliente]
+    [Eseguito da: Nome, Cognome e data di nascita Cliente]
   </div>
   <form id="form-breve" action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome">Nome completo:</label>
@@ -89,6 +94,7 @@
     <label for="data-bonifico">Data del bonifico (gg-mm-aaaa):</label>
     <input type="text" id="data-bonifico" name="data-bonifico"
            placeholder="gg-mm-aaaa"
+           inputmode="numeric"
            pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$"
            title="Inserisci la data nel formato gg-mm-aaaa, con anno a 4 cifre"
            required>
@@ -114,9 +120,9 @@
   <p class="price">Costo: 3.000.000 euro</p>
   <div class="bank-info">
     IBAN: IT12A1234567890123456789012<br>
-     Intestato a: Dr. Aniello Starace<br>
-     Causale: Pagamento consulenze per cinque anni<br>
-             [Eseguito da: Nome, Cognome e data di nascita Cliente]
+    Intestato a: Dr. Aniello Starace<br>
+    Causale: Pagamento consulenze per cinque anni<br>
+    [Eseguito da: Nome, Cognome e data di nascita Cliente]
   </div>
   <form id="form-5anni" action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome-5">Nome completo:</label>
@@ -125,6 +131,7 @@
     <label for="data-bonifico-5">Data del bonifico (gg-mm-aaaa):</label>
     <input type="text" id="data-bonifico-5" name="data-bonifico-5"
            placeholder="gg-mm-aaaa"
+           inputmode="numeric"
            pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$"
            title="Inserisci la data nel formato gg-mm-aaaa, con anno a 4 cifre"
            required>
@@ -167,5 +174,6 @@
   attachValidation('form-5anni', 'data-bonifico-5');
 </script>
 
+<!-- Nota: aggiungi sempre la stessa validazione lato server in upload.php -->
 </body>
 </html>
