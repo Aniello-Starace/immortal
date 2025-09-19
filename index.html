@@ -214,11 +214,31 @@
     <label for="data-bonifico-5">Data del bonifico:</label>
     <input type="date" id="data-bonifico-5" name="data-bonifico-5" required>
     <label for="importo-5">Importo versato:</label>
-    <input type="number" id="importo-5" name="importo-5" value="3.000.000" required readonly>
+    <input type="number" id="importo-5" name="importo-5" value="3000000" required readonly>
     <label for="ricevuta-5">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
     <input type="file" id="ricevuta-5" name="ricevuta-5" accept=".pdf,.jpg,.jpeg,.png" required>
-    <input type="checkbox" id="manleva-5" name="manleva-5" required>
-    <label for="manleva-5">Confermo di accettare il contratto di manleva.</label>
+   
+ 
+    
+    <div class="checkbox-wrapper">
+    
+     .checkbox-wrapper {
+  display: flex;
+  align-items: center; /* per allineare verticalmente */
+  gap: 10px; /* spazio tra quadratino e testo */
+  margin-bottom: 15px; /* spazio sotto il blocco */
+}
+      form input[type="checkbox"] { width: auto; display: inline-block; margin-right: 10px; }
+
+      <input type="checkbox" id="manleva" name="manleva" required>
+  <label for="manleva">Confermo di accettare il contratto di manleva.</label>
+
+    
+    </div>
+    
+ 
+    
+
     <button type="submit" class="cta-button">Invia conferma pagamento</button>
   </form>
 </section>
