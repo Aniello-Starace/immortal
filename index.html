@@ -118,9 +118,15 @@
     form input[type="checkbox"] {
       width: auto;
       display: inline-block;
-      margin-right: 10px;
+      margin: 0;
     }
     form button { cursor: pointer; }
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
     @media (max-width: 768px) {
       header h1 { font-size: 2.2rem; }
       header p { font-size: 1.1rem; }
@@ -190,8 +196,12 @@
     <input type="number" id="importo" name="importo" value="1000" required readonly>
     <label for="ricevuta">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
     <input type="file" id="ricevuta" name="ricevuta" accept=".pdf,.jpg,.jpeg,.png" required>
-    <input type="checkbox" id="manleva" name="manleva" required>
-    <label for="manleva">Confermo di accettare il contratto di manleva.</label>
+    
+    <div class="checkbox-wrapper">
+      <input type="checkbox" id="manleva" name="manleva" required>
+      <label for="manleva">Confermo di accettare il contratto di manleva.</label>
+    </div>
+    
     <button type="submit" class="cta-button">Invia conferma pagamento</button>
   </form>
 </section>
@@ -217,24 +227,16 @@
     <input type="number" id="importo-5" name="importo-5" value="3000000" required readonly>
     <label for="ricevuta-5">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
     <input type="file" id="ricevuta-5" name="ricevuta-5" accept=".pdf,.jpg,.jpeg,.png" required>
-   
- 
     
     <div class="checkbox-wrapper">
-    
-    
-    <a>  <input type="checkbox" id="manleva" name="manleva" required> 
-  <label for="manleva">Confermo di accettare il contratto di manleva.</label> </a>
-
-    
+      <input type="checkbox" id="manleva-5" name="manleva-5" required>
+      <label for="manleva-5">Confermo di accettare il contratto di manleva.</label>
     </div>
     
- 
-    
-
     <button type="submit" class="cta-button">Invia conferma pagamento</button>
   </form>
 </section>
 
 </body>
 </html>
+
