@@ -121,22 +121,24 @@
       margin: 0;
     }
     form button { cursor: pointer; }
+
+    /* Sistema perfetto per checkbox + testo allineati */
     .checkbox-wrapper {
       display: flex;
-      align-items: center;
+      align-items: center; /* perfetto allineamento verticale */
       gap: 10px;
       margin-bottom: 15px;
-  
-    .checkbox-wrapper input[type="checkbox"] {
-  vertical-align: middle;
-}
-.checkbox-wrapper label {
-  vertical-align: middle;
-  margin: 0;
-}
-
-    
     }
+
+    .checkbox-wrapper input[type="checkbox"] {
+      margin: 0;
+    }
+
+    .checkbox-wrapper label {
+      margin: 0;
+      line-height: 1.2;
+    }
+
     @media (max-width: 768px) {
       header h1 { font-size: 2.2rem; }
       header p { font-size: 1.1rem; }
@@ -249,4 +251,3 @@
 
 </body>
 </html>
-
