@@ -49,7 +49,7 @@
 
 <section id="metodo">
   <h2>Processo & Scoperte</h2>
-  <p>Il Processo di ringiovanimento sviluppato dal Dr. Aniello Starace combina scienza rigorosa, innovazioni esclusive e decenni di esperienza pratica. Ogni fase del processo è basata su evidenze sperimentali e verifiche scientifiche, con l'obiettivo di ottimizzare vitalità, energia e benessere a lungo termine.</p>
+  <p>Il Processo di ringiovanimento sviluppato dal Dr. Aniello Starace combina scienza rigorosa, innovazioni esclusive e decenni di esperienza pratica.</p>
 </section>
 
 <section id="video" class="video">
@@ -61,7 +61,7 @@
 </section>
 
 <section id="foto">
-  <h2>Foto 2019 – 2025<br><small>Fascia d'età critica dai 49 ai 55 anni, un ringiovanimento visibile!</small></h2>
+  <h2>Foto 2019 – 2025</h2>
   <div class="gallery">
     <figure><img src="foto_2019.jpg" alt="Aniello 2019"><figcaption>2019</figcaption></figure>
     <figure><img src="foto_2021.jpg" alt="Aniello 2021"><figcaption>2021</figcaption></figure>
@@ -72,93 +72,87 @@
   </div>
 </section>
 
-<!-- Consulenza breve con OCR -->
+<!-- Consulenza breve -->
 <section id="consulenza-breve">
   <h2>Consulenza Preliminare</h2>
-  <p>Per valutare l'idoneità del candidato al processo esclusivo, è necessaria una consulenza preliminare:</p>
   <p class="price">Costo: 1.000 euro</p>
-  <p>Durata: 30-50 minuti</p>
   <div class="bank-info">
-    <strong>Pagamento tramite bonifico bancario:</strong><br>
     IBAN: IT12A1234567890123456789012<br>
-    Intestato a: Dr. Aniello Starace<br>                                           
-    Causale: "Pagamento Consulenza Breve<br>[Eseguito da: Nome, Cognome e data di nascita Cliente]"
+    Intestato a: Dr. Aniello Starace
   </div>
-  <p>Accettando la consulenza, il candidato <strong>accetta implicitamente il contratto di manleva</strong>, sollevando il Dr. Aniello Starace da qualsiasi responsabilità civile, legale o penale derivante dal processo.</p>
   <form id="form-breve" action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome">Nome completo:</label>
     <input type="text" id="nome" name="nome" required>
-    
+
     <label for="data-bonifico">Data del bonifico (gg-mm-aaaa):</label>
-    <input type="text" id="data-bonifico" name="data-bonifico" 
+    <input type="text" id="data-bonifico" name="data-bonifico"
            placeholder="gg-mm-aaaa"
-           pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$"
+           pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$"
            title="Inserisci la data nel formato gg-mm-aaaa, con anno a 4 cifre"
            required>
-           
+
     <label for="importo">Importo versato:</label>
     <input type="number" id="importo" name="importo" value="1000" required readonly>
-    <label for="ricevuta">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
+
+    <label for="ricevuta">Allega ricevuta (PDF/JPG/PNG, max 5MB):</label>
     <input type="file" id="ricevuta" name="ricevuta" accept=".pdf,.jpg,.jpeg,.png" required>
-    
+
     <div class="checkbox-wrapper">
       <input type="checkbox" id="manleva" name="manleva" required>
-      <label for="manleva">Confermo di accettare il contratto di manleva.</label>
+      <label for="manleva">Accetto il contratto di manleva.</label>
     </div>
-    
-    <button type="submit" class="cta-button">Invia ricevuta in attesa di conferma</button>
+
+    <button type="submit" class="cta-button">Invia ricevuta</button>
   </form>
 </section>
 
-<!-- Consulenze per cinque anni con OCR -->
+<!-- Consulenze 5 anni -->
 <section id="consulenze-per-cinque-anni">
   <h2>Consulenze per cinque anni</h2>
   <p class="price">Costo: 3.000.000 euro</p>
   <div class="bank-info">
-    <strong>Pagamento tramite bonifico bancario:</strong><br>
     IBAN: IT12A1234567890123456789012<br>
-    Intestato a: Dr. Aniello Starace<br>
-    Causale: "Pagamento consulenze per cinque anni<br>[Eseguito da: Nome, Cognome e data di nascita Cliente]"
+    Intestato a: Dr. Aniello Starace
   </div>
-  <p>Accettando le consulenze per cinque anni, il candidato <strong>accetta implicitamente il contratto di manleva</strong>, che tutela il Dr. Aniello Starace da qualsiasi responsabilità civile, legale o penale derivante dalle attività del processo.</p>
   <form id="form-5anni" action="upload.php" method="post" enctype="multipart/form-data">
     <label for="nome-5">Nome completo:</label>
     <input type="text" id="nome-5" name="nome-5" required>
-    
+
     <label for="data-bonifico-5">Data del bonifico (gg-mm-aaaa):</label>
-    <input type="text" id="data-bonifico-5" name="data-bonifico-5" 
+    <input type="text" id="data-bonifico-5" name="data-bonifico-5"
            placeholder="gg-mm-aaaa"
-           pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$"
+           pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$"
            title="Inserisci la data nel formato gg-mm-aaaa, con anno a 4 cifre"
            required>
-    
+
     <label for="importo-5">Importo versato:</label>
     <input type="number" id="importo-5" name="importo-5" value="3000000" required readonly>
-    <label for="ricevuta-5">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
+
+    <label for="ricevuta-5">Allega ricevuta (PDF/JPG/PNG, max 5MB):</label>
     <input type="file" id="ricevuta-5" name="ricevuta-5" accept=".pdf,.jpg,.jpeg,.png" required>
-    
+
     <div class="checkbox-wrapper">
       <input type="checkbox" id="manleva-5" name="manleva-5" required>
-      <label for="manleva-5">Confermo di accettare il contratto di manleva.</label>
+      <label for="manleva-5">Accetto il contratto di manleva.</label>
     </div>
-    
-    <button type="submit" class="cta-button">Invia ricevuta in attesa di conferma</button>
+
+    <button type="submit" class="cta-button">Invia ricevuta</button>
   </form>
 </section>
 
 <script>
-  // Funzione per validare la data gg-mm-aaaa
+  // Validazione extra lato client
   function validateDate(input) {
-    const regex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
+    const regex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$/;
     return regex.test(input);
   }
 
   function attachValidation(formId, dateId) {
     const form = document.getElementById(formId);
     const dateInput = document.getElementById(dateId);
-    form.addEventListener('submit', function(e) {
-      if(!validateDate(dateInput.value)) {
-        alert("La data inserita non è valida. Inserire nel formato gg-mm-aaaa con anno a 4 cifre.");
+    form.addEventListener('submit', e => {
+      if (!validateDate(dateInput.value)) {
+        alert("La data non è valida. Usa il formato gg-mm-aaaa con anno a 4 cifre.");
         e.preventDefault();
         dateInput.focus();
       }
