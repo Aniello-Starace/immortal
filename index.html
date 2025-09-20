@@ -37,6 +37,7 @@
       section { padding:40px 15px; }
       .gallery img { width:140px; }
     }
+    input[type="date"] { color:#007fff; } /* testo azzurro */
   </style>
 </head>
 <body>
@@ -141,21 +142,22 @@
 
 <script>
 (function(){
-  // fallback per browser che non supportano type="date"
-  var test = document.createElement('input');
-  test.setAttribute('type','date');
-  if (test.type !== 'date') {
-    ['data-bonifico','data-bonifico-5'].forEach(function(id){
-      var el = document.getElementById(id);
-      if (!el) return;
+  const today = new Date().toISOString().split('T')[0];
+  ['data-bonifico','data-bonifico-5'].forEach(function(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.setAttribute('max', today);  // non permette date future
+    el.setAttribute('min', '2025-09-20'); // data minima di creazione form
+    // fallback per browser che non supportano type=date
+    if(el.type !== 'date'){
       el.type = 'text';
       el.placeholder = 'gg-mm-aaaa';
       el.setAttribute('pattern','^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$');
       el.setAttribute('inputmode','numeric');
       el.setAttribute('maxlength','10');
       el.title = 'Inserisci la data nel formato gg-mm-aaaa';
-    });
-  }
+    }
+  });
 })();
 </script>
 
