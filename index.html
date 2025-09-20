@@ -37,7 +37,14 @@
       section { padding:40px 15px; }
       .gallery img { width:140px; }
     }
-    input[type="date"] { color:#007fff; } /* testo azzurro */
+    input[type="date"] { 
+      color:#007fff; 
+      width:150px;       /* larghezza ridotta al formato gg-mm-aaaa */
+      max-width:100%;    
+      padding:6px 10px;  
+      font-size:1rem;    
+      display:inline-block;
+    }
   </style>
 </head>
 <body>
@@ -156,6 +163,8 @@
       el.setAttribute('inputmode','numeric');
       el.setAttribute('maxlength','10');
       el.title = 'Inserisci la data nel formato gg-mm-aaaa';
+      el.style.width = '150px';       // larghezza compatta
+      el.style.display = 'inline-block';
     }
   });
 })();
