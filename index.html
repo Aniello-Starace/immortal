@@ -24,36 +24,11 @@
     .gallery figcaption { margin-top:8px; font-size:0.95rem; color:#444; }
     .video a { display:block; margin:10px auto; color:#0d1b2a; font-weight:600; text-decoration:none; }
     .video a:hover { text-decoration:underline; }
-    form { max-width:600px; margin:0 auto; text-align:left; }
-    form input, form button, form label { display:block; width:100%; margin-bottom:15px; font-size:1rem; }
-    form input[type="checkbox"] { width:auto; display:inline-block; margin:0; }
-    form button { cursor:pointer; }
-    .checkbox-wrapper { display:flex; align-items:center; gap:10px; margin-bottom:15px; }
-    .checkbox-wrapper input[type="checkbox"] { margin:0; }
-    .checkbox-wrapper label { margin:0; line-height:1.2; }
     @media (max-width:768px){
       header h1 { font-size:2.2rem; }
       header p { font-size:1.1rem; }
       section { padding:40px 15px; }
       .gallery img { width:140px; }
-    }
-    /* stile compatto per data */
-    input[type="date"] { 
-      color:#007fff; 
-      width:150px;
-      max-width:100%;
-      padding:6px 10px;
-      font-size:1rem;
-      display:inline-block;
-    }
-    /* stile compatto per importo */
-    input[type="number"]#importo,
-    input[type="number"]#importo-5 {
-      width:180px;
-      max-width:100%;
-      padding:6px 10px;
-      font-size:1rem;
-      display:inline-block;
     }
   </style>
 </head>
@@ -95,37 +70,18 @@
   </div>
 </section>
 
-<!-- Consulenza breve -->
+<!-- Consulenze (breve e quinquennale) -->
 <section id="consulenza-breve">
-  <h2>Consulenza Preliminare</h2>
-  <p class="price">Costo: 1.000 euro</p>
+  <h2>Modulo di Prenotazione Consulenze</h2>
+  <p class="price">Seleziona il tipo di consulenza e completa il modulo sottostante.</p>
   <div class="bank-info">
     IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
-    Causale: Consulenza breve<br>
   </div>
   
   <div style="max-width:600px; margin:0 auto;">
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3R9KaQqiE5FArW8sMJTqWvenWvkVwX-eBz1JWpe5wrbq9PA/viewform?embedded=true"
-            width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">
-      Caricamento modulo…
-    </iframe>
-  </div>
-</section>
-
-<!-- Consulenze 5 anni -->
-<section id="consulenze-per-cinque-anni">
-  <h2>Consulenze per cinque anni</h2>
-  <p class="price">Costo: 3.000.000 euro</p>
-  <div class="bank-info">
-    IBAN: IT12A1234567890123456789012<br>
-    Intestato a: Dr. Aniello Starace<br>
-    Causale: Consulenze per cinque anni<br>
-  </div>
-  
-  <div style="max-width:600px; margin:0 auto;">
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3R9KaQqiE5FArW8sMJTqWvenWvkVwX-eBz1JWpe5wrbq9PA/viewform?embedded=true"
-            width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">
+            width="100%" height="900" frameborder="0" marginheight="0" marginwidth="0">
       Caricamento modulo…
     </iframe>
   </div>
