@@ -100,3 +100,39 @@
     Intestato a: Dr. Aniello Starace<br>
     Causale: Consulenze per cinque anni<br>
   </div>
+  
+  <div style="max-width:600px; margin:0 auto; position:relative;">
+    <iframe id="iframe-form2" src="https://docs.google.com/forms/d/e/1FAIpQLSe3R9KaQqiE5FArW8sMJTqWvenWvkVwX-eBz1JWpe5wrbq9PA/viewform?embedded=true"
+            width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">
+      Caricamento modulo…
+    </iframe>
+  </div>
+</section>
+
+<script>
+  // Funzione per nascondere il messaggio di "domanda obbligatoria" rosso nei moduli incorporati
+  function nascondiMessaggioRosso(iframeId) {
+    const iframe = document.getElementById(iframeId);
+    iframe.addEventListener('load', () => {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .freebirdFormviewerViewItemsItemItemErrorMessage,
+          .freebirdFormviewerViewItemsItemErrorMessage { 
+            display: none !important; 
+          }
+        `;
+        doc.head.appendChild(style);
+      } catch(e) {
+        console.warn('Impossibile accedere all\'iframe per nascondere il messaggio, causa cross-domain.');
+      }
+    });
+  }
+
+  nascondiMessaggioRosso('iframe-form1');
+  nascondiMessaggioRosso('iframe-form2');
+</script>
+
+</body>
+</html>
