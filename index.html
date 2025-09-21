@@ -67,7 +67,7 @@
 
 <section id="chi-sono">
   <h2>Chi sono</h2>
-  <p>Dottor Aniello Starace, Fisico quantistico, Teologo, Chimico, Matematico, Ragioniere, dottore in Scienze Infermieristiche, Ricercatore indipendente e fondatore dell'Aeon Process, con oltre cinquant'anni di esperienza nello studio dei meccanismi della vita, dell'energia e della rigenerazione biologica.</p>
+  <p>Dottor Aniello Starace, Fisico quantistico, Teologo, Chimico, Matematico, Ragioniere, dottore in Scienze Infermieristiche, Ricercatore indipendente e fondatore dell’Aeon Process, con oltre cinquant’anni di esperienza nello studio dei meccanismi della vita, dell’energia e della rigenerazione biologica.</p>
 </section>
 
 <section id="metodo">
@@ -104,26 +104,13 @@
     Intestato a: Dr. Aniello Starace<br>
     Causale: Consulenza breve<br>
   </div>
-  <form id="form-breve" action="upload.php" method="post" enctype="multipart/form-data">
-    <label for="nome">Nome completo:</label>
-    <input type="text" id="nome" name="nome" required>
-
-    <label for="data-bonifico">Data del bonifico:</label>
-    <input type="date" id="data-bonifico" name="data-bonifico" required>
-
-    <label for="importo">Importo versato:</label>
-    <input type="number" id="importo" name="importo" value="1000" required readonly>
-
-    <label for="ricevuta">Allega ricevuta (PDF/JPG/PNG, max 5MB):</label>
-    <input type="file" id="ricevuta" name="ricevuta" accept=".pdf,.jpg,.jpeg,.png" required>
-
-    <div class="checkbox-wrapper">
-      <input type="checkbox" id="manleva" name="manleva" required>
-      <label for="manleva">Accetto il contratto di manleva.</label>
-    </div>
-
-    <button type="submit" class="cta-button">Invia ricevuta</button>
-  </form>
+  
+  <div style="max-width:600px; margin:0 auto;">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3R9KaQqiE5FArW8sMJTqWvenWvkVwX-eBz1JWpe5wrbq9PA/viewform?embedded=true"
+            width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">
+      Caricamento modulo…
+    </iframe>
+  </div>
 </section>
 
 <!-- Consulenze 5 anni -->
@@ -135,50 +122,14 @@
     Intestato a: Dr. Aniello Starace<br>
     Causale: Consulenze per cinque anni<br>
   </div>
-  <form id="form-5anni" action="upload.php" method="post" enctype="multipart/form-data">
-    <label for="nome-5">Nome completo:</label>
-    <input type="text" id="nome-5" name="nome-5" required>
-
-    <label for="data-bonifico-5">Data del bonifico:</label>
-    <input type="date" id="data-bonifico-5" name="data-bonifico-5" required>
-
-    <label for="importo-5">Importo versato:</label>
-    <input type="number" id="importo-5" name="importo-5" value="3000000" required readonly>
-
-    <label for="ricevuta-5">Allega ricevuta (PDF/JPG/PNG, max 5MB):</label>
-    <input type="file" id="ricevuta-5" name="ricevuta-5" accept=".pdf,.jpg,.jpeg,.png" required>
-
-    <div class="checkbox-wrapper">
-      <input type="checkbox" id="manleva-5" name="manleva-5" required>
-      <label for="manleva-5">Accetto il contratto di manleva.</label>
-    </div>
-
-    <button type="submit" class="cta-button">Invia ricevuta</button>
-  </form>
+  
+  <div style="max-width:600px; margin:0 auto;">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3R9KaQqiE5FArW8sMJTqWvenWvkVwX-eBz1JWpe5wrbq9PA/viewform?embedded=true"
+            width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">
+      Caricamento modulo…
+    </iframe>
+  </div>
 </section>
-
-<script>
-(function(){
-  const today = new Date().toISOString().split('T')[0];
-  ['data-bonifico','data-bonifico-5'].forEach(function(id){
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.setAttribute('max', today);  // non permette date future
-    el.setAttribute('min', '2025-09-20'); // data minima di creazione form
-    // fallback per browser che non supportano type=date
-    if(el.type !== 'date'){
-      el.type = 'text';
-      el.placeholder = 'gg-mm-aaaa';
-      el.setAttribute('pattern','^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$');
-      el.setAttribute('inputmode','numeric');
-      el.setAttribute('maxlength','10');
-      el.title = 'Inserisci la data nel formato gg-mm-aaaa';
-      el.style.width = '150px';
-      el.style.display = 'inline-block';
-    }
-  });
-})();
-</script>
 
 </body>
 </html>
