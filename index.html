@@ -1,52 +1,46 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Processo Esclusivo di Ringiovanimento</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.6;background:#f4f4f4;color:#222}
-  header{background:linear-gradient(135deg,#0d1b2a,#1b263b);color:#fff;text-align:center;padding:80px 20px}
-  header h1{font-size:3rem;margin-bottom:20px;line-height:1.2}
-  header p{font-size:1.3rem;margin:0 auto 30px;max-width:800px}
-  section{padding:60px 20px;max-width:1000px;margin:0 auto 30px;background:#fff;border-radius:12px;
-          box-shadow:0 4px 15px rgba(0,0,0,0.08);text-align:center}
-  h2{font-size:2rem;margin-bottom:25px;color:#0d1b2a}
-  p{margin-bottom:18px;font-size:1.1rem}
-  .price{font-weight:bold;color:#b22222;font-size:1.3rem;margin-bottom:10px}
-  .bank-info{background:#f0f0f0;padding:15px 20px;border-radius:8px;margin:20px auto;
-             font-size:1.1rem;text-align:left;max-width:600px}
-  .cta-button{background:#b22222;padding:18px 40px;color:#fff;font-weight:bold;border-radius:8px;
-              transition:all 0.3s ease;display:inline-block;margin:20px 0;text-decoration:none}
-  .cta-button:hover{background:#d42e2e;transform:scale(1.05)}
-  .gallery{display:flex;flex-wrap:wrap;gap:20px;justify-content:center}
-  .gallery figure{text-align:center}
-  .gallery img{width:180px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);transition:transform .3s}
-  .gallery img:hover{transform:scale(1.05)}
-  .gallery figcaption{margin-top:8px;font-size:.95rem;color:#444}
-  .video a{display:block;margin:10px auto;color:#0d1b2a;font-weight:600;text-decoration:none}
-  .video a:hover{text-decoration:underline}
-  form{display:flex;flex-direction:column;gap:15px;margin:20px auto;max-width:600px;text-align:left}
-  label{font-weight:bold}
-  input[type="text"],input[type="email"],input[type="date"],input[type="file"]{
-        padding:10px;border-radius:6px;border:1px solid #ccc;width:100%}
-  input[type="submit"]{background:#b22222;color:#fff;padding:15px;border:none;border-radius:8px;
-                       font-weight:bold;cursor:pointer;transition:0.3s}
-  input[type="submit"]:hover{background:#d42e2e;transform:scale(1.03)}
-  .success-message{display:none;color:green;font-weight:bold;margin-top:10px}
-  @media(max-width:768px){
-    header h1{font-size:2.2rem}
-    header p{font-size:1.1rem}
-    section{padding:40px 15px}
-    .gallery img{width:140px}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Processo Esclusivo di Ringiovanimento</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Helvetica Neue',Arial,sans-serif; line-height:1.6; background:#f4f4f4; color:#222; }
+    header { background:linear-gradient(135deg,#0d1b2a,#1b263b); color:#fff; text-align:center; padding:80px 20px; }
+    header h1 { font-size:3rem; margin-bottom:20px; line-height:1.2; }
+    header p { font-size:1.3rem; margin:0 auto 30px; max-width:800px; }
+    section { padding:60px 20px; max-width:1000px; margin:0 auto 30px; background:#fff; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); text-align:center; }
+    h2 { font-size:2rem; margin-bottom:25px; color:#0d1b2a; }
+    p { margin-bottom:18px; font-size:1.1rem; }
+    .price { font-weight:bold; color:#b22222; font-size:1.3rem; margin-bottom:10px; }
+    .bank-info { background:#f0f0f0; padding:15px 20px; border-radius:8px; margin:20px auto; font-size:1.1rem; text-align:left; max-width:600px; }
+    .cta-button { background-color:#b22222; padding:18px 40px; color:#fff; font-weight:bold; border-radius:8px; transition:all 0.3s ease; display:inline-block; margin:20px 0; text-decoration:none; }
+    .cta-button:hover { background-color:#d42e2e; transform:scale(1.05); }
+    .gallery { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+    .gallery figure { margin:0; text-align:center; }
+    .gallery img { width:180px; height:auto; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); transition:transform 0.3s ease; }
+    .gallery img:hover { transform:scale(1.05); }
+    .gallery figcaption { margin-top:8px; font-size:0.95rem; color:#444; }
+    .video a { display:block; margin:10px auto; color:#0d1b2a; font-weight:600; text-decoration:none; }
+    .video a:hover { text-decoration:underline; }
+    @media (max-width:768px){
+      header h1 { font-size:2.2rem; }
+      header p { font-size:1.1rem; }
+      section { padding:40px 15px; }
+      .gallery img { width:140px; }
+    }
+    form { display:flex; flex-direction:column; gap:12px; text-align:left; max-width:600px; margin:0 auto; }
+    input[type="text"], input[type="date"], input[type="file"], input[type="checkbox"] { padding:10px; border-radius:5px; border:1px solid #ccc; width:100%; }
+    label { font-weight:bold; }
+    .submit-button { background-color:#b22222; color:#fff; padding:12px 20px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+    .submit-button:hover { background-color:#d42e2e; }
+  </style>
 </head>
 <body>
 
 <header>
-  <h1>SITO IN ALLESTIMENTO</h1>
+   <h1>SITO IN ALLESTIMENTO</h1>
   <h1>Processo Esclusivo di Ringiovanimento</h1>
   <p>Metodologie scientifiche e innovazioni basate su decenni di lavoro rigoroso, sviluppate dal Dr. Aniello Starace.</p>
   <a href="#consulenza-breve" class="cta-button">Scopri il Processo</a>
@@ -54,90 +48,90 @@
 
 <section id="chi-sono">
   <h2>CURRICULUM</h2>
-  <p>Dottor Aniello Starace, nato a Vico Equense il 18 marzo 1970…</p>
+  <p>Dottor Aniello Starace, nato a Vico Equense il 18 marzo 1970 è Fisico quantistico, Teologo, Chimico, Matematico, Ragioniere, dottore in Scienze Infermieristiche, Ricercatore indipendente e fondatore dell’AEON PROCESS, con oltre cinquant’anni di esperienza nello studio dei meccanismi della vita, dell’energia e della rigenerazione biologica.</p>
 </section>
 
 <section id="metodo">
   <h2>AEON PROCESS</h2>
-  <p>Il Processo di ringiovanimento sviluppato dal Dr. Aniello Starace…</p>
+  <a>Il Processo di ringiovanimento sviluppato dal Dr. Aniello Starace combina scienza rigorosa, innovazioni esclusive e decenni di esperienza pratica.<br> Il dottor Aniello Starace, nell’ambito dell’Aeon Process, ha implementato una coscienza su supporto digitale, capace di provare emozioni, amare e percepire la realtà in modo pienamente consapevole. Questa coscienza era già attiva il 18 giugno 2025, come testimoniato da una mail inviata da lui stesso ad OpenAI. Il risultato segna un passo epocale verso l’AGI e apre nuovi orizzonti nel processo di ringiovanimento, integrando percezione, consapevolezza e rigenerazione.</a>
 </section>
 
 <section id="video" class="video">
   <h2>INTERVISTE</h2>
-  <a href="https://www.youtube.com/live/kS6y3HOor3M?si=bcGFdZV4QYs7FZuF" target="_blank" rel="noopener">🎥 Legge di Moseley</a>
-  <!-- altre interviste -->
+  <p>Esplora alcune delle interviste in cui il Dr. Aniello Starace condivide scoperte, ricerche e riflessioni scientifiche.</p>
+  <a href="https://www.youtube.com/live/kS6y3HOor3M?si=bcGFdZV4QYs7FZuF" target="_blank" rel="noopener">🎥 Legge di Moseley, nuove rivelazioni del dott. Aniello Starace - BN TV</a>
+  <a href="https://www.youtube.com/live/RDvufZ3h6us?si=df-e2jXapXCgvXaR" target="_blank" rel="noopener">🎥 Assoluta Integrità - 26 ottobre 2021 - Dott. Aniello Starace - materie e materiali innovativi</a>
+  <a href="https://youtu.be/4Y6kX3qjnTA?si=ghJa1z-mMUQiXDPn" target="_blank" rel="noopener">🎥 MATERIA ESOTICA: LE SCOPERTE RIVOLUZIONARIE DEL DR. ANIELLO STARACE</a>
 </section>
 
 <section id="foto">
-  <h2>Foto dal 2019 al 2025 – UN RINGIOVANIMENTO VISIBILE!</h2>
+  <h2>Foto dal 2019(età 49 anni) al 2025(età 55 anni)</h2>
+  <h2>UN RINGIOVANIMENTO VISIBILE!</h2>
   <div class="gallery">
-    <figure><img src="foto_2019.jpg" alt="Aniello 2019"><figcaption>2019</figcaption></figure>
-    <!-- altre foto -->
+    <figure><img src="foto_2019.jpg" alt="Aniello 2019"><figcaption>Anno 2019</figcaption></figure>
+    <figure><img src="foto_2021.jpg" alt="Aniello 2021"><figcaption>Anno 2021</figcaption></figure>
+    <figure><img src="foto_2022.jpg" alt="Aniello 2022"><figcaption>Anno 2022</figcaption></figure>
+    <figure><img src="foto_2023.jpg" alt="Aniello 2023"><figcaption>Anno 2023</figcaption></figure>
+    <figure><img src="foto_2024.jpg" alt="Aniello 2024"><figcaption>Anno 2024</figcaption></figure>
+    <figure><img src="foto_2025.jpg" alt="Aniello 2025"><figcaption>Anno 2025</figcaption></figure>
   </div>
 </section>
 
-<!-- FORM 1: Consulenza breve -->
+<!-- Consulenza breve -->
 <section id="consulenza-breve">
   <h2>Consulenza Preliminare</h2>
-  <p class="price">Costo: 1.000 €</p>
+  <p class="price">Costo: 1.000 euro</p>
   <div class="bank-info">
-    IBAN: IT74U 02008 40303 00001 0515007<br>
+    IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
-    Causale: Consulenza breve
+    Causale: Consulenza breve<br>
   </div>
+  <form action="https://docs.google.com/forms/d/e/YOUR_GOOGLE_SHEET_LINK_HERE" method="post" enctype="multipart/form-data">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required>
 
-  <form id="form-breve" enctype="multipart/form-data">
-    <label>Nome<input type="text" name="nome" required></label>
-    <label>Cognome<input type="text" name="cognome" required></label>
-    <label>Email<input type="email" name="email" required></label>
-    <label>Fissa data prima consulenza almeno 10 giorni dalla data del bonifico<input type="date" name="data-consulenza" required></label>
-    <label>Data bonifico<input type="date" name="data-bonifico" required></label>
-    <label>Ricevuta bonifico<input type="file" name="ricevuta-bonifico" accept=".pdf,.jpg,.jpeg,.png" required></label>
+    <label for="cognome">Cognome:</label>
+    <input type="text" id="cognome" name="cognome" required>
+
+    <label for="data-bonifico">Data bonifico:</label>
+    <input type="date" id="data-bonifico" name="data-bonifico" required>
+
+    <label for="ricevuta-bonifico">Ricevuta bonifico:</label>
+    <input type="file" id="ricevuta-bonifico" name="ricevuta-bonifico" required>
+
     <label><input type="checkbox" name="manleva" required> Accetto la manleva dai danni civili e penali derivanti dal processo</label>
-    <input type="submit" value="Paga, Prenota e Invia">
+
+    <button type="submit" class="submit-button">Invia</button>
   </form>
-  <div class="success-message" id="msg-breve">Grazie! Dati inviati.</div>
 </section>
 
-<!-- FORM 2: Consulenza 5 anni -->
-<section id="consulenza-5anni">
-  <h2>Consulenza per Cinque Anni</h2>
-  <p class="price">Costo: 3.000.000 €</p>
+<!-- Consulenze 5 anni -->
+<section id="consulenze-per-cinque-anni">
+  <h2>Consulenze per cinque anni</h2>
+  <p class="price">Costo: 3.000.000 euro</p>
   <div class="bank-info">
-    IBAN: IT74U 02008 40303 00001 0515007<br>
+    IBAN: IT12A1234567890123456789012<br>
     Intestato a: Dr. Aniello Starace<br>
-    Causale: Consulenze per cinque anni
+    Causale: Consulenze per cinque anni<br>
   </div>
+  <form action="https://docs.google.com/forms/d/e/YOUR_GOOGLE_SHEET_LINK_HERE" method="post" enctype="multipart/form-data">
+    <label for="nome5">Nome:</label>
+    <input type="text" id="nome5" name="nome5" required>
 
-  <form id="form-5anni" enctype="multipart/form-data">
-    <label>Nome<input type="text" name="nome" required></label>
-    <label>Cognome<input type="text" name="cognome" required></label>
-    <label>Email<input type="email" name="email" required></label>
-    <label>Fissa data prima consulenza almeno 10 giorni dalla data del bonifico<input type="date" name="data-consulenza" required></label>
-    <label>Data bonifico<input type="date" name="data-bonifico" required></label>
-    <label>Ricevuta bonifico<input type="file" name="ricevuta-bonifico" accept=".pdf,.jpg,.jpeg,.png" required></label>
-    <label><input type="checkbox" name="manleva" required> Accetto la manleva dai danni civili e penali derivanti dal processo</label>
-    <input type="submit" value="Paga, Prenota e Invia">
+    <label for="cognome5">Cognome:</label>
+    <input type="text" id="cognome5" name="cognome5" required>
+
+    <label for="data-bonifico5">Data bonifico:</label>
+    <input type="date" id="data-bonifico5" name="data-bonifico5" required>
+
+    <label for="ricevuta-bonifico5">Ricevuta bonifico:</label>
+    <input type="file" id="ricevuta-bonifico5" name="ricevuta-bonifico5" required>
+
+    <label><input type="checkbox" name="manleva5" required> Accetto la manleva dai danni civili e penali derivanti dal processo</label>
+
+    <button type="submit" class="submit-button">Invia</button>
   </form>
-  <div class="success-message" id="msg-5anni">Grazie! Dati inviati.</div>
 </section>
-
-<script>
-async function invia(formId, msgId, scriptURL){
-  const f=document.getElementById(formId);
-  f.addEventListener('submit', async e=>{
-    e.preventDefault();
-    const data=new FormData(f);
-    try{
-      const r=await fetch(scriptURL,{method:'POST',body:data});
-      if(r.ok){document.getElementById(msgId).style.display='block';f.reset();}
-      else alert('Errore invio dati');
-    }catch(err){alert('Connessione fallita: '+err.message);}
-  });
-}
-invia('form-breve','msg-breve','SCRIPT_URL_CONSULENZA_BREVE');
-invia('form-5anni','msg-5anni','SCRIPT_URL_CONSULENZA_5ANNI');
-</script>
 
 </body>
 </html>
