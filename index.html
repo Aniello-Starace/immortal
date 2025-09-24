@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Processo Esclusivo di Ringiovanimento</title>
   <style>
-    /* --- STILE IDENTICO ALLA VERSIONE PRECEDENTE --- */
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Helvetica Neue',Arial,sans-serif; line-height:1.6; background:#f4f4f4; color:#222; }
     header { background:linear-gradient(135deg,#0d1b2a,#1b263b); color:#fff; text-align:center; padding:80px 20px; }
@@ -17,7 +16,7 @@
     .content-p { margin-bottom:18px; font-size:1.1rem; text-align:left; }
     .price { font-weight:bold; color:#b22222; font-size:1.3rem; margin-bottom:10px; text-align:center; }
     .bank-info { background:#f0f0f0; padding:15px 20px; border-radius:8px; margin:20px auto; font-size:1.1rem; text-align:left; max-width:600px; }
-    .cta-button { background-color:#b22222; padding:18px 40px; color:#fff; font-weight:bold; border-radius:8px; transition:all 0.3s ease; display:inline-block; margin:20px 0; text-decoration:none; }
+    .cta-button { background-color:#b22222; padding:18px 40px; color:#fff; font-weight:bold; border-radius:8px; transition:all 0.3s ease; display:inline-block; margin:20px auto; text-decoration:none; }
     .cta-button:hover { background-color:#d42e2e; transform:scale(1.05); }
     .gallery { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
     .gallery figure { margin:0; text-align:center; }
@@ -37,7 +36,7 @@
     .checkbox-inline { display:flex; align-items:center; gap:10px; margin-bottom:15px; }
     .checkbox-inline input[type="checkbox"] { width:auto; margin:0; transform:scale(1.05); }
     .checkbox-inline label { margin:0; line-height:1.2; }
-    form button { cursor:pointer; padding:12px 18px; border:none; color:#fff; background:#b22222; border-radius:8px; font-weight:bold; }
+    form button { cursor:pointer; padding:12px 18px; border:none; color:#fff; background:#b22222; border-radius:8px; font-weight:bold; display:block; margin:0 auto; }
     @media (max-width:768px){
       header h1 { font-size:2.2rem; }
       header p { font-size:1.1rem; }
@@ -109,6 +108,9 @@
     <label for="data-bonifico">Data del bonifico:</label>
     <input type="date" id="data-bonifico" name="data-bonifico" class="compact" required>
 
+    <label for="data-primo-app">Data primo appuntamento:</label>
+    <input type="date" id="data-primo-app" name="data-primo-app" class="compact" required>
+
     <label for="ora-primo-app">Ora primo appuntamento:</label>
     <input type="time" id="ora-primo-app" name="ora-primo-app" class="compact" required>
 
@@ -145,6 +147,9 @@
     <label for="data-bonifico-5">Data del bonifico:</label>
     <input type="date" id="data-bonifico-5" name="data-bonifico-5" class="compact" required>
 
+    <label for="data-primo-app-5">Data primo appuntamento:</label>
+    <input type="date" id="data-primo-app-5" name="data-primo-app-5" class="compact" required>
+
     <label for="ora-primo-app-5">Ora primo appuntamento:</label>
     <input type="time" id="ora-primo-app-5" name="ora-primo-app-5" class="compact" required>
 
@@ -170,10 +175,9 @@
 (function(){
   const today = new Date().toISOString().split('T')[0];
   const minDate = '2025-09-20';
-  ['data-bonifico','data-bonifico-5'].forEach(id=>{
+  ['data-bonifico','data-bonifico-5','data-primo-app','data-primo-app-5'].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
-    el.setAttribute('max', today);
     el.setAttribute('min', minDate);
     if(el.type !== 'date'){
       el.type = 'text'; el.classList.add('compact'); el.placeholder='gg-mm-aaaa';
