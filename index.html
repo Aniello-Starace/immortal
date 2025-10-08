@@ -215,38 +215,29 @@
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
 })();
 </script>
-<!-- Bottone apri/chiudi chat -->
-<div id="chat-button" 
-     style="position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%; background-color:#ff69b4; z-index:9998; cursor:pointer; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); transition:all 0.3s ease;">
-    Chat
-</div>
-
-<!-- Finestra chat -->
-<iframe id="chat-iframe" 
-        src="chat-widget.html" 
-        style="position:fixed; bottom:90px; right:20px; width:360px; height:520px; border:none; z-index:9999; display:none; box-shadow:0 4px 14px rgba(0,0,0,0.35); border-radius:12px; background:white;">
+<!-- Widget chat -->
+<iframe id="chat-iframe"
+        src="chat-widget.html"
+        style="position:fixed; bottom:20px; right:20px; width:360px; height:520px; border:none; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.35); border-radius:12px; background:white;">
 </iframe>
 
 <script>
-const chatButton = document.getElementById('chat-button');
+// Attendi che l’iframe sia caricato prima di abilitare i click
 const chatIframe = document.getElementById('chat-iframe');
-let isOpen = false;
 
-chatButton.addEventListener('click', () => {
-    if (isOpen) {
-        chatIframe.style.display = 'none';
-        chatButton.innerText = 'Chat';
-        chatButton.style.backgroundColor = '#ff69b4';
-        chatButton.style.zIndex = '9998';
-        isOpen = false;
-    } else {
-        chatIframe.style.display = 'block';
-        chatButton.innerText = '×';
-        chatButton.style.backgroundColor = '#ff1493';
-        // Metti il bottone dietro la chat quando è aperta
-        chatButton.style.zIndex = '9997';
-        isOpen = true;
-    }
+chatIframe.addEventListener('load', () => {
+  const iframeDoc = chatIframe.contentDocument || chatIframe.contentWindow.document;
+
+  // Abilita i click all'interno del widget
+  chatIframe.style.pointerEvents = 'auto';
+
+  // Focus automatico sul campo input del widget (se esiste)
+  const tryFocus = () => {
+    const input = iframeDoc.querySelector('input, textarea');
+    if (input) input.focus();
+  };
+
+  setTimeout(tryFocus, 500); // dà tempo al widget di caricarsi
 });
 </script>
 </body>
