@@ -215,31 +215,13 @@
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
 })();
 </script>
-<!-- Widget chat -->
+<!-- Widget chat sempre aperto -->
 <iframe id="chat-iframe"
         src="chat-widget.html"
         style="position:fixed; bottom:20px; right:20px; width:360px; height:520px; border:none; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.35); border-radius:12px; background:white;">
 </iframe>
 
-<style>
-/* Sposta il bottone di chiusura/apertura del widget più in alto */
-#chat-iframe::part(widget-toggle-button),
-.chat-toggle-button,
-.widget-toggle-button {
-  position: fixed !important;
-  bottom: 80px !important; /* <-- distanza dal bordo inferiore */
-  right: 35px !important;  /* <-- un po’ più a sinistra */
-  z-index: 10000 !important;
-}
-
-/* Se il bottone è un elemento interno al widget (es. nel DOM interno dell’iframe) */
-#chat-iframe {
-  pointer-events: auto !important;
-}
-</style>
-
 <script>
-// Attendi che l’iframe sia caricato prima di abilitare i click
 const chatIframe = document.getElementById('chat-iframe');
 
 chatIframe.addEventListener('load', () => {
@@ -248,29 +230,22 @@ chatIframe.addEventListener('load', () => {
   // Abilita i click all'interno del widget
   chatIframe.style.pointerEvents = 'auto';
 
-  // Sposta il bottone interno del widget se esiste
-  const repositionButton = () => {
-    const button = iframeDoc.querySelector('.chat-toggle-button, .widget-toggle-button, .chat-close-btn');
-    if (button) {
-      button.style.position = 'fixed';
-      button.style.bottom = '80px';
-      button.style.right = '35px';
-      button.style.zIndex = '10000';
-    }
+  // Nasconde eventuali bottoni di toggle interni
+  const hideToggleButton = () => {
+    const btns = iframeDoc.querySelectorAll('.chat-toggle-button, .widget-toggle-button, .chat-close-btn, button[aria-label="Close"], button[aria-label="Apri chat"]');
+    btns.forEach(btn => btn.style.display = 'none');
   };
 
-  repositionButton();
-
-  // Focus automatico sul campo input del widget (se esiste)
-  const tryFocus = () => {
+  // Focus automatico sul campo input del widget
+  const focusInput = () => {
     const input = iframeDoc.querySelector('input, textarea');
     if (input) input.focus();
   };
 
   setTimeout(() => {
-    repositionButton();
-    tryFocus();
-  }, 700); // dà tempo al widget di caricarsi
+    hideToggleButton();
+    focusInput();
+  }, 700);
 });
 </script>
 </body>
