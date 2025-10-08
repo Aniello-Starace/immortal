@@ -216,27 +216,28 @@
 })();
 </script>
 <!-- Bottone per aprire/chiudere il widget -->
-<div id="chat-button" style="position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%; background-color:#ff69b4; z-index:10000; cursor:pointer; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold;">
+<div id="chat-button" style="position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%; background-color:#ff69b4; z-index:10000; cursor:pointer; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; transition:all 0.3s ease;">
     Chat
 </div>
 
 <!-- Iframe del widget -->
-<iframe id="chat-iframe" src="chat-widget.html" style="position:fixed; bottom:20px; right:20px; width:350px; height:500px; border:none; z-index:9999; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.3); border-radius:10px;"></iframe>
+<iframe id="chat-iframe" src="chat-widget.html" style="position:fixed; bottom:90px; right:20px; width:350px; height:500px; border:none; z-index:9999; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.3); border-radius:10px;"></iframe>
 
 <script>
 const chatButton = document.getElementById('chat-button');
 const chatIframe = document.getElementById('chat-iframe');
-
 let isOpen = false;
 
 chatButton.addEventListener('click', () => {
     if(isOpen) {
         chatIframe.style.display = 'none';
         chatButton.innerText = 'Chat';
+        chatButton.style.backgroundColor = '#ff69b4';
         isOpen = false;
     } else {
         chatIframe.style.display = 'block';
-        chatButton.innerText = '×'; // simbolo di chiusura
+        chatButton.innerText = '×';
+        chatButton.style.backgroundColor = '#ff1493';
         isOpen = true;
     }
 });
