@@ -215,37 +215,42 @@
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
 })();
 </script>
-<!-- Widget chat sempre aperto -->
+<!-- Widget chat -->
 <iframe id="chat-iframe"
         src="chat-widget.html"
         style="position:fixed; bottom:20px; right:20px; width:360px; height:520px; border:none; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.35); border-radius:12px; background:white;">
 </iframe>
 
+<!-- Bottone esterno -->
+<button id="toggle-chat"
+        style="position:fixed; top:20px; right:25px; width:45px; height:45px; border-radius:50%; border:none; background:#ff4d6d; color:white; font-size:20px; cursor:pointer; z-index:10000; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
+✕
+</button>
+
 <script>
 const chatIframe = document.getElementById('chat-iframe');
+const toggleBtn = document.getElementById('toggle-chat');
+
+toggleBtn.addEventListener('click', () => {
+  if (chatIframe.style.display === 'none') {
+    chatIframe.style.display = 'block';
+    toggleBtn.textContent = '✕';
+  } else {
+    chatIframe.style.display = 'none';
+    toggleBtn.textContent = '💬';
+  }
+});
 
 chatIframe.addEventListener('load', () => {
   const iframeDoc = chatIframe.contentDocument || chatIframe.contentWindow.document;
-
-  // Abilita i click all'interno del widget
   chatIframe.style.pointerEvents = 'auto';
 
-  // Nasconde eventuali bottoni di toggle interni
-  const hideToggleButton = () => {
-    const btns = iframeDoc.querySelectorAll('.chat-toggle-button, .widget-toggle-button, .chat-close-btn, button[aria-label="Close"], button[aria-label="Apri chat"]');
+  // Nasconde bottoni interni del widget
+  const hideInternal = () => {
+    const btns = iframeDoc.querySelectorAll('.chat-toggle-button, .widget-toggle-button, .chat-close-btn');
     btns.forEach(btn => btn.style.display = 'none');
   };
-
-  // Focus automatico sul campo input del widget
-  const focusInput = () => {
-    const input = iframeDoc.querySelector('input, textarea');
-    if (input) input.focus();
-  };
-
-  setTimeout(() => {
-    hideToggleButton();
-    focusInput();
-  }, 700);
+  setTimeout(hideInternal, 700);
 });
 </script>
 </body>
