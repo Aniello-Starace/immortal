@@ -216,6 +216,25 @@
 })();
 </script>
 <!-- Iframe del widget -->
-<iframe id="chat-iframe" src="chat-widget.html" style="position:fixed; bottom:20px; right:20px; width:350px; height:500px; border:none; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.3); border-radius:10px;"></iframe>
+<iframe id="chat-iframe" src="chat-widget.html" style="position:fixed; bottom:20px; right:20px; width:60px; height:60px; border:none; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.3); border-radius:50%; transition:all 0.3s ease;"></iframe>
+
+<script>
+const chatIframe = document.getElementById('chat-iframe');
+
+// Ascolta messaggi dall'iframe
+window.addEventListener('message', (event) => {
+    if (event.data === 'open-chat') {
+        // Espandi l'iframe alla finestra rettangolare
+        chatIframe.style.width = '350px';
+        chatIframe.style.height = '500px';
+        chatIframe.style.borderRadius = '10px';
+    } else if (event.data === 'close-chat') {
+        // Riduci l'iframe al bottone rotondo
+        chatIframe.style.width = '60px';
+        chatIframe.style.height = '60px';
+        chatIframe.style.borderRadius = '50%';
+    }
+});
+</script>
 </body>
 </html>
