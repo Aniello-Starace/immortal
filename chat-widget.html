@@ -333,7 +333,9 @@
     <div id="chat-widget">
         <div id="chat-header">
             <div class="header-info">
-                <div class="avatar">LA</div>
+                <div class="avatar">
+                    <img src="lia.jpg" alt="Lia Aeon">
+                </div>
                 <div class="header-text">
                     <h3>Lia Aeon</h3>
                     <p>Assistente Virtuale</p>
@@ -368,7 +370,8 @@
             stage: 'waiting_name',
             userName: null,
             hasIntroduced: false,
-            userGender: null
+            userGender: null,
+            askedAboutConsultation: false
         };
 
         // Knowledge base about AEON PROCESS
@@ -469,7 +472,7 @@
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message bot';
                 messageDiv.innerHTML = `
-                    <div class="message-avatar">LA</div>
+                    <div class="message-avatar"><img src="lia.jpg" alt="Lia"></div>
                     <div class="message-content">${text}</div>
                 `;
                 messagesContainer.appendChild(messageDiv);
@@ -481,7 +484,7 @@
                 indicator.className = 'message bot';
                 indicator.id = 'typing-indicator-msg';
                 indicator.innerHTML = `
-                    <div class="message-avatar">LA</div>
+                    <div class="message-avatar"><img src="lia.jpg" alt="Lia"></div>
                     <div class="typing-indicator active">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
@@ -550,7 +553,7 @@
                     // User is asking about the service but hasn't been qualified yet
                     if (containsKeywords(lowerMsg, ['aeon', 'processo', 'ringiovanimento', 'cos\'è', 'cosa è', 'spiegami', 'programma', 'costo', 'prezzo', 'quanto', 'consulenza', 'prenotare', 'appuntamento'])) {
                         chatState.stage = 'checking_capital';
-                        addBotMessage("Prima di fornirle informazioni dettagliate, devo verificare un aspetto importante: dispone di una disponibilità economica nell'ordine dei 3 milioni di euro?");
+                        addBotMessage("Prima di fornirle informazioni dettagliate sul servizio, devo verificare un aspetto importante: il percorso completo richiede un investimento di 3 milioni di euro. Dispone di questa disponibilità economica per poter accedere al programma?");
                         return;
                     }
                 }
@@ -602,19 +605,38 @@
 
                 // About AEON PROCESS - only for qualified users
                 if (containsKeywords(lowerMsg, ['aeon', 'processo', 'ringiovanimento', 'cos\'è', 'cosa è', 'spiegami', 'programma'])) {
-                    addBotMessage("L'AEON PROCESS è un programma rivoluzionario di ringiovanimento sviluppato dal dottor Starace, che integra percezione coscienziale, consapevolezza e rigenerazione biologica. Desidera sapere di più sui dettagli, sui costi o sulle modalità di accesso?");
+                    addBotMessage("L'AEON PROCESS è un programma rivoluzionario di ringiovanimento sviluppato dal dottor Starace, che integra percezione coscienziale, consapevolezza e rigenerazione biologica.");
+                    if (!chatState.askedAboutConsultation) {
+                        setTimeout(() => {
+                            addBotMessage("Per accedere al programma, è necessaria una consulenza preliminare con il dottor Starace. Desidera sapere come prenotarla?");
+                            chatState.askedAboutConsultation = true;
+                        }, 1500);
+                    }
                     return;
                 }
 
                 // About costs
-                if (containsKeywords(lowerMsg, ['costo', 'prezzo', 'quanto', 'pagamento', 'soldi', 'euro', 'investimento'])) {
-                    addBotMessage("Il percorso completo dell'AEON PROCESS ha un investimento di 3.000.000 di euro per un ciclo quinquennale. È necessaria prima una consulenza preliminare di 1.000 euro per valutare l'idoneità.");
+                if (containsKeywords(lowerMsg, ['costo', 'costi', 'prezzo', 'prezzi', 'quanto', 'pagamento', 'soldi', 'euro', 'investimento'])) {
+                    addBotMessage("Il percorso completo dell'AEON PROCESS ha un investimento di 3.000.000 di euro per un ciclo quinquennale. È necessaria prima una consulenza preliminare di 1.000 euro (circa 50 minuti con il dottor Aniello Starace) per valutare l'idoneità al programma.");
+                    if (!chatState.askedAboutConsultation) {
+                        setTimeout(() => {
+                            addBotMessage("Desidera prenotare la consulenza preliminare?");
+                            chatState.askedAboutConsultation = true;
+                        }, 1800);
+                    }
                     return;
                 }
 
                 // About consultation
-                if (containsKeywords(lowerMsg, ['consulenza', 'prenotare', 'appuntamento', 'come', 'procedura', 'iniziare'])) {
-                    addBotMessage("Per prenotare una consulenza preliminare (1.000 euro, 50 minuti), dovrà contattare direttamente il dottor Starace via email: dottor.aniello.starace@gmail.com");
+                if (containsKeywords(lowerMsg, ['consulenza', 'prenotare', 'appuntamento', 'come', 'procedura', 'iniziare', 'sì', 'si', 'certo', 'ok', 'prenot'])) {
+                    chatState.askedAboutConsultation = true;
+                    addBotMessage("Perfetto! Per prenotare la consulenza preliminare (1.000 euro, circa 50 minuti con il dottor Aniello Starace), dovrà contattarlo direttamente via email: dottor.aniello.starace@gmail.com");
+                    return;
+                }
+                
+                // If user refuses consultation after being asked
+                if (chatState.askedAboutConsultation && containsKeywords(lowerMsg, ['no', 'non voglio', 'non mi interessa', 'forse', 'ci penso'])) {
+                    addBotMessage("Senza la consulenza preliminare non è possibile accedere al programma. La ringrazio per il tempo dedicato. Buona giornata.");
                     return;
                 }
 
