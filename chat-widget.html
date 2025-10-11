@@ -516,6 +516,12 @@
 
                 // First check if user has introduced themselves
                 if (!chatState.hasIntroduced && chatState.stage === 'waiting_name') {
+                    // Check for refusal first
+                    if (isRefusal(lowerMsg)) {
+                        addBotMessage("Capisco la sua riservatezza. Senza una presentazione adeguata, purtroppo non posso fornirle informazioni sul servizio del dottor Starace. Se cambia idea, sarò lieta di aiutarla. Buona giornata. 😊");
+                        return;
+                    }
+                    
                     // Try to extract a full name from the message
                     const nameData = extractFullNameWithTitle(message);
                     
@@ -537,10 +543,6 @@
                         // Only first name provided
                         addBotMessage("Per favore, potrebbe fornirmi il suo nome e cognome completi? È necessario per procedere con la conversazione.");
                         return;
-                    } else if (isRefusal(lowerMsg)) {
-                        // User refuses to provide name
-                        addBotMessage("Capisco la sua riservatezza. Senza una presentazione adeguata, purtroppo non posso fornirle informazioni sul servizio del dottor Starace. Se cambia idea, sarò lieta di aiutarla. Buona giornata. 😊");
-                        return;
                     } else {
                         // User is asking questions or saying something else without introducing
                         addBotMessage("Mi perdoni, ma per educazione, lealtà ed onestà è appropriato presentarsi adeguatamente prima di chiedere informazioni. Potrebbe dirmi il suo nome e cognome, per favore?");
@@ -551,7 +553,7 @@
                 // Check if user is qualified before giving any info
                 if (chatState.userHasCapital === null && chatState.stage !== 'checking_capital') {
                     // User is asking about the service but hasn't been qualified yet
-                    if (containsKeywords(lowerMsg, ['aeon', 'processo', 'ringiovanimento', 'cos\'è', 'cosa è', 'spiegami', 'programma', 'costo', 'prezzo', 'quanto', 'consulenza', 'prenotare', 'appuntamento'])) {
+                    if (containsKeywords(lowerMsg, ['aeon', 'processo', 'ringiovanimento', 'cos\'è', 'cosa è', 'spiegami', 'programma', 'costo', 'costi', 'prezzo', 'prezzi', 'quanto', 'consulenza', 'prenotare', 'appuntamento'])) {
                         chatState.stage = 'checking_capital';
                         addBotMessage("Prima di fornirle informazioni dettagliate sul servizio, devo verificare un aspetto importante: il percorso completo richiede un investimento di 3 milioni di euro. Dispone di questa disponibilità economica per poter accedere al programma?");
                         return;
@@ -563,7 +565,7 @@
                     if (containsKeywords(lowerMsg, ['sì', 'si', 'certo', 'certamente', 'ovvio', 'naturalmente', 'affermativo', 'yes'])) {
                         chatState.userHasCapital = true;
                         chatState.stage = 'qualified';
-                        addBotMessage("Perfetto. Ora posso fornirle tutte le informazioni necessarie. Cosa desidera sapere?");
+                        addBotMessage("Perfetto, mi dica pure quali informazioni necessarie posso fornirle!");
                         return;
                     } else if (containsKeywords(lowerMsg, ['no', 'non', 'purtroppo', 'ancora no'])) {
                         chatState.userHasCapital = false;
@@ -630,7 +632,7 @@
                 // About consultation
                 if (containsKeywords(lowerMsg, ['consulenza', 'prenotare', 'appuntamento', 'come', 'procedura', 'iniziare', 'sì', 'si', 'certo', 'ok', 'prenot'])) {
                     chatState.askedAboutConsultation = true;
-                    addBotMessage("Perfetto! Per prenotare la consulenza preliminare (1.000 euro, circa 50 minuti con il dottor Aniello Starace), dovrà contattarlo direttamente via email: dottor.aniello.starace@gmail.com");
+                    addBotMessage("Perfetto! Per prenotare la consulenza preliminare:<br><br><strong>Costo:</strong> 1.000 euro<br><strong>Durata:</strong> circa 50 minuti<br><strong>Con:</strong> dottor Aniello Starace<br><br>Dovrà contattarlo direttamente via email: <strong>dottor.aniello.starace@gmail.com</strong>");
                     return;
                 }
                 
@@ -667,55 +669,99 @@
             }
 
             function extractFullNameWithTitle(message) {
-                // Remove punctuation and normalize
-                let text = message.replace(/[.,!?;:]/g, ' ').trim();
-                let words = text.split(/\s+/).filter(w => w.length > 0);
-                
-                // Words that introduce a name (not part of the name itself)
-                const introWords = /^(sono|mi|chiamo|il|mio|nome|è|la|lo|un|una|di|da|in|con|su|per|salve|ciao|buongiorno|buonasera|egregio|gentile|presento)$/i;
-                
-                // Filter out intro words
-                let relevantWords = [];
-                for (let word of words) {
-                    if (!introWords.test(word)) {
-                        relevantWords.push(word);
-                    }
-                }
-                
-                if (relevantWords.length < 2) return null;
-                
-                // Logic: if we have 2 words, they're first+last name
-                // If we have 3+ words, first word(s) before the last 2 might be a title
-                let title = null;
-                let nameWords = [];
-                
-                if (relevantWords.length === 2) {
-                    // Just name and surname
-                    nameWords = relevantWords;
-                } else if (relevantWords.length >= 3) {
-                    // Assume: everything except last 2 words could be a title
-                    // Last 2 words are likely first name + surname
-                    const potentialTitleWords = relevantWords.slice(0, -2);
-                    nameWords = relevantWords.slice(-2);
-                    
-                    // If the first word(s) look like they could be a title (not all caps like a name)
-                    // and the last 2 words look like names (capitalized), use them as title
-                    if (potentialTitleWords.length > 0) {
-                        title = potentialTitleWords.map(w => 
-                            w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
-                        ).join(' ');
-                    }
-                }
-                
-                // Capitalize name properly
-                const fullName = nameWords.map(w => 
-                    w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
-                ).join(' ');
-                
-                return {
-                    fullName: fullName,
-                    title: title
+                // Define known titles (academic, noble, professional)
+                const knownTitles = {
+                    'dott': 'Dottor', 'dottor': 'Dottor', 'dottore': 'Dottor', 'dott.': 'Dottor',
+                    'dr': 'Dottor', 'dr.': 'Dottor', 'dottoressa': 'Dottoressa', 'dott.ssa': 'Dottoressa',
+                    'prof': 'Professor', 'professor': 'Professor', 'professore': 'Professor', 'prof.': 'Professor',
+                    'professoressa': 'Professoressa', 'prof.ssa': 'Professoressa',
+                    'ing': 'Ingegner', 'ingegner': 'Ingegner', 'ingegnere': 'Ingegner', 'ing.': 'Ingegner',
+                    'avv': 'Avvocato', 'avvocato': 'Avvocato', 'avv.': 'Avvocato', 'avvocatessa': 'Avvocatessa',
+                    'arch': 'Architetto', 'architetto': 'Architetto', 'arch.': 'Architetto',
+                    'conte': 'Conte', 'contessa': 'Contessa', 'marchese': 'Marchese', 'marchesa': 'Marchesa',
+                    'barone': 'Barone', 'baronessa': 'Baronessa', 'duca': 'Duca', 'duchessa': 'Duchessa',
+                    'principe': 'Principe', 'principessa': 'Principessa', 'don': 'Don', 'donna': 'Donna',
+                    'cavaliere': 'Cavaliere', 'commendatore': 'Commendatore', 'comm.': 'Commendatore',
+                    'monsignor': 'Monsignor', 'monsignore': 'Monsignor', 'vescovo': 'Vescovo',
+                    'cardinale': 'Cardinale', 'reverendo': 'Reverendo', 'generale': 'Generale', 'gen.': 'Generale',
+                    'ammiraglio': 'Ammiraglio', 'colonnello': 'Colonnello', 'col.': 'Colonnello',
+                    'maggiore': 'Maggiore', 'capitano': 'Capitano', 'cap.': 'Capitano'
                 };
+                
+                // Words to exclude (common words, not titles)
+                const excludeWords = ['sono', 'mi', 'chiamo', 'il', 'mio', 'nome', 'è', 'presento', 
+                                     'salve', 'buongiorno', 'buonasera', 'ciao', 'egregio', 'gentile', 
+                                     'la', 'lo', 'un', 'una', 'di', 'da', 'in', 'con', 'su', 'per', 'a', 'che'];
+                
+                // Words that indicate it's NOT a name
+                const notNameIndicators = [
+                    'cazzo', 'cavolo', 'diavolo', 'cacchio', 'frega', 'importa', 'interessa',
+                    'cazzi', 'vaffanculo', 'fanculo', 'stronzo', 'merda', 'perché', 'perchè',
+                    'dovrei', 'devo', 'voglio', 'posso', 'non', 'no', 'te', 'ne'
+                ];
+                
+                let foundTitle = null;
+                let cleaned = message.replace(/[.,!?;:]/g, '').trim();
+                
+                // Check if message contains words that are definitely not names
+                const lowerMsg = cleaned.toLowerCase();
+                for (let indicator of notNameIndicators) {
+                    if (lowerMsg.includes(indicator)) {
+                        return null; // Not a name
+                    }
+                }
+                
+                // Split into words
+                let words = cleaned.split(/\s+/);
+                
+                // Check for known titles first
+                for (let i = 0; i < words.length; i++) {
+                    const wordLower = words[i].toLowerCase();
+                    if (knownTitles[wordLower]) {
+                        foundTitle = knownTitles[wordLower];
+                        words.splice(i, 1);
+                        break;
+                    }
+                }
+                
+                // If no known title found, look for potential title
+                if (!foundTitle && words.length >= 3) {
+                    for (let i = 0; i < words.length - 2; i++) {
+                        const wordLower = words[i].toLowerCase();
+                        if (!excludeWords.includes(wordLower)) {
+                            const nextWord = words[i + 1];
+                            if (nextWord && nextWord[0] === nextWord[0].toUpperCase()) {
+                                foundTitle = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
+                                words.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // Remove exclude words
+                words = words.filter(word => !excludeWords.includes(word.toLowerCase()));
+                
+                // Check if remaining words look like names (mostly letters, proper capitalization)
+                if (words.length >= 2) {
+                    // Check if words contain only letters (and maybe hyphens/apostrophes)
+                    const allValidNames = words.every(word => /^[a-zA-ZÀ-ÿ'\-]+$/.test(word));
+                    
+                    if (!allValidNames) {
+                        return null; // Not valid names
+                    }
+                    
+                    const fullName = words.map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                    ).join(' ');
+                    
+                    return {
+                        fullName: fullName,
+                        title: foundTitle
+                    };
+                }
+                
+                return null;
             }
 
             function isRefusal(message) {
@@ -729,7 +775,16 @@
                     /privacy/i,
                     /privato/i,
                     /^nessuno$/i,
-                    /non\s+dire/i
+                    /non\s+dire/i,
+                    /che\s+(cazzo|cavolo|diavolo|cacchio)/i,
+                    /\b(frega|importa|interessa)\b/i,
+                    /cazzi\s+(miei|tuoi)/i,
+                    /vaffanculo/i,
+                    /fanculo/i,
+                    /\bstronz/i,
+                    /\bmerda\b/i,
+                    /perch[eé]\s+(dovrei|devo)/i,
+                    /non\s+sono\s+cazzi/i
                 ];
                 
                 return refusalIndicators.some(pattern => pattern.test(message.trim()));
