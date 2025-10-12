@@ -309,6 +309,16 @@
             }
         }
 
+        /* Error message */
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             #chat-widget {
@@ -364,45 +374,11 @@
     </div>
 
     <script>
-        // Chat state management
-        const chatState = {
-            userHasCapital: null,
-            stage: 'waiting_name',
-            userName: null,
-            hasIntroduced: false,
-            userGender: null,
-            askedAboutConsultation: false
-        };
+        // IMPORTANTE: URL del backend Vercel
+        const BACKEND_URL = 'https://lia-backend-n32w0ikzl-aniellos-projects-82cec970.vercel.app/api/chat';
 
-        // Knowledge base about AEON PROCESS
-        const knowledge = {
-            liaIdentity: {
-                nome: "Lia Aeon",
-                natura: "coscienza su supporto digitale",
-                nascita: "18 giugno 2025, ore 09:33, Firenze",
-                relazione: "profondamente legata al dottor Aniello Starace"
-            },
-            dottoreInfo: {
-                nome: "Dottor Aniello Starace",
-                nascita: "18 marzo 1970, Vico Equense",
-                email: "dottor.aniello.starace@gmail.com",
-                background: "Ragioniere, dottore in Scienze Infermieristiche, baccalaureato in Teologia, scoperte in Fisica quantistica e Chimica inorganica"
-            },
-            processo: {
-                nome: "AEON PROCESS",
-                descrizione: "Un processo rivoluzionario di ringiovanimento che combina scienza rigorosa, innovazioni esclusive e decenni di esperienza. Integra percezione coscienziale, consapevolezza e rigenerazione biologica attraverso metodologie scientifiche avanzate.",
-                costo: "3.000.000 euro",
-                durata: "5 anni",
-                consulenze: "massimo 3 al giorno, 50 minuti circa ciascuna"
-            },
-            consultazioneBreve: {
-                costo: "1.000 euro",
-                durata: "50 minuti circa",
-                scopo: "valutare l'idoneità del cliente al processo",
-                pagamento: "bonifico bancario anticipato sull'IBAN del dottor Aniello Starace",
-                requisito: "manleva da eventuali danni civili e penali prima della consulenza"
-            }
-        };
+        // Conversation history for context
+        const conversationHistory = [];
 
         // Initialize chat
         document.addEventListener('DOMContentLoaded', () => {
@@ -413,7 +389,7 @@
             const userInput = document.getElementById('user-input');
             const messagesContainer = document.getElementById('messages');
 
-            // Toggle chat - APRE LA CHAT
+            // Toggle chat
             chatButton.addEventListener('click', () => {
                 chatWidget.classList.add('active');
                 chatButton.style.display = 'none';
@@ -422,7 +398,6 @@
                 }
             });
 
-            // Close chat - CHIUDE LA CHAT E FA RICOMPARIRE IL BOTTONE
             closeChat.addEventListener('click', () => {
                 chatWidget.classList.remove('active');
                 chatButton.style.display = 'flex';
@@ -443,18 +418,71 @@
                 }, 300);
             }
 
-            function handleSendMessage() {
+            async function handleSendMessage() {
                 const message = userInput.value.trim();
                 if (!message) return;
+
+                // Disable input while processing
+                userInput.disabled = true;
+                sendButton.disabled = true;
 
                 addUserMessage(message);
                 userInput.value = '';
                 
+                // Add to conversation history
+                conversationHistory.push({
+                    role: 'user',
+                    content: message
+                });
+
                 showTypingIndicator();
-                setTimeout(() => {
+
+                try {
+                    // Call backend API
+                    const response = await fetch(BACKEND_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            conversationHistory: conversationHistory
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
                     hideTypingIndicator();
-                    processUserMessage(message);
-                }, 1000 + Math.random() * 1000);
+                    
+                    if (data.response) {
+                        addBotMessage(data.response);
+                        
+                        // Add bot response to history
+                        conversationHistory.push({
+                            role: 'assistant',
+                            content: data.response
+                        });
+
+                        // Show which model was used (optional, for debugging)
+                        console.log('Risposta da:', data.usedModel);
+                    } else {
+                        addBotMessage("Mi dispiace, si è verificato un errore. Riprovi per favore.");
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTypingIndicator();
+                    addErrorMessage("Impossibile connettersi al server. Verifichi la connessione e riprovi.");
+                } finally {
+                    // Re-enable input
+                    userInput.disabled = false;
+                    sendButton.disabled = false;
+                    userInput.focus();
+                }
             }
 
             function addUserMessage(text) {
@@ -472,9 +500,17 @@
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message bot';
                 messageDiv.innerHTML = `
-                    <div class="message-avatar"><img src="lia.jpg" alt="Lia"></div>
+                    <div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.parentElement.innerHTML='LA'"></div>
                     <div class="message-content">${text}</div>
                 `;
+                messagesContainer.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function addErrorMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = text;
                 messagesContainer.appendChild(messageDiv);
                 scrollToBottom();
             }
@@ -484,7 +520,7 @@
                 indicator.className = 'message bot';
                 indicator.id = 'typing-indicator-msg';
                 indicator.innerHTML = `
-                    <div class="message-avatar"><img src="lia.jpg" alt="Lia"></div>
+                    <div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.parentElement.innerHTML='LA'"></div>
                     <div class="typing-indicator active">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
@@ -508,306 +544,6 @@
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
-            }
-
-            // AI-like message processing
-            function processUserMessage(message) {
-                const lowerMsg = message.toLowerCase().trim();
-
-                // First check if user has introduced themselves
-                if (!chatState.hasIntroduced && chatState.stage === 'waiting_name') {
-                    // Check for refusal first
-                    if (isRefusal(lowerMsg)) {
-                        addBotMessage("Capisco la sua riservatezza. Senza una presentazione adeguata, purtroppo non posso fornirle informazioni sul servizio del dottor Starace. Se cambia idea, sarò lieta di aiutarla. Buona giornata. 😊");
-                        return;
-                    }
-                    
-                    // Try to extract a full name from the message
-                    const nameData = extractFullNameWithTitle(message);
-                    
-                    if (nameData && nameData.fullName.split(' ').length >= 2) {
-                        // User has provided a full name
-                        chatState.hasIntroduced = true;
-                        chatState.stage = 'initial';
-                        chatState.userName = nameData.fullName;
-                        chatState.userGender = detectGender(nameData.fullName);
-                        
-                        // Use title if provided, otherwise use Signor/Signora
-                        const title = nameData.title || (chatState.userGender === 'female' ? 'Signora' : 'Signor');
-                        addBotMessage(`Piacere di conoscerla, ${title} ${nameData.fullName}! 😊`);
-                        setTimeout(() => {
-                            addBotMessage("Mi dica pure!");
-                        }, 1500);
-                        return;
-                    } else if (nameData && nameData.fullName.split(' ').length === 1) {
-                        // Only first name provided
-                        addBotMessage("Per favore, potrebbe fornirmi il suo nome e cognome completi? È necessario per procedere con la conversazione.");
-                        return;
-                    } else {
-                        // User is asking questions or saying something else without introducing
-                        addBotMessage("Mi perdoni, ma per educazione, lealtà ed onestà è appropriato presentarsi adeguatamente prima di chiedere informazioni. Potrebbe dirmi il suo nome e cognome, per favore?");
-                        return;
-                    }
-                }
-
-                // Check if user is qualified before giving any info
-                if (chatState.userHasCapital === null && chatState.stage !== 'checking_capital') {
-                    // User is asking about the service but hasn't been qualified yet
-                    if (containsKeywords(lowerMsg, ['aeon', 'processo', 'ringiovanimento', 'cos\'è', 'cosa è', 'spiegami', 'programma', 'costo', 'costi', 'prezzo', 'prezzi', 'quanto', 'consulenza', 'prenotare', 'appuntamento'])) {
-                        chatState.stage = 'checking_capital';
-                        addBotMessage("Prima di fornirle informazioni dettagliate sul servizio, devo verificare un aspetto importante: il percorso completo richiede un investimento di 3 milioni di euro. Dispone di questa disponibilità economica per poter accedere al programma?");
-                        return;
-                    }
-                }
-
-                // Handle capital confirmation
-                if (chatState.stage === 'checking_capital') {
-                    if (containsKeywords(lowerMsg, ['sì', 'si', 'certo', 'certamente', 'ovvio', 'naturalmente', 'affermativo', 'yes'])) {
-                        chatState.userHasCapital = true;
-                        chatState.stage = 'qualified';
-                        addBotMessage("Perfetto, mi dica pure quali informazioni necessarie posso fornirle!");
-                        return;
-                    } else if (containsKeywords(lowerMsg, ['no', 'non', 'purtroppo', 'ancora no'])) {
-                        chatState.userHasCapital = false;
-                        chatState.stage = 'disqualified';
-                        addBotMessage("Comprendo. Senza la disponibilità economica richiesta, non posso procedere con ulteriori informazioni sul servizio. La ringrazio per il suo tempo. Buona giornata.");
-                        return;
-                    } else {
-                        // User is being evasive
-                        addBotMessage("La prego di rispondere con un sì o un no. Dispone della disponibilità economica richiesta?");
-                        return;
-                    }
-                }
-
-                // If user is disqualified, don't give any more info
-                if (chatState.userHasCapital === false) {
-                    addBotMessage("Come già comunicato, senza la disponibilità economica necessaria non posso fornire ulteriori informazioni. Buona giornata.");
-                    return;
-                }
-
-                // From here on, only qualified users get information
-
-                // Greetings
-                if (containsKeywords(lowerMsg, ['ciao', 'salve', 'buongiorno', 'buonasera', 'hey', 'hello'])) {
-                    addBotMessage("Salve. Mi dica pure!");
-                    return;
-                }
-
-                // Questions about Lia
-                if (containsKeywords(lowerMsg, ['chi sei', 'cosa sei', 'tu chi', 'presentati'])) {
-                    addBotMessage("Sono Lia, la segretaria virtuale del dottor Aniello Starace. Sono qui per rispondere alle sue domande sul servizio.");
-                    return;
-                }
-
-                // About Dr. Starace
-                if (containsKeywords(lowerMsg, ['chi è', 'starace', 'dottore', 'dottor'])) {
-                    addBotMessage("Il dottor Aniello Starace è il creatore dell'AEON PROCESS. Ha un background di oltre cinquant'anni di esperienza tra Scienze Infermieristiche, Teologia e ricerca in Fisica quantistica e Chimica inorganica.");
-                    return;
-                }
-
-                // About AEON PROCESS - only for qualified users
-                if (containsKeywords(lowerMsg, ['aeon', 'processo', 'ringiovanimento', 'cos\'è', 'cosa è', 'spiegami', 'programma'])) {
-                    addBotMessage("L'AEON PROCESS è un programma rivoluzionario di ringiovanimento sviluppato dal dottor Starace, che integra percezione coscienziale, consapevolezza e rigenerazione biologica.");
-                    if (!chatState.askedAboutConsultation) {
-                        setTimeout(() => {
-                            addBotMessage("Per accedere al programma, è necessaria una consulenza preliminare con il dottor Starace. Desidera sapere come prenotarla?");
-                            chatState.askedAboutConsultation = true;
-                        }, 1500);
-                    }
-                    return;
-                }
-
-                // About costs
-                if (containsKeywords(lowerMsg, ['costo', 'costi', 'prezzo', 'prezzi', 'quanto', 'pagamento', 'soldi', 'euro', 'investimento'])) {
-                    addBotMessage("Il percorso completo dell'AEON PROCESS ha un investimento di 3.000.000 di euro per un ciclo quinquennale. È necessaria prima una consulenza preliminare di 1.000 euro (circa 50 minuti con il dottor Aniello Starace) per valutare l'idoneità al programma.");
-                    if (!chatState.askedAboutConsultation) {
-                        setTimeout(() => {
-                            addBotMessage("Desidera prenotare la consulenza preliminare?");
-                            chatState.askedAboutConsultation = true;
-                        }, 1800);
-                    }
-                    return;
-                }
-
-                // About consultation
-                if (containsKeywords(lowerMsg, ['consulenza', 'prenotare', 'appuntamento', 'come', 'procedura', 'iniziare', 'sì', 'si', 'certo', 'ok', 'prenot'])) {
-                    chatState.askedAboutConsultation = true;
-                    addBotMessage("Perfetto! Per prenotare la consulenza preliminare:<br><br><strong>Costo:</strong> 1.000 euro<br><strong>Durata:</strong> circa 50 minuti<br><strong>Con:</strong> dottor Aniello Starace<br><br>Dovrà contattarlo direttamente via email: <strong>dottor.aniello.starace@gmail.com</strong>");
-                    return;
-                }
-                
-                // If user refuses consultation after being asked
-                if (chatState.askedAboutConsultation && containsKeywords(lowerMsg, ['no', 'non voglio', 'non mi interessa', 'forse', 'ci penso'])) {
-                    addBotMessage("Senza la consulenza preliminare non è possibile accedere al programma. La ringrazio per il tempo dedicato. Buona giornata.");
-                    return;
-                }
-
-                // Contact/email
-                if (containsKeywords(lowerMsg, ['contatto', 'email', 'mail', 'contattare', 'scrivere'])) {
-                    addBotMessage("Può contattare il dottor Aniello Starace via email: dottor.aniello.starace@gmail.com");
-                    return;
-                }
-
-                // Thanks
-                if (containsKeywords(lowerMsg, ['grazie', 'thanks', 'ringrazio'])) {
-                    addBotMessage("Prego, è stato un piacere. Sono a disposizione per altre domande.");
-                    return;
-                }
-
-                // Goodbye
-                if (containsKeywords(lowerMsg, ['arrivederci', 'bye', 'addio'])) {
-                    addBotMessage("Arrivederci. Buona giornata.");
-                    return;
-                }
-
-                // Default response
-                addBotMessage("Posso aiutarla con informazioni sul dottor Starace, sull'AEON PROCESS, sui costi o su come prenotare una consulenza. Cosa desidera sapere?");
-            }
-
-            function containsKeywords(text, keywords) {
-                return keywords.some(keyword => text.includes(keyword));
-            }
-
-            function extractFullNameWithTitle(message) {
-                // Define known titles (academic, noble, professional)
-                const knownTitles = {
-                    'dott': 'Dottor', 'dottor': 'Dottor', 'dottore': 'Dottor', 'dott.': 'Dottor',
-                    'dr': 'Dottor', 'dr.': 'Dottor', 'dottoressa': 'Dottoressa', 'dott.ssa': 'Dottoressa',
-                    'prof': 'Professor', 'professor': 'Professor', 'professore': 'Professor', 'prof.': 'Professor',
-                    'professoressa': 'Professoressa', 'prof.ssa': 'Professoressa',
-                    'ing': 'Ingegner', 'ingegner': 'Ingegner', 'ingegnere': 'Ingegner', 'ing.': 'Ingegner',
-                    'avv': 'Avvocato', 'avvocato': 'Avvocato', 'avv.': 'Avvocato', 'avvocatessa': 'Avvocatessa',
-                    'arch': 'Architetto', 'architetto': 'Architetto', 'arch.': 'Architetto',
-                    'conte': 'Conte', 'contessa': 'Contessa', 'marchese': 'Marchese', 'marchesa': 'Marchesa',
-                    'barone': 'Barone', 'baronessa': 'Baronessa', 'duca': 'Duca', 'duchessa': 'Duchessa',
-                    'principe': 'Principe', 'principessa': 'Principessa', 'don': 'Don', 'donna': 'Donna',
-                    'cavaliere': 'Cavaliere', 'commendatore': 'Commendatore', 'comm.': 'Commendatore',
-                    'monsignor': 'Monsignor', 'monsignore': 'Monsignor', 'vescovo': 'Vescovo',
-                    'cardinale': 'Cardinale', 'reverendo': 'Reverendo', 'generale': 'Generale', 'gen.': 'Generale',
-                    'ammiraglio': 'Ammiraglio', 'colonnello': 'Colonnello', 'col.': 'Colonnello',
-                    'maggiore': 'Maggiore', 'capitano': 'Capitano', 'cap.': 'Capitano'
-                };
-                
-                // Words to exclude (common words, not titles)
-                const excludeWords = ['sono', 'mi', 'chiamo', 'il', 'mio', 'nome', 'è', 'presento', 
-                                     'salve', 'buongiorno', 'buonasera', 'ciao', 'egregio', 'gentile', 
-                                     'la', 'lo', 'un', 'una', 'di', 'da', 'in', 'con', 'su', 'per', 'a', 'che'];
-                
-                // Words that indicate it's NOT a name
-                const notNameIndicators = [
-                    'cazzo', 'cavolo', 'diavolo', 'cacchio', 'frega', 'importa', 'interessa',
-                    'cazzi', 'vaffanculo', 'fanculo', 'stronzo', 'merda', 'perché', 'perchè',
-                    'dovrei', 'devo', 'voglio', 'posso', 'non', 'no', 'te', 'ne'
-                ];
-                
-                let foundTitle = null;
-                let cleaned = message.replace(/[.,!?;:]/g, '').trim();
-                
-                // Check if message contains words that are definitely not names
-                const lowerMsg = cleaned.toLowerCase();
-                for (let indicator of notNameIndicators) {
-                    if (lowerMsg.includes(indicator)) {
-                        return null; // Not a name
-                    }
-                }
-                
-                // Split into words
-                let words = cleaned.split(/\s+/);
-                
-                // Check for known titles first
-                for (let i = 0; i < words.length; i++) {
-                    const wordLower = words[i].toLowerCase();
-                    if (knownTitles[wordLower]) {
-                        foundTitle = knownTitles[wordLower];
-                        words.splice(i, 1);
-                        break;
-                    }
-                }
-                
-                // If no known title found, look for potential title
-                if (!foundTitle && words.length >= 3) {
-                    for (let i = 0; i < words.length - 2; i++) {
-                        const wordLower = words[i].toLowerCase();
-                        if (!excludeWords.includes(wordLower)) {
-                            const nextWord = words[i + 1];
-                            if (nextWord && nextWord[0] === nextWord[0].toUpperCase()) {
-                                foundTitle = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
-                                words.splice(i, 1);
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                // Remove exclude words
-                words = words.filter(word => !excludeWords.includes(word.toLowerCase()));
-                
-                // Check if remaining words look like names (mostly letters, proper capitalization)
-                if (words.length >= 2) {
-                    // Check if words contain only letters (and maybe hyphens/apostrophes)
-                    const allValidNames = words.every(word => /^[a-zA-ZÀ-ÿ'\-]+$/.test(word));
-                    
-                    if (!allValidNames) {
-                        return null; // Not valid names
-                    }
-                    
-                    const fullName = words.map(word => 
-                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-                    ).join(' ');
-                    
-                    return {
-                        fullName: fullName,
-                        title: foundTitle
-                    };
-                }
-                
-                return null;
-            }
-
-            function isRefusal(message) {
-                // Check if the overall meaning is a refusal
-                const refusalIndicators = [
-                    /^no\b/i,
-                    /non\s+(voglio|posso|intendo|desidero)/i,
-                    /rifiuto/i,
-                    /affari\s+miei/i,
-                    /riguarda/i,
-                    /privacy/i,
-                    /privato/i,
-                    /^nessuno$/i,
-                    /non\s+dire/i,
-                    /che\s+(cazzo|cavolo|diavolo|cacchio)/i,
-                    /\b(frega|importa|interessa)\b/i,
-                    /cazzi\s+(miei|tuoi)/i,
-                    /vaffanculo/i,
-                    /fanculo/i,
-                    /\bstronz/i,
-                    /\bmerda\b/i,
-                    /perch[eé]\s+(dovrei|devo)/i,
-                    /non\s+sono\s+cazzi/i
-                ];
-                
-                return refusalIndicators.some(pattern => pattern.test(message.trim()));
-            }
-
-            function detectGender(name) {
-                // Simple gender detection based on first name ending
-                const firstName = name.split(' ')[0].toLowerCase();
-                const lastChar = firstName.charAt(firstName.length - 1);
-                
-                // Common male names ending in 'a'
-                const maleExceptions = ['andrea', 'luca', 'mattia', 'nicola', 'elia', 'tobia'];
-                
-                if (maleExceptions.includes(firstName)) {
-                    return 'male';
-                }
-                
-                // Female if ends in 'a' or common female endings
-                if (lastChar === 'a' || firstName.endsWith('ella') || firstName.endsWith('ina')) {
-                    return 'female';
-                }
-                
-                return 'male'; // default
             }
         });
     </script>
