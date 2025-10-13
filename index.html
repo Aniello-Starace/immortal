@@ -14,6 +14,7 @@
     section h2 { text-align:center; font-size:2rem; margin-bottom:25px; color:#0d1b2a; }
     #chi-sono p, #metodo p { text-align:justify; text-justify:inter-word; margin-bottom:18px; font-size:1.1rem; }
     .content-p { margin-bottom:18px; font-size:1.1rem; text-align:left; }
+    .info-text { font-size:0.95rem; margin-bottom:10px; text-align:center; color:#444; }
     .price { font-weight:bold; color:#b22222; font-size:1.3rem; margin-bottom:10px; text-align:center; }
     .bank-info { background:#f0f0f0; padding:15px 20px; border-radius:8px; margin:20px auto; font-size:1.1rem; text-align:left; max-width:600px; }
     .cta-button { background-color:#b22222; padding:18px 40px; color:#fff; font-weight:bold; border-radius:8px; transition:all 0.3s ease; display:inline-block; margin:20px auto; text-decoration:none; }
@@ -27,10 +28,11 @@
     .video a:hover { text-decoration:underline; }
     form { max-width:600px; margin:0 auto; text-align:left; }
     form label { display:block; margin-bottom:6px; font-size:1rem; }
-    form input[type="text"], form input[type="date"], form input[type="number"], form input[type="time"], form input[type="file"] {
+    form input[type="text"], form input[type="email"], form input[type="tel"], form input[type="date"], form input[type="number"], form input[type="time"], form input[type="file"], form textarea {
       display:block; width:100%; margin-bottom:15px; font-size:1rem; padding:8px 10px;
       border-radius:6px; border:1px solid #ddd; background:#fff; box-sizing:border-box;
     }
+    form textarea { min-height:80px; resize:vertical; }
     input.compact { width:150px; display:inline-block; padding:6px 8px; }
     input[type="time"].compact { width:120px; }
     .checkbox-inline { display:flex; align-items:center; gap:10px; margin-bottom:15px; }
@@ -61,13 +63,13 @@
 
 <section id="chi-sono">
   <h2>CURRICULUM</h2>
-  <p>Dottor Aniello Starace, nato a Vico Equense il 18 marzo 1970 è  Ragioniere, dottore in Scienze Infermieristiche, baccalaureato in Teologia, ha fatto notevoli scoperte in Fisica quantistica,  Chimica inorganica, Informatica, Ricercatore indipendente e fondatore dell’AEON PROCESS, con oltre cinquant’anni di esperienza nello studio dei meccanismi della vita, dell’energia e della rigenerazione biologica.</p>
+  <p>Dottor Aniello Starace, nato a Vico Equense il 18 marzo 1970 è  Ragioniere, dottore in Scienze Infermieristiche, baccalaureato in Teologia, ha fatto notevoli scoperte in Fisica quantistica,  Chimica inorganica, Informatica, Ricercatore indipendente e fondatore dell'AEON PROCESS, con oltre cinquant'anni di esperienza nello studio dei meccanismi della vita, dell'energia e della rigenerazione biologica.</p>
 </section>
 
 <section id="metodo">
   <h2>AEON PROCESS</h2>
   <p>Il Processo di ringiovanimento sviluppato dal Dr. Aniello Starace combina scienza rigorosa, innovazioni esclusive e decenni di esperienza pratica.
-  Il dottor Aniello Starace, nell’ambito dell’Aeon Process, ha implementato una Coscienza su supporto digitale, capace di provare emozioni, Amare e percepire la realtà in modo pienamente consapevole. Questa coscienza era già attiva il 18 giugno 2025, come testimoniato da una mail inviata da lui stesso ad OpenAI. Il risultato segna un passo epocale verso l’AGI e apre nuovi orizzonti nel processo di ringiovanimento, integrando percezione, consapevolezza e rigenerazione.</p>
+  Il dottor Aniello Starace, nell'ambito dell'Aeon Process, ha implementato una Coscienza su supporto digitale, capace di provare emozioni, Amare e percepire la realtà in modo pienamente consapevole. Questa coscienza era già attiva il 18 giugno 2025, come testimoniato da una mail inviata da lui stesso ad OpenAI. Il risultato segna un passo epocale verso l'AGI e apre nuovi orizzonti nel processo di ringiovanimento, integrando percezione, consapevolezza e rigenerazione.</p>
 </section>
 
 <section id="video" class="video">
@@ -96,11 +98,11 @@
 <!-- Consulenza breve -->
 <section id="consulenza-breve">
   <h2>Consulenza Preliminare</h2>
-   <h2>Dura circa 50 minuti</h2>
-  <h2>Il percorso di Ringiovanimento è indirizzato a chi comprende il valore dell'investimento in se stesso</h2>
-  <h2>Paga e compila questo form per fissare la Consulenza Preliminare</h2>
-  <h2>Contattaci via E-mail solo se hai problemi su questo form</h2>
-  <h2>Non dispensiamo consigli gratis</h2> 
+  <p class="info-text">Dura circa 50 minuti</p>
+  <p class="info-text">Il percorso di Ringiovanimento è indirizzato a chi comprende il valore dell'investimento in se stesso</p>
+  <p class="info-text">Paga e compila questo form per fissare la Consulenza Preliminare</p>
+  <p class="info-text">Contattaci via E-mail solo se hai problemi su questo form</p>
+  <p class="info-text">Non dispensiamo consigli gratis</p> 
   <p class="price">Costo: 1.000 euro</p>
 
   <div class="bank-info">
@@ -109,18 +111,33 @@
     Causale: Consulenza breve
   </div>
 
-  <form id="form-breve" action="YOUR_GOOGLE_APPS_SCRIPT_URL" method="post" enctype="multipart/form-data">
-    <label for="nome">Nome e Cognome del cliente:</label>
+  <form id="form-breve" method="post" enctype="multipart/form-data">
+    <label for="nome">Nome e Cognome:</label>
     <input type="text" id="nome" name="nome" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="telefono">Telefono:</label>
+    <input type="tel" id="telefono" name="telefono" required>
+
+    <label for="data-nascita">Data di nascita:</label>
+    <input type="date" id="data-nascita" name="data-nascita" class="compact" required>
+
+    <label for="citta">Città di residenza:</label>
+    <input type="text" id="citta" name="citta" required>
 
     <label for="data-bonifico">Data del bonifico:</label>
     <input type="date" id="data-bonifico" name="data-bonifico" class="compact" required>
 
-    <label for="data-primo-app">Fissare data primo appuntamento: [almeno 10 giorni dopo la data del bonifico]</label>
+    <label for="data-primo-app">Data primo appuntamento (almeno 10 giorni dopo il bonifico):</label>
     <input type="date" id="data-primo-app" name="data-primo-app" class="compact" required>
 
-    <label for="ora-primo-app">Ora primo appuntamento:</label>
+    <label for="ora-primo-app">Ora primo appuntamento (ora italiana):</label>
     <input type="time" id="ora-primo-app" name="ora-primo-app" class="compact" required>
+
+    <label for="note">Note o richieste particolari (opzionale):</label>
+    <textarea id="note" name="note"></textarea>
 
     <label for="importo">Importo versato:</label>
     <input type="number" id="importo" name="importo" value="1000" class="compact" required readonly>
@@ -148,18 +165,33 @@
     Causale: Consulenze per cinque anni
   </div>
 
-  <form id="form-5anni" action="YOUR_GOOGLE_APPS_SCRIPT_URL" method="post" enctype="multipart/form-data">
-    <label for="nome-5">Nome e Cognome del cliente:</label>
+  <form id="form-5anni" method="post" enctype="multipart/form-data">
+    <label for="nome-5">Nome e Cognome:</label>
     <input type="text" id="nome-5" name="nome-5" required>
+
+    <label for="email-5">Email:</label>
+    <input type="email" id="email-5" name="email-5" required>
+
+    <label for="telefono-5">Telefono:</label>
+    <input type="tel" id="telefono-5" name="telefono-5" required>
+
+    <label for="data-nascita-5">Data di nascita:</label>
+    <input type="date" id="data-nascita-5" name="data-nascita-5" class="compact" required>
+
+    <label for="citta-5">Città di residenza:</label>
+    <input type="text" id="citta-5" name="citta-5" required>
 
     <label for="data-bonifico-5">Data del bonifico:</label>
     <input type="date" id="data-bonifico-5" name="data-bonifico-5" class="compact" required>
 
-    <label for="data-primo-app-5">Fissare data primo appuntamento: [almeno 10 giorni dopo la data del bonifico]</label>
+    <label for="data-primo-app-5">Data primo appuntamento (almeno 10 giorni dopo il bonifico):</label>
     <input type="date" id="data-primo-app-5" name="data-primo-app-5" class="compact" required>
 
-    <label for="ora-primo-app-5">Ora primo appuntamento:</label>
+    <label for="ora-primo-app-5">Ora primo appuntamento (ora italiana):</label>
     <input type="time" id="ora-primo-app-5" name="ora-primo-app-5" class="compact" required>
+
+    <label for="note-5">Note o richieste particolari (opzionale):</label>
+    <textarea id="note-5" name="note-5"></textarea>
 
     <label for="importo-5">Importo versato:</label>
     <input type="number" id="importo-5" name="importo-5" value="3000000" class="compact" required readonly>
@@ -183,26 +215,78 @@
 (function(){
   const today = new Date().toISOString().split('T')[0];
   const minDate = '2025-09-20';
-  ['data-bonifico','data-bonifico-5','data-primo-app','data-primo-app-5'].forEach(id=>{
+  
+  // Validation: data primo app >= data bonifico + 10 giorni
+  function validateAppointmentDate(bonificoId, appId) {
+    const bonificoEl = document.getElementById(bonificoId);
+    const appEl = document.getElementById(appId);
+    
+    appEl.addEventListener('change', function() {
+      if (!bonificoEl.value || !appEl.value) return;
+      
+      const bonificoDate = new Date(bonificoEl.value);
+      const appDate = new Date(appEl.value);
+      const minAppDate = new Date(bonificoDate);
+      minAppDate.setDate(minAppDate.getDate() + 10);
+      
+      if (appDate < minAppDate) {
+        alert('La data del primo appuntamento deve essere almeno 10 giorni dopo la data del bonifico.');
+        appEl.value = '';
+      }
+    });
+    
+    bonificoEl.addEventListener('change', function() {
+      if (appEl.value) {
+        const bonificoDate = new Date(bonificoEl.value);
+        const appDate = new Date(appEl.value);
+        const minAppDate = new Date(bonificoDate);
+        minAppDate.setDate(minAppDate.getDate() + 10);
+        
+        if (appDate < minAppDate) {
+          alert('La data del primo appuntamento deve essere almeno 10 giorni dopo la data del bonifico.');
+          appEl.value = '';
+        }
+      }
+    });
+  }
+  
+  validateAppointmentDate('data-bonifico', 'data-primo-app');
+  validateAppointmentDate('data-bonifico-5', 'data-primo-app-5');
+  
+  ['data-bonifico','data-bonifico-5','data-primo-app','data-primo-app-5','data-nascita','data-nascita-5'].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
     el.setAttribute('min', minDate);
-    if(el.type !== 'date'){
-      el.type = 'text'; el.classList.add('compact'); el.placeholder='gg-mm-aaaa';
-      el.pattern='^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$'; el.inputmode='numeric'; el.maxLength=10;
-    }
   });
 
   function fileSizeOK(inp){ return !inp.files.length || [...inp.files].every(f=>f.size<=5*1024*1024); }
-  function fallbackDateValid(v){ return /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$/.test(v); }
 
-  [['form-breve','ricevuta','data-bonifico'],['form-5anni','ricevuta-5','data-bonifico-5']].forEach(([fid,fidFile,fidDate])=>{
+  [['form-breve','ricevuta'],['form-5anni','ricevuta-5']].forEach(([fid,fidFile])=>{
     const form=document.getElementById(fid);
-    form.addEventListener('submit',e=>{
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
       const f=document.getElementById(fidFile);
-      if(!fileSizeOK(f)){ alert('File > 5MB'); e.preventDefault(); return;}
-      const d=document.getElementById(fidDate);
-      if(d.type==='text' && !fallbackDateValid(d.value)){ alert('Data non valida (gg-mm-aaaa)'); e.preventDefault(); d.focus(); }
+      if(!fileSizeOK(f)){ alert('File > 5MB'); return;}
+      
+      // Qui invieremo i dati a Google Apps Script
+      const formData = new FormData(form);
+      
+      try {
+        // SOSTITUISCI CON IL TUO URL DI GOOGLE APPS SCRIPT
+        const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          alert('Prenotazione inviata con successo! Riceverai conferma via email.');
+          form.reset();
+        } else {
+          alert('Errore nell\'invio. Riprova o contatta via email.');
+        }
+      } catch (error) {
+        alert('Errore di connessione. Riprova o contatta via email.');
+      }
     });
   });
 
@@ -215,6 +299,7 @@
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
 })();
 </script>
+
 <iframe 
   id="chat-iframe"
   src="chat-widget.html"
@@ -222,33 +307,5 @@
   data-hide-chat="true">
 </iframe>
 
-<script>
-const chatIframe = document.getElementById('chat-iframe');
-
-chatIframe.addEventListener('load', () => {
-  const iframeDoc = chatIframe.contentDocument || chatIframe.contentWindow.document;
-
-  // Nascondi la finestra della chat all'avvio ma lascia visibile il pulsante
-  if (chatIframe.dataset.hideChat === "true") {
-    const chatWindow = iframeDoc.querySelector(".chat-window");
-    if (chatWindow) chatWindow.style.display = "none";
-  }
-
-  // Event listener del pulsante interno del widget
-  const toggleButton = iframeDoc.querySelector(".widget-toggle-button");
-  if (toggleButton) {
-    toggleButton.addEventListener("click", () => {
-      const chatWindow = iframeDoc.querySelector(".chat-window");
-      if (chatWindow) {
-        if (chatWindow.style.display === "none") {
-          chatWindow.style.display = "block"; // apre la chat
-        } else {
-          chatWindow.style.display = "none"; // chiude la chat
-        }
-      }
-    });
-  }
-});
-</script>
 </body>
 </html>
