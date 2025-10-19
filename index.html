@@ -272,17 +272,21 @@
       const formData = new FormData(form);
       
       try {
-        
-        const response = await fetch('https://melodious-truffle-aeab36.netlify.app/.netlify/functions/submit-form-netlify', {
+
+// Converti FormData in oggetto
+const dataObj = {};
+for (let [key, value] of formData.entries()) {
+  dataObj[key] = value;
+}
+
+const response = await fetch('https://melodious-truffle-aeab36.netlify.app/.netlify/functions/submit-form-netlify', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify(Object.fromEntries(formData))
-          method: 'POST',
-          body: formData
-        });
-        
+  body: JSON.stringify(dataObj)
+});
+  
         if (response.ok) {
           alert('Prenotazione inviata con successo! Riceverai conferma via email.');
           form.reset();
