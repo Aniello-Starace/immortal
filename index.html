@@ -213,6 +213,8 @@
 
 <script>
 (function(){
+  console.log('Script caricato');
+  
   const today = new Date().toISOString().split('T')[0];
   const minDate = '2025-09-20';
   
@@ -220,6 +222,8 @@
   function validateAppointmentDate(bonificoId, appId) {
     const bonificoEl = document.getElementById(bonificoId);
     const appEl = document.getElementById(appId);
+    
+    if (!bonificoEl || !appEl) return;
     
     appEl.addEventListener('change', function() {
       if (!bonificoEl.value || !appEl.value) return;
@@ -259,53 +263,88 @@
     el.setAttribute('min', minDate);
   });
 
-  function fileSizeOK(inp){ return !inp.files.length || [...inp.files].every(f=>f.size<=5*1024*1024); }
+  function fileSizeOK(inp){ 
+    return !inp.files.length || [...inp.files].every(f=>f.size<=5*1024*1024); 
+  }
 
-  [['form-breve','ricevuta'],['form-5anni','ricevuta-5']].forEach(([fid,fidFile])=>{
-    const form=document.getElementById(fid);
-    form.addEventListener('submit', async (e)=>{
+  // Handler per i form
+  function setupForm(formId, fileInputId) {
+    const form = document.getElementById(formId);
+    const fileInput = document.getElementById(fileInputId);
+    
+    if (!form) {
+      console.error('Form non trovato:', formId);
+      return;
+    }
+    
+    console.log('Setup form:', formId);
+    
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const f=document.getElementById(fidFile);
-      if(!fileSizeOK(f)){ alert('File > 5MB'); return;}
+      console.log('Form submit intercettato!', formId);
       
-      // Qui invieremo i dati a Google Apps Script
+      // Verifica dimensione file
+      if (!fileSizeOK(fileInput)) {
+        alert('File troppo grande (max 5MB)');
+        return;
+      }
+      
+      // Raccogli dati (ignoriamo il file per ora)
       const formData = new FormData(form);
+      const dataObj = {};
+      
+      for (let [key, value] of formData.entries()) {
+        // Salta i file
+        if (key !== 'ricevuta' && key !== 'ricevuta-5') {
+          dataObj[key] = value;
+        }
+      }
+      
+      console.log('Dati da inviare:', dataObj);
       
       try {
-
-// Converti FormData in oggetto
-const dataObj = {};
-for (let [key, value] of formData.entries()) {
-  dataObj[key] = value;
-}
-
-const response = await fetch('https://melodious-truffle-aeab36.netlify.app/.netlify/functions/submit-form-netlify', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(dataObj)
-});
-  
+        console.log('Invio in corso...');
+        
+        const response = await fetch('https://melodious-truffle-aeab36.netlify.app/.netlify/functions/submit-form-netlify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataObj)
+        });
+        
+        console.log('Response status:', response.status);
+        const responseText = await response.text();
+        console.log('Response:', responseText);
+        
         if (response.ok) {
-          alert('Prenotazione inviata con successo! Riceverai conferma via email.');
+          alert('Prenotazione inviata con successo! Riceverai conferma via email. (Nota: invia la ricevuta via email a dottor.aniello.starace@gmail.com)');
           form.reset();
         } else {
-          alert('Errore nell\'invio. Riprova o contatta via email.');
+          alert('Errore nell\'invio (codice ' + response.status + '). Riprova o contatta via email.');
         }
       } catch (error) {
-        alert('Errore di connessione. Riprova o contatta via email.');
+        console.error('Errore fetch:', error);
+        alert('Errore di connessione: ' + error.message + '. Riprova o contatta via email.');
       }
     });
-  });
+  }
+  
+  // Setup entrambi i form
+  setupForm('form-breve', 'ricevuta');
+  setupForm('form-5anni', 'ricevuta-5');
 
-  const lb=document.getElementById('lightbox'); const lbImg=lb.querySelector('img');
+  // Lightbox
+  const lb=document.getElementById('lightbox'); 
+  const lbImg=lb.querySelector('img');
   document.querySelectorAll('.gallery img').forEach(img=>{
     img.tabIndex=0;
     img.addEventListener('dblclick',()=>{ lbImg.src=img.src; lb.style.display='flex'; document.body.style.overflow='hidden'; });
     img.addEventListener('keydown',e=>{ if(e.key==='Enter'){ lbImg.src=img.src; lb.style.display='flex'; document.body.style.overflow='hidden'; } });
   });
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
+  
+  console.log('Script completato');
 })();
 </script>
 
