@@ -216,7 +216,8 @@
   console.log('Script caricato');
   
   const today = new Date().toISOString().split('T')[0];
-  const minDate = '2025-09-20';
+  const minDate = '1900-01-01'; // Per data di nascita
+const minDateBonifico = '2025-09-20'; // Per bonifici
   
   // Validation: data primo app >= data bonifico + 10 giorni
   function validateAppointmentDate(bonificoId, appId) {
