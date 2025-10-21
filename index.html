@@ -282,6 +282,8 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       console.log('Form submit intercettato!', formId);
+      console.log('📝 Form element:', form);
+      console.log('📎 File input:', fileInput);
       
       // Verifica dimensione file
       if (!fileSizeOK(fileInput)) {
