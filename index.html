@@ -142,8 +142,8 @@
 
     <label for="note">Note o richieste particolari (opzionale):</label>
     <textarea id="note" name="note"></textarea>
-    <input type="hidden" id="ricevuta" name="ricevuta" value="ricevuta_inviata_via_email">
-    
+    <label for="ricevuta">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
+    <input type="file" id="ricevuta" name="ricevuta" accept=".pdf,.jpg,.jpeg,.png" required>
     <p class="info-text">Ricorda di inviare copia della ricevuta del bonifico tramite mail</p>
     <div class="checkbox-inline">
       <input type="checkbox" id="manleva" name="manleva" required>
