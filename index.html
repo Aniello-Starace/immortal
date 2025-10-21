@@ -142,9 +142,10 @@
 
     <label for="note">Note o richieste particolari (opzionale):</label>
     <textarea id="note" name="note"></textarea>
-    <label for="ricevuta">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
-    <input type="file" id="ricevuta" name="ricevuta" accept=".pdf,.jpg,.jpeg,.png" required>
-    <p class="info-text">Ricorda di inviare copia della ricevuta del bonifico tramite mail</p>
+    
+    <input type="hidden" id="ricevuta" name="ricevuta" value="ricevuta_da_inviare_via_email">
+    <p class="info-text"><strong>IMPORTANTE: Inviare copia della ricevuta del bonifico via mail a dottor.aniello.starace@gmail.com</strong></p>
+    
     <div class="checkbox-inline">
       <input type="checkbox" id="manleva" name="manleva" required>
       <label for="manleva">Accetto Manleva da danni civili e penali derivanti dal Processo di Ringiovanimento.</label>
@@ -211,7 +212,7 @@
   });
 
   function fileSizeOK(inp){ 
-    return !inp.files.length || [...inp.files].every(f=>f.size<=5*1024*1024); 
+    return true; 
   }
 
   // Handler per i form
@@ -243,12 +244,9 @@
       const dataObj = {};
       
       for (let [key, value] of formData.entries()) {
-        // Salta i file
-        if (key !== 'ricevuta' && key !== 'ricevuta') {
-          dataObj[key] = value;
-        }
+        dataObj[key] = value;
       }
-      
+            
       console.log('Dati da inviare:', dataObj);
       
       try {
