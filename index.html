@@ -155,7 +155,7 @@
 </section>
 
 <!-- Consulenze 5 anni -->
-<section id="consulenze-per-cinque-anni">
+<section id="consulenza-breve">
   <h2>Consulenze per cinque anni</h2>
   <p class="price">Costo: 3.000.000 euro</p>
 
@@ -165,43 +165,43 @@
     Causale: Consulenze per cinque anni
   </div>
 
-  <form id="form-5anni">
-    <label for="nome-5">Nome e Cognome:</label>
-    <input type="text" id="nome-5" name="nome-5" required>
+  <form id="form-breve">
+    <label for="nome">Nome e Cognome:</label>
+    <input type="text" id="nome" name="nome" required>
 
-    <label for="email-5">Email:</label>
-    <input type="email" id="email-5" name="email-5" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
 
-    <label for="telefono-5">Telefono:</label>
-    <input type="tel" id="telefono-5" name="telefono-5" required>
+    <label for="telefono">Telefono:</label>
+    <input type="tel" id="telefono" name="telefono" required>
 
-    <label for="data-nascita-5">Data di nascita:</label>
-    <input type="date" id="data-nascita-5" name="data-nascita-5" class="compact" required>
+    <label for="data-nascita">Data di nascita:</label>
+    <input type="date" id="data-nascita" name="data-nascita" class="compact" required>
 
-    <label for="citta-5">Città di residenza:</label>
-    <input type="text" id="citta-5" name="citta-5" required>
+    <label for="citta">Città di residenza:</label>
+    <input type="text" id="citta" name="citta" required>
 
-    <label for="data-bonifico-5">Data del bonifico:</label>
-    <input type="date" id="data-bonifico-5" name="data-bonifico-5" class="compact" required>
+    <label for="data-bonifico">Data del bonifico:</label>
+    <input type="date" id="data-bonifico" name="data-bonifico" class="compact" required>
 
-    <label for="data-primo-app-5">Data primo appuntamento (almeno 10 giorni dopo il bonifico):</label>
-    <input type="date" id="data-primo-app-5" name="data-primo-app-5" class="compact" required>
+    <label for="data-primo-app">Data primo appuntamento (almeno 10 giorni dopo il bonifico):</label>
+    <input type="date" id="data-primo-app" name="data-primo-app" class="compact" required>
 
-    <label for="ora-primo-app-5">Ora primo appuntamento (ora italiana):</label>
-    <input type="time" id="ora-primo-app-5" name="ora-primo-app-5" class="compact" required>
+    <label for="ora-primo-app">Ora primo appuntamento (ora italiana):</label>
+    <input type="time" id="ora-primo-app" name="ora-primo-app" class="compact" required>
 
-    <label for="note-5">Note o richieste particolari (opzionale):</label>
-    <textarea id="note-5" name="note-5"></textarea>
+    <label for="note">Note o richieste particolari (opzionale):</label>
+    <textarea id="note" name="note-5"></textarea>
 
-    <label for="importo-5">Importo versato:</label>
-    <input type="number" id="importo-5" name="importo-5" value="3000000" class="compact" required readonly>
+    <label for="importo">Importo versato:</label>
+    <input type="number" id="importo" name="importo" value="3000000" class="compact" required readonly>
 
-    <label for="ricevuta-5">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
-    <input type="file" id="ricevuta-5" name="ricevuta-5" accept=".pdf,.jpg,.jpeg,.png" required>
+    <label for="ricevuta">Allega ricevuta bonifico (PDF/JPG/PNG, max 5MB):</label>
+    <input type="file" id="ricevuta" name="ricevuta" accept=".pdf,.jpg,.jpeg,.png" required>
 
     <div class="checkbox-inline">
-      <input type="checkbox" id="manleva-5" name="manleva-5" required>
-      <label for="manleva-5">Accetto Manleva da danni civili e penali derivanti dal Processo di Ringiovanimento.</label>
+      <input type="checkbox" id="manleva" name="manleva" required>
+      <label for="manleva">Accetto Manleva da danni civili e penali derivanti dal Processo di Ringiovanimento.</label>
     </div>
 
     <button type="submit" class="cta-button">Invia ricevuta e prenota</button>
@@ -255,9 +255,9 @@
   }
   
   validateAppointmentDate('data-bonifico', 'data-primo-app');
-  validateAppointmentDate('data-bonifico-5', 'data-primo-app-5');
   
-  ['data-bonifico','data-bonifico-5','data-primo-app','data-primo-app-5','data-nascita','data-nascita-5'].forEach(id=>{
+  
+  ['data-bonifico','data-primo-app','data-nascita'].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
     el.setAttribute('min', minDate);
@@ -297,7 +297,7 @@
       
       for (let [key, value] of formData.entries()) {
         // Salta i file
-        if (key !== 'ricevuta' && key !== 'ricevuta-5') {
+        if (key !== 'ricevuta' && key !== 'ricevuta') {
           dataObj[key] = value;
         }
       }
@@ -334,7 +334,7 @@
   
   // Setup entrambi i form
   setupForm('form-breve', 'ricevuta');
-  setupForm('form-5anni', 'ricevuta-5');
+  // setupForm('form-5anni', 'ricevuta-5');
 
   // Lightbox
   const lb=document.getElementById('lightbox'); 
