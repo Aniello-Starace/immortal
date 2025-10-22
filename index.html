@@ -233,12 +233,6 @@
       console.log('📝 Form element:', form);
       console.log('📎 File input:', fileInput);
       
-      // Verifica dimensione file
-      if (!fileSizeOK(fileInput)) {
-        alert('File troppo grande (max 5MB)');
-        return;
-      }
-      
       // Raccogli dati (ignoriamo il file per ora)
       const formData = new FormData(form);
       const dataObj = {};
