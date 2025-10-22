@@ -211,11 +211,15 @@
     el.setAttribute('min', minDate);
   });
 
- 
+  function fileSizeOK(inp){ 
+    return true; 
+  }
+
   // Handler per i form
-  function setupForm(formId) {
+  function setupForm(formId, fileInputId) {
     const form = document.getElementById(formId);
-        
+    const fileInput = document.getElementById(fileInputId);
+    
     if (!form) {
       console.error('Form non trovato:', formId);
       return;
@@ -228,6 +232,12 @@
       console.log('Form submit intercettato!', formId);
       console.log('📝 Form element:', form);
       console.log('📎 File input:', fileInput);
+      
+      // Verifica dimensione file
+      if (!fileSizeOK(fileInput)) {
+        alert('File troppo grande (max 5MB)');
+        return;
+      }
       
       // Raccogli dati (ignoriamo il file per ora)
       const formData = new FormData(form);
