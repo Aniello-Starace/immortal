@@ -226,9 +226,15 @@
     }
     
     console.log('Setup form:', formId);
-    
+    let inviato = false;
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      if (inviato) {
+    console.warn('Invio già effettuato. Ignoro doppio submit.');
+    return;
+  }
+
       console.log('Form submit intercettato!', formId);
       console.log('📝 Form element:', form);
       console.log('📎 File input:', fileInput);
@@ -260,6 +266,8 @@
         
         if (response.ok) {
           alert('Prenotazione inviata con successo! Riceverai conferma via email. (Nota: invia la ricevuta via email a dottor.aniello.starace@gmail.com)');
+      inviato = true; // ✅ l’invio è stato completato con successo
+         
           form.reset();
         } else {
           alert('Errore nell\'invio (codice ' + response.status + '). Riprova o contatta via email.');
