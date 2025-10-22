@@ -252,6 +252,11 @@
       
       try {
         console.log('Invio in corso...');
+
+ if (inviato) {
+    console.warn('Invio già effettuato. Ignoro doppio submit.');
+    return;
+  }
         
         const response = await fetch('https://melodious-truffle-aeab36.netlify.app/.netlify/functions/submit-form-netlify', {
           method: 'POST',
