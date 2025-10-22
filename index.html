@@ -211,15 +211,11 @@
     el.setAttribute('min', minDate);
   });
 
-  function fileSizeOK(inp){ 
-    return true; 
-  }
-
+ 
   // Handler per i form
-  function setupForm(formId, fileInputId) {
+  function setupForm(formId) {
     const form = document.getElementById(formId);
-    const fileInput = document.getElementById(fileInputId);
-    
+        
     if (!form) {
       console.error('Form non trovato:', formId);
       return;
