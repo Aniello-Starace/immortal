@@ -5,15 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lia Aeon Chat</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
         /* Chat Button */
         #chat-button {
@@ -33,16 +26,8 @@
             z-index: 1000;
             transition: transform 0.3s ease;
         }
-
-        #chat-button:hover {
-            transform: scale(1.1);
-        }
-
-        #chat-button svg {
-            width: 30px;
-            height: 30px;
-            fill: white;
-        }
+        #chat-button:hover { transform: scale(1.1); }
+        #chat-button svg { width: 30px; height: 30px; fill: white; }
 
         /* Chat Widget Container */
         #chat-widget {
@@ -60,21 +45,11 @@
             overflow: hidden;
             animation: slideUp 0.3s ease-out;
         }
-
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        #chat-widget.active {
-            display: flex;
-        }
+        #chat-widget.active { display: flex; }
 
         /* Header */
         #chat-header {
@@ -85,13 +60,7 @@
             align-items: center;
             justify-content: space-between;
         }
-
-        .header-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .header-info { display: flex; align-items: center; gap: 12px; }
         .avatar {
             width: 45px;
             height: 45px;
@@ -104,26 +73,11 @@
             font-weight: bold;
             border: 2px solid white;
             overflow: hidden;
+            color: white;
         }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .header-text h3 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .header-text p {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .header-text h3 { margin: 0; font-size: 16px; font-weight: 600; }
+        .header-text p { margin: 0; font-size: 12px; opacity: 0.9; }
         #close-chat {
             background: none;
             border: none;
@@ -139,10 +93,7 @@
             border-radius: 50%;
             transition: background 0.2s;
         }
-
-        #close-chat:hover {
-            background: rgba(255,255,255,0.2);
-        }
+        #close-chat:hover { background: rgba(255,255,255,0.2); }
 
         /* Messages Container */
         #messages {
@@ -151,32 +102,10 @@
             padding: 20px;
             background: #f8f9fa;
         }
-
-        .message {
-            margin-bottom: 16px;
-            display: flex;
-            gap: 10px;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.bot {
-            flex-direction: row;
-        }
-
-        .message.user {
-            flex-direction: row-reverse;
-        }
+        .message { margin-bottom: 16px; display: flex; gap: 10px; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.bot { flex-direction: row; }
+        .message.user { flex-direction: row-reverse; }
 
         .message-avatar {
             width: 32px;
@@ -191,16 +120,8 @@
             flex-shrink: 0;
             overflow: hidden;
         }
-
-        .message-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .message.user .message-avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
+        .message-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .message.user .message-avatar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 
         .message-content {
             max-width: 70%;
@@ -209,13 +130,11 @@
             line-height: 1.5;
             font-size: 14px;
         }
-
         .message.bot .message-content {
             background: white;
             color: #333;
             border-bottom-left-radius: 4px;
         }
-
         .message.user .message-content {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -230,7 +149,6 @@
             display: flex;
             gap: 10px;
         }
-
         #user-input {
             flex: 1;
             padding: 12px 16px;
@@ -240,11 +158,7 @@
             outline: none;
             transition: border-color 0.2s;
         }
-
-        #user-input:focus {
-            border-color: #667eea;
-        }
-
+        #user-input:focus { border-color: #667eea; }
         #send-button {
             width: 44px;
             height: 44px;
@@ -258,15 +172,8 @@
             justify-content: center;
             transition: transform 0.2s;
         }
-
-        #send-button:hover {
-            transform: scale(1.05);
-        }
-
-        #send-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        #send-button:hover { transform: scale(1.05); }
+        #send-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* Typing Indicator */
         .typing-indicator {
@@ -279,11 +186,7 @@
             width: fit-content;
             border-bottom-left-radius: 4px;
         }
-
-        .typing-indicator.active {
-            display: flex;
-        }
-
+        .typing-indicator.active { display: flex; }
         .typing-dot {
             width: 8px;
             height: 8px;
@@ -291,23 +194,9 @@
             background: #999;
             animation: bounce 1.4s infinite;
         }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes bounce {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-10px);
-            }
-        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-10px);} }
 
         /* Error message */
         .error-message {
@@ -321,13 +210,7 @@
 
         /* Responsive */
         @media (max-width: 480px) {
-            #chat-widget {
-                width: 100%;
-                height: 100%;
-                bottom: 0;
-                right: 0;
-                border-radius: 0;
-            }
+            #chat-widget { width: 100%; height: 100%; bottom: 0; right: 0; border-radius: 0; }
         }
     </style>
 </head>
@@ -344,7 +227,7 @@
         <div id="chat-header">
             <div class="header-info">
                 <div class="avatar">
-                    <img src="lia.jpg" alt="Lia Aeon">
+                    <img src="lia.jpg" alt="Lia Aeon" onerror="this.style.display='none'; this.parentElement.textContent='LA'">
                 </div>
                 <div class="header-text">
                     <h3>Lia Aeon</h3>
@@ -354,17 +237,10 @@
             <button id="close-chat" aria-label="Chiudi chat">×</button>
         </div>
 
-        <div id="messages">
-            <!-- Messages will appear here -->
-        </div>
+        <div id="messages"></div>
 
         <div id="input-area">
-            <input 
-                type="text" 
-                id="user-input" 
-                placeholder="Scrivi un messaggio..."
-                autocomplete="off"
-            />
+            <input type="text" id="user-input" placeholder="Scrivi un messaggio..." autocomplete="off" />
             <button id="send-button" aria-label="Invia messaggio">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
@@ -374,12 +250,10 @@
     </div>
 
     <script>
-        // IMPORTANTE: URL del backend Vercel
         const BACKEND_URL = 'https://melodious-truffle-aeab36.netlify.app/.netlify/functions/chat-netlify';
-        // Conversation history for context
         const conversationHistory = [];
+        let typingIndicatorVisible = false;
 
-        // Initialize chat
         document.addEventListener('DOMContentLoaded', () => {
             const chatButton = document.getElementById('chat-button');
             const chatWidget = document.getElementById('chat-widget');
@@ -388,13 +262,10 @@
             const userInput = document.getElementById('user-input');
             const messagesContainer = document.getElementById('messages');
 
-            // Toggle chat
             chatButton.addEventListener('click', () => {
                 chatWidget.classList.add('active');
                 chatButton.style.display = 'none';
-                if (messagesContainer.children.length === 0) {
-                    sendWelcomeMessage();
-                }
+                if (messagesContainer.children.length === 0) sendWelcomeMessage();
             });
 
             closeChat.addEventListener('click', () => {
@@ -402,7 +273,6 @@
                 chatButton.style.display = 'flex';
             });
 
-            // Send message handlers
             sendButton.addEventListener('click', handleSendMessage);
             userInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -420,64 +290,39 @@
             async function handleSendMessage() {
                 const message = userInput.value.trim();
                 if (!message) return;
-
-                // Disable input while processing
                 userInput.disabled = true;
                 sendButton.disabled = true;
 
                 addUserMessage(message);
                 userInput.value = '';
-                
-                // Add to conversation history
-                conversationHistory.push({
-                    role: 'user',
-                    content: message
-                });
+                conversationHistory.push({ role: 'user', content: message });
 
                 showTypingIndicator();
 
                 try {
-                    // Call backend API
                     const response = await fetch(BACKEND_URL, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            message: message,
-                            conversationHistory: conversationHistory
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message, conversationHistory })
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
-                    
+
                     hideTypingIndicator();
-                    
+
                     if (data.response) {
                         addBotMessage(data.response);
-                        
-                        // Add bot response to history
-                        conversationHistory.push({
-                            role: 'assistant',
-                            content: data.response
-                        });
-
-                        // Show which model was used (optional, for debugging)
+                        conversationHistory.push({ role: 'assistant', content: data.response });
                         console.log('Risposta da:', data.usedModel);
                     } else {
                         addBotMessage("Mi dispiace, si è verificato un errore. Riprovi per favore.");
                     }
-
                 } catch (error) {
                     console.error('Error:', error);
                     hideTypingIndicator();
                     addErrorMessage("Impossibile connettersi al server. Verifichi la connessione e riprovi.");
                 } finally {
-                    // Re-enable input
                     userInput.disabled = false;
                     sendButton.disabled = false;
                     userInput.focus();
@@ -485,58 +330,64 @@
             }
 
             function addUserMessage(text) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message user';
-                messageDiv.innerHTML = `
-                    <div class="message-avatar">Tu</div>
-                    <div class="message-content">${escapeHtml(text)}</div>
-                `;
-                messagesContainer.appendChild(messageDiv);
+                const div = document.createElement('div');
+                div.className = 'message user';
+                div.innerHTML = `<div class="message-avatar">Tu</div><div class="message-content">${escapeHtml(text)}</div>`;
+                messagesContainer.appendChild(div);
                 scrollToBottom();
             }
 
             function addBotMessage(text) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message bot';
-                messageDiv.innerHTML = `
-                    <div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.parentElement.innerHTML='LA'"></div>
-                    <div class="message-content">${text}</div>
+                const div = document.createElement('div');
+                div.className = 'message bot';
+                div.innerHTML = `
+                    <div class="message-avatar">
+                        <img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'">
+                    </div>
+                    <div class="message-content">${escapeHtml(text)}</div>
                 `;
-                messagesContainer.appendChild(messageDiv);
+                messagesContainer.appendChild(div);
                 scrollToBottom();
             }
 
             function addErrorMessage(text) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'error-message';
-                messageDiv.textContent = text;
-                messagesContainer.appendChild(messageDiv);
+                const div = document.createElement('div');
+                div.className = 'error-message';
+                div.textContent = text;
+                messagesContainer.appendChild(div);
                 scrollToBottom();
             }
 
             function showTypingIndicator() {
-                const indicator = document.createElement('div');
-                indicator.className = 'message bot';
-                indicator.id = 'typing-indicator-msg';
-                indicator.innerHTML = `
-                    <div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.parentElement.innerHTML='LA'"></div>
+                if (typingIndicatorVisible) return;
+                typingIndicatorVisible = true;
+                const div = document.createElement('div');
+                div.className = 'message bot';
+                div.id = 'typing-indicator-msg';
+                div.innerHTML = `
+                    <div class="message-avatar">
+                        <img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'">
+                    </div>
                     <div class="typing-indicator active">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
                     </div>
                 `;
-                messagesContainer.appendChild(indicator);
+                messagesContainer.appendChild(div);
                 scrollToBottom();
             }
 
             function hideTypingIndicator() {
                 const indicator = document.getElementById('typing-indicator-msg');
                 if (indicator) indicator.remove();
+                typingIndicatorVisible = false;
             }
 
             function scrollToBottom() {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                requestAnimationFrame(() => {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                });
             }
 
             function escapeHtml(text) {
@@ -548,5 +399,3 @@
     </script>
 </body>
 </html>
-
-
