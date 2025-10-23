@@ -154,21 +154,24 @@ function addUserMessage(text){
 const div=document.createElement('div');
 div.className='message user';
 div.innerHTML=`<div class="message-avatar">Tu</div><div class="message-content">${escapeHtml(text)}</div>`;
-messagesContainer.appendChild(div);scrollToBottom();
+messagesContainer.appendChild(div);
+scrollToBottom();
 }
 
 function addBotMessage(text){
 const div=document.createElement('div');
 div.className='message bot';
 div.innerHTML=`<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge"></div></div><div class="message-content">${escapeHtml(text)}</div>`;
-messagesContainer.appendChild(div);scrollToBottom();
+messagesContainer.appendChild(div);
+scrollToBottom();
 }
 
 function addErrorMessage(text){
 const div=document.createElement('div');
 div.className='error-message';
 div.textContent=text;
-messagesContainer.appendChild(div);scrollToBottom();
+messagesContainer.appendChild(div);
+scrollToBottom();
 }
 
 function showTypingIndicator(){
@@ -179,7 +182,8 @@ const div=document.createElement('div');
 div.className='message bot';
 div.id='typing-indicator-msg';
 div.innerHTML=`<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge typing"></div></div><div class="typing-indicator active"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-messagesContainer.appendChild(div);scrollToBottom();
+messagesContainer.appendChild(div);
+scrollToBottom();
 }
 
 function hideTypingIndicator(){
