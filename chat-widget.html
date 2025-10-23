@@ -1,142 +1,197 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Chat Widget</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    #chat-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 320px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    #chat-header {
-      background-color: #0078d7;
-      color: white;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-    }
-    #chat-body {
-      display: none;
-      background: white;
-      height: 400px;
-      overflow-y: auto;
-      padding: 10px;
-    }
-    .message {
-      margin: 8px 0;
-      padding: 6px 10px;
-      border-radius: 8px;
-      max-width: 80%;
-      word-wrap: break-word;
-    }
-    .user {
-      background-color: #e1ffc7;
-      align-self: flex-end;
-    }
-    .bot {
-      background-color: #f1f1f1;
-      align-self: flex-start;
-    }
-    #chat-input-container {
-      display: flex;
-      border-top: 1px solid #ccc;
-    }
-    #chat-input {
-      flex: 1;
-      border: none;
-      padding: 10px;
-    }
-    #chat-send {
-      background-color: #0078d7;
-      color: white;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lia Aeon Chat</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+/* Pulsante di apertura */
+#chat-button { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); border:none; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center; z-index:1000; transition: transform 0.3s ease; }
+#chat-button:hover { transform:scale(1.1); }
+#chat-button svg { width:30px; height:30px; fill:white; }
+
+/* Contenitore chat */
+#chat-widget { position: fixed; bottom:90px; right:20px; width:380px; height:550px; background:white; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.2); display:none; flex-direction:column; z-index:999; overflow:hidden; animation:slideUp 0.3s ease-out; }
+@keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+#chat-widget.active { display:flex; }
+
+/* Header */
+#chat-header { background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; padding:20px; display:flex; align-items:center; justify-content:space-between; }
+.header-info { display:flex; align-items:center; gap:12px; position:relative; }
+.avatar { width:45px; height:45px; border-radius:50%; background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; border:2px solid white; overflow:hidden; color:white; position:relative; }
+.avatar img { width:100%; height:100%; object-fit:cover; }
+.online-badge { position:absolute; bottom:0; right:0; width:12px; height:12px; border-radius:50%; background:#4cd137; border:2px solid white; animation:pulse 1.2s infinite; transition:background 0.3s ease; }
+.online-badge.typing { background:#f39c12; }
+@keyframes pulse { 0%{transform:scale(0.8);}50%{transform:scale(1.2);}100%{transform:scale(0.8);} }
+.header-text h3 { margin:0; font-size:16px; font-weight:600; }
+.header-text p { margin:0; font-size:12px; opacity:0.9; }
+#close-chat { background:none; border:none; color:white; font-size:24px; cursor:pointer; padding:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:background 0.2s; }
+#close-chat:hover { background:rgba(255,255,255,0.2); }
+
+/* Messaggi */
+#messages { flex:1; overflow-y:auto; padding:20px; background:#f8f9fa; }
+.message { margin-bottom:16px; display:flex; gap:10px; animation:fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.message.bot { flex-direction:row; }
+.message.user { flex-direction:row-reverse; }
+.message-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%); display:flex; align-items:center; justify-content:center; font-size:14px; color:white; flex-shrink:0; overflow:hidden; position:relative; }
+.message-avatar img { width:100%; height:100%; object-fit:cover; }
+.message-avatar .online-badge { position:absolute; bottom:0; right:0; width:8px; height:8px; border-radius:50%; background:#4cd137; border:1.5px solid white; animation:pulse 1.2s infinite; transition:background 0.3s ease; }
+.message-avatar .online-badge.typing { background:#f39c12; }
+.message.user .message-avatar { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
+.message-content { max-width:70%; padding:12px 16px; border-radius:16px; line-height:1.5; font-size:14px; }
+.message.bot .message-content { background:white; color:#333; border-bottom-left-radius:4px; }
+.message.user .message-content { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border-bottom-right-radius:4px; }
+
+/* Input */
+#input-area { padding:16px; background:white; border-top:1px solid #e0e0e0; display:flex; gap:10px; }
+#user-input { flex:1; padding:12px 16px; border:1px solid #e0e0e0; border-radius:24px; font-size:14px; outline:none; transition:border-color 0.2s; }
+#user-input:focus { border-color:#667eea; }
+#send-button { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border:none; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 0.2s; }
+#send-button:hover { transform:scale(1.05); }
+#send-button:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* Indicatori */
+.typing-indicator { display:none; align-items:center; gap:10px; padding:12px 16px; background:white; border-radius:16px; width:fit-content; border-bottom-left-radius:4px; }
+.typing-indicator.active { display:flex; }
+.typing-dot { width:8px; height:8px; border-radius:50%; background:#999; animation:bounce 1.4s infinite; }
+.typing-dot:nth-child(2) { animation-delay:0.2s; }
+.typing-dot:nth-child(3) { animation-delay:0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-10px);} }
+
+/* Errori */
+.error-message { background:#fee; color:#c33; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; }
+
+/* Responsive */
+@media (max-width:480px) { #chat-widget { width:100%; height:100%; bottom:0; right:0; border-radius:0; } }
+</style>
 </head>
 <body>
-  <div id="chat-container">
-    <div id="chat-header">💬 Chatta con noi</div>
-    <div id="chat-body"></div>
-    <div id="chat-input-container">
-      <input id="chat-input" type="text" placeholder="Scrivi un messaggio..." />
-      <button id="chat-send">Invia</button>
-    </div>
-  </div>
+<!-- Bottone -->
+<button id="chat-button" aria-label="Apri chat">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+</button>
 
-  <script>
-    const chatHeader = document.getElementById('chat-header');
-    const chatBody = document.getElementById('chat-body');
-    const chatInput = document.getElementById('chat-input');
-    const chatSend = document.getElementById('chat-send');
+<!-- Chat -->
+<div id="chat-widget">
+<div id="chat-header">
+<div class="header-info">
+<div class="avatar">
+<img src="lia.jpg" alt="Lia Aeon" onerror="this.style.display='none'; this.parentElement.textContent='LA'">
+<div class="online-badge" id="header-badge"></div>
+</div>
+<div class="header-text">
+<h3>Lia Aeon</h3>
+<p>Assistente Virtuale</p>
+</div>
+</div>
+<button id="close-chat" aria-label="Chiudi chat">×</button>
+</div>
 
-    let chatOpen = false;
-    let conversazione = [];
-    const sessionId = 'session-' + Date.now();
+<div id="messages"></div>
 
-    chatHeader.addEventListener('click', () => {
-      chatOpen = !chatOpen;
-      chatBody.style.display = chatOpen ? 'flex' : 'none';
-      chatBody.style.flexDirection = 'column';
-    });
+<div id="input-area">
+<input type="text" id="user-input" placeholder="Scrivi un messaggio..." autocomplete="off" />
+<button id="send-button" aria-label="Invia messaggio">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+</button>
+</div>
+</div>
 
-    chatSend.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter') sendMessage();
-    });
+<script>
+const BACKEND_URL='https://melodious-truffle-aeab36.netlify.app/.netlify/functions/chat-netlify';
+const conversationHistory=[];
+let typingIndicatorVisible=false;
 
-    function appendMessage(sender, text) {
-      const msg = document.createElement('div');
-      msg.classList.add('message', sender);
-      msg.textContent = text;
-      chatBody.appendChild(msg);
-      chatBody.scrollTop = chatBody.scrollHeight;
-      conversazione.push(`${sender === 'user' ? 'Utente' : 'Bot'}: ${text}`);
-    }
+document.addEventListener('DOMContentLoaded',()=>{
+const chatButton=document.getElementById('chat-button');
+const chatWidget=document.getElementById('chat-widget');
+const closeChat=document.getElementById('close-chat');
+const sendButton=document.getElementById('send-button');
+const userInput=document.getElementById('user-input');
+const messagesContainer=document.getElementById('messages');
+const headerBadge=document.getElementById('header-badge');
 
-    function sendMessage() {
-      const text = chatInput.value.trim();
-      if (!text) return;
-      appendMessage('user', text);
-      chatInput.value = '';
+chatButton.addEventListener('click',()=>{
+chatWidget.classList.add('active');
+chatButton.style.display='none';
+if(messagesContainer.children.length===0) sendWelcomeMessage();
+});
 
-      // simulazione risposta bot
-      setTimeout(() => {
-        const reply = "Grazie per il messaggio, ti risponderemo presto!";
-        appendMessage('bot', reply);
-      }, 700);
-    }
+closeChat.addEventListener('click',()=>{
+chatWidget.classList.remove('active');
+chatButton.style.display='flex';
+});
 
-    // Quando la finestra viene chiusa o ricaricata → invia la conversazione
-    window.addEventListener('beforeunload', async () => {
-      if (conversazione.length === 0) return;
-      const record = {
-        timestamp: new Date().toLocaleString(),
-        nome: null,
-        conversazione: conversazione.join('\n')
-      };
+sendButton.addEventListener('click',handleSendMessage);
+userInput.addEventListener('keypress',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendMessage();}});
 
-      try {
-        await fetch('https://script.google.com/macros/s/TUO_SCRIPT_ID/exec', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(record)
-        });
-        console.log('Conversazione salvata su Google Sheet.');
-      } catch (error) {
-        console.error('Errore durante il salvataggio:', error);
-      }
-    });
-  </script>
+function sendWelcomeMessage(){setTimeout(()=>{addBotMessage("Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?");},300);}
+
+async function handleSendMessage(){
+const message=userInput.value.trim();
+if(!message) return;
+userInput.disabled=true;
+sendButton.disabled=true;
+addUserMessage(message);
+userInput.value='';
+conversationHistory.push({role:'user',content:message});
+showTypingIndicator();
+try{
+const response=await fetch(BACKEND_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,conversationHistory})});
+if(!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+const data=await response.json();
+hideTypingIndicator();
+if(data.response){addBotMessage(data.response);conversationHistory.push({role:'assistant',content:data.response});}else{addBotMessage("Mi dispiace, si è verificato un errore. Riprovi per favore.");}
+}catch(error){hideTypingIndicator();addErrorMessage("Impossibile connettersi al server. Verifichi la connessione e riprovi.");}
+finally{userInput.disabled=false;sendButton.disabled=false;userInput.focus();}
+}
+
+function addUserMessage(text){
+const div=document.createElement('div');
+div.className='message user';
+div.innerHTML=`<div class="message-avatar">Tu</div><div class="message-content">${escapeHtml(text)}</div>`;
+messagesContainer.appendChild(div);scrollToBottom();
+}
+
+function addBotMessage(text){
+const div=document.createElement('div');
+div.className='message bot';
+div.innerHTML=`<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge"></div></div><div class="message-content">${escapeHtml(text)}</div>`;
+messagesContainer.appendChild(div);scrollToBottom();
+}
+
+function addErrorMessage(text){
+const div=document.createElement('div');
+div.className='error-message';
+div.textContent=text;
+messagesContainer.appendChild(div);scrollToBottom();
+}
+
+function showTypingIndicator(){
+if(typingIndicatorVisible) return;
+typingIndicatorVisible=true;
+headerBadge.classList.add('typing');
+const div=document.createElement('div');
+div.className='message bot';
+div.id='typing-indicator-msg';
+div.innerHTML=`<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge typing"></div></div><div class="typing-indicator active"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+messagesContainer.appendChild(div);scrollToBottom();
+}
+
+function hideTypingIndicator(){
+const indicator=document.getElementById('typing-indicator-msg');
+if(indicator) indicator.remove();
+headerBadge.classList.remove('typing');
+typingIndicatorVisible=false;
+}
+
+function scrollToBottom(){requestAnimationFrame(()=>{messagesContainer.scrollTop=messagesContainer.scrollHeight;});}
+function escapeHtml(text){const div=document.createElement('div');div.textContent=text;return div.innerHTML;}
+});
+</script>
 </body>
 </html>
