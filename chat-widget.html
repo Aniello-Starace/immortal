@@ -93,7 +93,7 @@ body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 </div>
 </div>
 
-<script><script>
+<script>
 const BACKEND_URL='https://melodious-truffle-aeab36.netlify.app/.netlify/functions/chat-netlify';
 const conversationHistory=[];
 let typingIndicatorVisible=false;
@@ -107,15 +107,6 @@ const sendButton=document.getElementById('send-button');
 const userInput=document.getElementById('user-input');
 const messagesContainer=document.getElementById('messages');
 const headerBadge=document.getElementById('header-badge');
-
-// Badge sicurezza
-const securityBadge=document.createElement('div');
-securityBadge.style.width='12px';
-securityBadge.style.height='12px';
-securityBadge.style.borderRadius='50%';
-securityBadge.style.background='#aaa';
-securityBadge.style.marginLeft='8px';
-document.querySelector('.header-text').appendChild(securityBadge);
 
 chatButton.addEventListener('click',()=>{
 chatWidget.classList.add('active');
@@ -149,7 +140,7 @@ showTypingIndicator();
 
 try{
 const controller=new AbortController();
-const timeout=setTimeout(()=>controller.abort(),8000); // timeout 8s
+const timeout=setTimeout(()=>controller.abort(),8000);
 
 const response=await fetch(BACKEND_URL,{
 method:'POST',
@@ -165,10 +156,8 @@ const data=await response.json();
 if(data.response){
 addBotMessage(data.response);
 conversationHistory.push({role:'assistant',content:data.response});
-securityBadge.style.background='#4cd137'; // verde connessione OK
 }else{
 addBotMessage("Mi dispiace, si è verificato un errore. Riprovi per favore.");
-securityBadge.style.background='#e74c3c'; // rosso errore
 }
 }else{
 throw new Error(`HTTP error! status: ${response.status}`);
@@ -176,7 +165,6 @@ throw new Error(`HTTP error! status: ${response.status}`);
 }catch(error){
 hideTypingIndicator();
 addErrorMessage("Impossibile connettersi al server. Verifichi la connessione e riprovi.");
-securityBadge.style.background='#e74c3c';
 }finally{
 userInput.disabled=false;
 sendButton.disabled=false;
@@ -233,4 +221,5 @@ function escapeHtml(text){const div=document.createElement('div');div.textConten
 </script>
 </body>
 </html>
+
 
