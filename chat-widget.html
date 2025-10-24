@@ -103,6 +103,7 @@ body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
 <script>
 const BACKEND_URL='https://melodious-truffle-aeab36.netlify.app/.netlify/functions/chat-netlify';
+const PROXY_URL='https://api.allorigins.win/raw?url=';
 const conversationHistory=[];
 let typingIndicatorVisible=false;
 
@@ -131,6 +132,22 @@ userInput.addEventListener('keypress',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.p
 
 function sendWelcomeMessage(){setTimeout(()=>{addBotMessage("Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?");},300);}
 
+async function sendMessageToServer(message){
+  try{
+    const response=await fetch(PROXY_URL + encodeURIComponent(BACKEND_URL),{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message,conversationHistory})
+    });
+    if(!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data=await response.json();
+    return data;
+  }catch(error){
+    console.error("Errore durante la richiesta:",error);
+    return {error:"Impossibile connettersi al server. Riprova più tardi."};
+  }
+}
+
 async function handleSendMessage(){
 const message=userInput.value.trim();
 if(!message) return;
@@ -141,9 +158,7 @@ userInput.value='';
 conversationHistory.push({role:'user',content:message});
 showTypingIndicator();
 try{
-const response=await fetch(BACKEND_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,conversationHistory})});
-if(!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-const data=await response.json();
+const data=await sendMessageToServer(message);
 hideTypingIndicator();
 if(data.response){addBotMessage(data.response);conversationHistory.push({role:'assistant',content:data.response});}else{addBotMessage("Mi dispiace, si è verificato un errore. Riprovi per favore.");}
 }catch(error){hideTypingIndicator();addErrorMessage("Impossibile connettersi al server. Verifichi la connessione e riprovi.");}
