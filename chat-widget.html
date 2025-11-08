@@ -144,7 +144,9 @@ const timeout=setTimeout(()=>controller.abort(),8000);
 
 const response=await fetch(BACKEND_URL,{
 method:'POST',
-headers:{'Content-Type':'application/json'},
+headers:{'Content-Type':'application/json'
+'Bypass-Tunnel-Reminder': 'true'         
+        },
 body:JSON.stringify({message,conversationHistory}),
 signal:controller.signal
 });
@@ -221,6 +223,7 @@ function escapeHtml(text){const div=document.createElement('div');div.textConten
 </script>
 </body>
 </html>
+
 
 
 
