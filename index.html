@@ -120,7 +120,7 @@
     #lightbox { display:none; position:fixed; z-index:9999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:20px; }
     #lightbox img { max-width:100%; max-height:100%; border-radius:6px; box-shadow:0 6px 30px rgba(0,0,0,0.6); }
     
-    /* Chat iframe - non deve coprire nulla */
+    /* Chat iframe - sempre cliccabile */
     #chat-iframe {
       position:fixed; 
       bottom:20px; 
@@ -130,10 +130,7 @@
       border:none; 
       z-index:9998; 
       background:transparent;
-      pointer-events:none; /* ← Permette di cliccare attraverso l'iframe */
-    }
-    #chat-iframe.chat-active {
-      pointer-events:auto; /* ← Riattiva i click quando la chat è aperta */
+      pointer-events:auto;
     }
     
     @media (max-width:480px) {
@@ -241,9 +238,9 @@
     <input type="hidden" id="ricevuta" name="ricevuta" value="ricevuta_da_inviare_via_email">
     <p class="info-text"><strong>IMPORTANTE: Inviare copia della ricevuta del bonifico via mail a dottor.aniello.starace@gmail.com</strong></p>
     
-    <div class="checkbox-inline" onclick="toggleCheckbox()">
-      <input type="checkbox" id="manleva" name="manleva" required onclick="event.stopPropagation()">
-      <label for="manleva">Accetto Manleva da danni civili e penali derivanti dal Processo di Ringiovanimento.</label>
+    <div class="checkbox-inline">
+      <input type="checkbox" id="manleva" name="manleva" required>
+      <label for="manleva" onclick="document.getElementById('manleva').click()">Accetto Manleva da danni civili e penali derivanti dal Processo di Ringiovanimento.</label>
     </div>
 
     <button type="submit" class="cta-button">Invia ricevuta e prenota</button>
@@ -260,12 +257,6 @@ function scrollToForm(e) {
     behavior: 'smooth',
     block: 'start'
   });
-}
-
-// Toggle checkbox quando si clicca sul container
-function toggleCheckbox() {
-  const checkbox = document.getElementById('manleva');
-  checkbox.checked = !checkbox.checked;
 }
 
 (function(){
@@ -385,18 +376,6 @@ function toggleCheckbox() {
     img.addEventListener('keydown',e=>{ if(e.key==='Enter'){ lbImg.src=img.src; lb.style.display='flex'; document.body.style.overflow='hidden'; } });
   });
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
-  
-  // Gestione iframe chat - attiva pointer events quando la chat è aperta
-  const chatIframe = document.getElementById('chat-iframe');
-  if (chatIframe) {
-    window.addEventListener('message', function(e) {
-      if (e.data === 'chat-opened') {
-        chatIframe.classList.add('chat-active');
-      } else if (e.data === 'chat-closed') {
-        chatIframe.classList.remove('chat-active');
-      }
-    });
-  }
   
   console.log('Script completato');
 })();
