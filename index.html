@@ -120,7 +120,7 @@
     #lightbox { display:none; position:fixed; z-index:9999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:20px; }
     #lightbox img { max-width:100%; max-height:100%; border-radius:6px; box-shadow:0 6px 30px rgba(0,0,0,0.6); }
     
-    /* Chat iframe - sempre grande abbastanza da contenere la chat */
+    /* Chat iframe */
     #chat-iframe {
       position:fixed; 
       bottom:0; 
@@ -130,10 +130,6 @@
       border:none; 
       z-index:9998; 
       background:transparent;
-      pointer-events:none;
-    }
-    
-    #chat-iframe.has-interaction {
       pointer-events:auto;
     }
     
@@ -141,10 +137,10 @@
       #chat-iframe {
         width:100px;
         height:100px;
-        pointer-events:auto;
+        transition: all 0.3s ease;
       }
       
-      #chat-iframe.chat-open {
+      #chat-iframe.expanding {
         width:100%;
         height:100%;
         z-index:99999;
@@ -386,21 +382,28 @@ function scrollToForm(e) {
   });
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
   
-  // Gestione iframe chat su mobile
+  // Gestione iframe chat
   const chatIframe = document.getElementById('chat-iframe');
   if (chatIframe) {
-    // Espandi iframe quando viene cliccato (prima che si apra la chat)
-    chatIframe.addEventListener('click', function() {
-      if (window.innerWidth <= 768) {
-        chatIframe.classList.add('chat-open');
-      }
-      chatIframe.classList.add('has-interaction');
-    });
+    let chatIsOpen = false;
     
-    // Ascolta messaggi dalla chat per sapere quando chiudere
+    // Su mobile: espandi al primo click
+    if (window.innerWidth <= 768) {
+      chatIframe.addEventListener('click', function handleFirstClick() {
+        if (!chatIsOpen) {
+          console.log('Espando iframe...');
+          chatIframe.classList.add('expanding');
+          chatIsOpen = true;
+        }
+      });
+    }
+    
+    // Ascolta quando la chat viene chiusa
     window.addEventListener('message', function(e) {
       if (e.data === 'chat-closed') {
-        chatIframe.classList.remove('chat-open');
+        console.log('Chat chiusa, riduco iframe');
+        chatIframe.classList.remove('expanding');
+        chatIsOpen = false;
       }
     });
   }
