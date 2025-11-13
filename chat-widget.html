@@ -6,12 +6,17 @@
 <title>Lia Aeon Chat</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow:hidden; }
-/* Pulsante di apertura */
+body { 
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  overflow:hidden;
+  background:transparent;
+}
+
+/* Pulsante di apertura - sempre visibile e centrato */
 #chat-button { 
   position: fixed; 
-  bottom: 20px; 
-  right: 20px; 
+  bottom: 10px; 
+  right: 10px; 
   width: 60px; 
   height: 60px; 
   border-radius: 50%; 
@@ -22,26 +27,39 @@ body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow:hid
   display:flex; 
   align-items:center; 
   justify-content:center; 
-  z-index:1000; 
+  z-index:10000; 
   transition: transform 0.3s ease;
 }
 #chat-button:hover { transform:scale(1.1); }
 #chat-button svg { width:30px; height:30px; fill:white; }
-/* Contenitore chat */
+/* Contenitore chat - occupa tutto lo spazio disponibile */
 #chat-widget { 
   position: fixed; 
-  bottom:90px; 
-  right:20px; 
-  width:360px; 
-  height:520px; 
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
   background:white; 
   border-radius:16px; 
   box-shadow:0 8px 32px rgba(0,0,0,0.2); 
   display:none; 
   flex-direction:column; 
-  z-index:999; 
+  z-index:9999; 
   overflow:hidden; 
   animation:slideUp 0.3s ease-out;
+}
+
+@media (min-width:769px) {
+  #chat-widget {
+    top: auto;
+    left: auto;
+    bottom: 20px;
+    right: 20px;
+    width: 360px;
+    height: 520px;
+  }
 }
 @keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
 #chat-widget.active { display:flex; }
@@ -88,17 +106,14 @@ body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow:hid
 /* Errori */
 .error-message { background:#fee; color:#c33; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; }
 /* Responsive - dentro iframe */
-@media (max-width:480px) { 
+@media (max-width:768px) { 
   #chat-widget { 
-    width:100vw; 
-    height:100vh; 
-    bottom:0; 
-    right:0; 
-    border-radius:0; 
+    border-radius:0;
   }
+  
   #chat-button {
-    bottom:10px;
-    right:10px;
+    bottom: 10px;
+    right: 10px;
   }
 }
 </style>
