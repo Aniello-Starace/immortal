@@ -389,19 +389,20 @@ function scrollToForm(e) {
   // Gestione iframe chat su mobile
   const chatIframe = document.getElementById('chat-iframe');
   if (chatIframe) {
-    // Ascolta messaggi dalla chat
-    window.addEventListener('message', function(e) {
-      if (e.data === 'chat-opened') {
+    // Espandi iframe quando viene cliccato (prima che si apra la chat)
+    chatIframe.addEventListener('click', function() {
+      if (window.innerWidth <= 768) {
         chatIframe.classList.add('chat-open');
-      } else if (e.data === 'chat-closed') {
+      }
+      chatIframe.classList.add('has-interaction');
+    });
+    
+    // Ascolta messaggi dalla chat per sapere quando chiudere
+    window.addEventListener('message', function(e) {
+      if (e.data === 'chat-closed') {
         chatIframe.classList.remove('chat-open');
       }
     });
-    
-    // Attiva pointer-events dopo il primo click
-    chatIframe.addEventListener('click', function() {
-      chatIframe.classList.add('has-interaction');
-    }, { once: true });
   }
   
   console.log('Script completato');
