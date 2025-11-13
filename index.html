@@ -137,13 +137,15 @@
       #chat-iframe {
         width:100px;
         height:100px;
-        transition: all 0.3s ease;
+        transition: width 0.1s ease, height 0.1s ease;
       }
       
       #chat-iframe.expanding {
-        width:100%;
-        height:100%;
+        width:100vw !important;
+        height:100vh !important;
         z-index:99999;
+        bottom:0;
+        right:0;
       }
     }
   </style>
@@ -387,11 +389,21 @@ function scrollToForm(e) {
   if (chatIframe) {
     let chatIsOpen = false;
     
-    // Su mobile: espandi al primo click
+    // Su mobile: espandi SUBITO al touch
     if (window.innerWidth <= 768) {
-      chatIframe.addEventListener('click', function handleFirstClick() {
+      // Usa touchstart invece di click per essere più veloce
+      chatIframe.addEventListener('touchstart', function(e) {
         if (!chatIsOpen) {
-          console.log('Espando iframe...');
+          console.log('Touch rilevato, espando iframe...');
+          chatIframe.classList.add('expanding');
+          chatIsOpen = true;
+        }
+      }, { passive: true });
+      
+      // Fallback per click
+      chatIframe.addEventListener('click', function(e) {
+        if (!chatIsOpen) {
+          console.log('Click rilevato, espando iframe...');
           chatIframe.classList.add('expanding');
           chatIsOpen = true;
         }
