@@ -12,7 +12,7 @@ body {
   background:transparent;
 }
 
-/* Pulsante di apertura */
+/* Pulsante di apertura - SEMPRE cliccabile */
 #chat-button { 
   position: fixed; 
   bottom: 20px; 
@@ -29,9 +29,10 @@ body {
   justify-content:center; 
   z-index:10000; 
   transition: transform 0.3s ease;
+  pointer-events:auto !important;
 }
 #chat-button:hover { transform:scale(1.1); }
-#chat-button svg { width:30px; height:30px; fill:white; }
+#chat-button svg { width:30px; height:30px; fill:white; pointer-events:none; }
 
 /* Contenitore chat - desktop */
 #chat-widget { 
@@ -113,11 +114,23 @@ body {
 @keyframes bounce { 0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-10px);} }
 /* Errori */
 .error-message { background:#fee; color:#c33; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; }
-/* Responsive - pulsante sempre visibile */
+/* Responsive */
 @media (max-width:768px) { 
   body {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  /* Overlay scuro dietro la chat su mobile */
+  #chat-widget::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
   }
 }
 </style>
@@ -179,14 +192,22 @@ const headerBadge=document.getElementById('header-badge');
 chatButton.addEventListener('click',()=>{
 chatWidget.classList.add('active');
 chatButton.style.display='none';
-notifyParent('chat-opened'); // ← Notifica parent
+notifyParent('chat-opened');
+// Attiva pointer-events sull'iframe parent
+if (window.parent !== window) {
+  window.parent.postMessage('enable-pointer-events', '*');
+}
 if(messagesContainer.children.length===0) sendWelcomeMessage();
 });
 
 closeChat.addEventListener('click',()=>{
 chatWidget.classList.remove('active');
 chatButton.style.display='flex';
-notifyParent('chat-closed'); // ← Notifica parent
+notifyParent('chat-closed');
+// Disattiva pointer-events sull'iframe parent
+if (window.parent !== window) {
+  window.parent.postMessage('disable-pointer-events', '*');
+}
 });
 
 sendButton.addEventListener('click',handleSendMessage);
