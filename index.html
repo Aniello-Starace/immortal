@@ -384,42 +384,6 @@ function scrollToForm(e) {
   });
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
   
-  // Gestione iframe chat
-  const chatIframe = document.getElementById('chat-iframe');
-  if (chatIframe) {
-    let chatIsOpen = false;
-    
-    // Su mobile: espandi SUBITO al touch
-    if (window.innerWidth <= 768) {
-      // Usa touchstart invece di click per essere più veloce
-      chatIframe.addEventListener('touchstart', function(e) {
-        if (!chatIsOpen) {
-          console.log('Touch rilevato, espando iframe...');
-          chatIframe.classList.add('expanding');
-          chatIsOpen = true;
-        }
-      }, { passive: true });
-      
-      // Fallback per click
-      chatIframe.addEventListener('click', function(e) {
-        if (!chatIsOpen) {
-          console.log('Click rilevato, espando iframe...');
-          chatIframe.classList.add('expanding');
-          chatIsOpen = true;
-        }
-      });
-    }
-    
-    // Ascolta quando la chat viene chiusa
-    window.addEventListener('message', function(e) {
-      if (e.data === 'chat-closed') {
-        console.log('Chat chiusa, riduco iframe');
-        chatIframe.classList.remove('expanding');
-        chatIsOpen = false;
-      }
-    });
-  }
-  
   console.log('Script completato');
 })();
 </script>
