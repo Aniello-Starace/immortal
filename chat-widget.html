@@ -32,7 +32,7 @@ body {
 }
 #chat-button:hover { transform:scale(1.1); }
 #chat-button svg { width:30px; height:30px; fill:white; }
-/* Contenitore chat - posizionamento responsive */
+/* Contenitore chat - default desktop */
 #chat-widget { 
   position: fixed; 
   bottom: 20px;
@@ -49,16 +49,27 @@ body {
   animation:slideUp 0.3s ease-out;
 }
 
-/* Su mobile: rimuovi offset, occupa tutto l'iframe */
+/* Su mobile: quando dentro iframe piccolo, resta come desktop */
+/* Ma quando iframe si espande, la chat va fullscreen */
 @media (max-width:768px) {
   #chat-widget {
-    top: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
+    /* Rimuovi posizionamento fisso, usa absolute relativo all'iframe */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    bottom: auto;
+    right: auto;
     border-radius: 0;
+    margin: 0;
+  }
+  
+  /* Il pulsante resta in basso a destra */
+  #chat-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
   }
 }
 @keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
@@ -105,15 +116,11 @@ body {
 @keyframes bounce { 0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-10px);} }
 /* Errori */
 .error-message { background:#fee; color:#c33; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; }
-/* Responsive - dentro iframe */
+/* Responsive - pulsante sempre visibile */
 @media (max-width:768px) { 
-  #chat-widget { 
-    border-radius:0;
-  }
-  
   #chat-button {
-    bottom: 10px;
-    right: 10px;
+    bottom: 20px;
+    right: 20px;
   }
 }
 </style>
