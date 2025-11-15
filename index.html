@@ -568,8 +568,13 @@ if (window.innerWidth <= 768) {
     const avatar = document.createElement('div');
     avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:' +
       (type === 'bot' ? 'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)' : 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)') +
-      ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;';
-    avatar.textContent = type === 'bot' ? 'L' : 'Tu';
+      ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
+    
+    if (type === 'bot') {
+      avatar.innerHTML = '<img src="lia.jpg" alt="Lia" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'L\';">';
+    } else {
+      avatar.textContent = 'Tu';
+    }
     
     const content = document.createElement('div');
     content.style.cssText = 'max-width:70%;padding:12px 16px;border-radius:16px;line-height:1.5;font-size:14px;' +
