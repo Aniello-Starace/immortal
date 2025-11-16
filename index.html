@@ -388,14 +388,14 @@ function scrollToForm(e) {
   });
   lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
   
-  // Gestione pointer-events iframe su mobile
+  // Gestione espansione iframe su mobile
   const chatIframe = document.getElementById('chat-iframe');
-  if (chatIframe && window.innerWidth <= 768) {
+  if (chatIframe) {
     window.addEventListener('message', function(e) {
-      if (e.data === 'enable-pointer-events') {
-        chatIframe.classList.add('chat-active');
-      } else if (e.data === 'disable-pointer-events') {
-        chatIframe.classList.remove('chat-active');
+      if (e.data === 'chat-opened') {
+        chatIframe.classList.add('expanding');
+      } else if (e.data === 'chat-closed') {
+        chatIframe.classList.remove('expanding');
       }
     });
   }
