@@ -168,7 +168,7 @@ body {
 </div>
 
 <script>
-const BACKEND_URL='https://ringiovanire.loca.lt/api/chat';
+const BACKEND_URL='https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/chat';
 const conversationHistory=[];
 let typingIndicatorVisible=false;
 let lastSentTime=0;
@@ -231,13 +231,12 @@ showTypingIndicator();
 
 try{
 const controller=new AbortController();
-const timeout=setTimeout(()=>controller.abort(),8000);
+const timeout=setTimeout(()=>controller.abort(),30000);
 
 const response=await fetch(BACKEND_URL,{
 method:'POST',
 headers:{
-'Content-Type':'application/json',
-'Bypass-Tunnel-Reminder':'true'
+'Content-Type':'application/json'
 },
 body:JSON.stringify({message,conversationHistory}),
 signal:controller.signal
