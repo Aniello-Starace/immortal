@@ -282,44 +282,38 @@ function scrollToForm(e) {
   
   const minDate = '1900-01-01';
   
-  // Validation: data primo app >= data bonifico + 10 giorni
-  function validateAppointmentDate(bonificoId, appId) {
-    const bonificoEl = document.getElementById(bonificoId);
-    const appEl = document.getElementById(appId);
-    
-    if (!bonificoEl || !appEl) return;
-    
-    appEl.addEventListener('change', function() {
-      if (!bonificoEl.value || !appEl.value) return;
-      
-      const bonificoDate = new Date(bonificoEl.value);
-      const appDate = new Date(appEl.value);
-      const minAppDate = new Date(bonificoDate);
-      minAppDate.setDate(minAppDate.getDate() + 10);
-      
-      if (appDate < minAppDate) {
-        alert('La data del primo appuntamento deve essere almeno 10 giorni dopo la data del bonifico.');
-        appEl.value = '';
-      }
-    });
-    
-    bonificoEl.addEventListener('change', function() {
-      if (appEl.value) {
-        const bonificoDate = new Date(bonificoEl.value);
-        const appDate = new Date(appEl.value);
-        const minAppDate = new Date(bonificoDate);
-        minAppDate.setDate(minAppDate.getDate() + 10);
-        
-        if (appDate < minAppDate) {
-          alert('La data del primo appuntamento deve essere almeno 10 giorni dopo la data del bonifico.');
-          appEl.value = '';
-        }
-      }
-    });
-  }
+  // Validation: data primo app >= data odierna + 10 giorni
+  function validateAppointmentDate() {
+  const appEl = document.getElementById('data-primo-app');
   
-  validateAppointmentDate('data-bonifico', 'data-primo-app');
+  if (!appEl) return;
   
+  appEl.addEventListener('change', function() {
+    if (!appEl.value) return;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset ore per confronto pulito
+    
+    const appDate = new Date(appEl.value);
+    const minAppDate = new Date(today);
+    minAppDate.setDate(minAppDate.getDate() + 10);
+    
+    if (appDate < minAppDate) {
+      const minDateFormatted = minAppDate.toLocaleDateString('it-IT');
+      alert(`La data del primo appuntamento deve essere almeno 10 giorni da oggi. Data minima: ${minDateFormatted}`);
+      appEl.value = '';
+    }
+  });
+  
+  // Imposta data minima nel calendario
+  const today = new Date();
+  const minDate = new Date(today);
+  minDate.setDate(minDate.getDate() + 10);
+  const minDateString = minDate.toISOString().split('T')[0];
+  appEl.setAttribute('min', minDateString);
+}
+
+validateAppointmentDate();  
   ['data-bonifico','data-primo-app','data-nascita'].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
