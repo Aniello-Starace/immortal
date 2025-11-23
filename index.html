@@ -227,9 +227,17 @@
     <label for="telefono">Telefono:</label>
     <input type="tel" id="telefono" name="telefono" required autocomplete="tel">
 
-    <label for="data-nascita">Data di nascita:</label>
-    <input type="date" id="data-nascita" name="data-nascita" required>
-
+<label for="data-nascita">Data di nascita (gg/mm/aaaa):</label>
+<input 
+  type="text" 
+  id="data-nascita" 
+  name="data-nascita" 
+  placeholder="31/12/1990"
+  pattern="\d{2}/\d{2}/\d{4}"
+  title="Formato: gg/mm/aaaa (es. 31/12/1990)"
+  required
+  inputmode="numeric"
+>
     <label for="citta">Città di residenza:</label>
     <input type="text" id="citta" name="citta" required autocomplete="address-level2">
 
@@ -336,7 +344,12 @@ function scrollToForm(e) {
       console.warn('Invio già effettuato');
       return;
     }
-
+// Valida e formatta la data di nascita
+const dataNascita = document.getElementById('data-nascita').value;
+if (dataNascita && !dataNascita.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+  alert('Formato data di nascita non valido. Usare gg/mm/aaaa (es. 31/12/1990)');
+  return;
+}
     console.log('Form submit');
     
     const formData = new FormData(form);
