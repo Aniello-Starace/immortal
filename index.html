@@ -341,14 +341,16 @@ function scrollToForm(e) {
     e.preventDefault();
     
     if (inviato) {
-      console.warn('Invio già effettuato');
-      return;
-    }
-// Valida la data di nascita
-const dataNascitaInput = document.getElementById('data-nascita').value.trim();
+  console.warn('Invio già effettuato');
+  return;
+}
+
+console.log('Form submit');
+
+// Valida e formatta la data di nascita
+const dataNascitaInput = dataObj['data-nascita'];
 if (dataNascitaInput) {
-  // Accetta formato: "gg mm aaaa" o "gg/mm/aaaa" o "gg-mm-aaaa"
-  const parts = dataNascitaInput.split(/[\s\/\-]+/);
+  const parts = dataNascitaInput.trim().split(/[\s\/\-]+/);
   
   if (parts.length !== 3) {
     alert('Formato data di nascita non valido. Usare: gg mm aaaa (es: 31 12 1990)');
@@ -359,19 +361,18 @@ if (dataNascitaInput) {
   const mese = parseInt(parts[1]);
   const anno = parseInt(parts[2]);
   
-  if (giorno < 1 || giorno > 31 || mese < 1 || mese > 12 || anno < 1900 || anno > 2025) {
+  if (isNaN(giorno) || isNaN(mese) || isNaN(anno) || 
+      giorno < 1 || giorno > 31 || mese < 1 || mese > 12 || 
+      anno < 1900 || anno > 2025) {
     alert('Data di nascita non valida. Verificare giorno (1-31), mese (1-12) e anno (1900-2025)');
     return;
   }
   
-  // Formatta in formato standard per l'invio: "gg/mm/aaaa"
-  dataObj['data-nascita'] = `${parts[0].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[2]}`;
+  // Formatta in formato standard: "gg/mm/aaaa"
+  dataObj['data-nascita'] = `${String(giorno).padStart(2, '0')}/${String(mese).padStart(2, '0')}/${anno}`;
 }
-    console.log('Form submit');
-    
-    const formData = new FormData(form);
-    const dataObj = {};
-    
+
+dataObj.timestamp = new Date().toISOString();    
     for (let [key, value] of formData.entries()) {
       dataObj[key] = value;
     }
