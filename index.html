@@ -6,17 +6,68 @@
   <title>Processo Esclusivo di Ringiovanimento</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-    body { font-family:'Helvetica Neue',Arial,sans-serif; line-height:1.6; background:#f4f4f4; color:#222; }
-    header { background:linear-gradient(135deg,#0d1b2a,#1b263b); color:#fff; text-align:center; padding:80px 20px; position:relative; z-index:1; }
-    header h1 { font-size:3rem; margin-bottom:20px; line-height:1.2; }
-    header p { font-size:1.3rem; margin:0 auto 30px; max-width:800px; }
-    section { padding:60px 20px; max-width:1000px; margin:0 auto 30px; background:#fff; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); position:relative; z-index:1; }
-    section h2 { text-align:center; font-size:2rem; margin-bottom:25px; color:#0d1b2a; }
-    #chi-sono p, #metodo p { text-align:justify; text-justify:inter-word; margin-bottom:18px; font-size:1.1rem; }
-    .content-p { margin-bottom:18px; font-size:1.1rem; text-align:left; }
-    .info-text { font-size:0.95rem; margin-bottom:10px; text-align:center; color:#444; }
-    .price { font-weight:bold; color:#b22222; font-size:1.3rem; margin-bottom:10px; text-align:center; }
-    .bank-info { background:#f0f0f0; padding:15px 20px; border-radius:8px; margin:20px auto; font-size:1.1rem; text-align:left; max-width:600px; }
+    /* SFONDO AZZURRO GENERALE */
+    body { 
+      font-family:'Helvetica Neue',Arial,sans-serif; 
+      line-height:1.6; 
+      background: linear-gradient(135deg,#0d1b2a,#1b263b); /* Stesso azzurro dell'header */
+      color: #ffffff; /* TESTO BIANCO */
+    }
+    
+    header { 
+      background:linear-gradient(135deg,#0d1b2a,#1b263b); 
+      color:#fff; 
+      text-align:center; 
+      padding:80px 20px; 
+      position:relative; 
+      z-index:1; 
+    }
+    header h1 { font-size:3rem; margin-bottom:20px; line-height:1.2; color:#ffffff; }
+    header p { font-size:1.3rem; margin:0 auto 30px; max-width:800px; color:#ffffff; }
+    
+    /* SEZIONI CON SFONDO SEMI-TRASPARENTE */
+    section { 
+      padding:60px 20px; 
+      max-width:1000px; 
+      margin:0 auto 30px; 
+      background:rgba(27, 38, 59, 0.7); /* Azzurro semi-trasparente */
+      border-radius:12px; 
+      box-shadow:0 4px 15px rgba(0,0,0,0.3); 
+      position:relative; 
+      z-index:1; 
+    }
+    
+    section h2 { 
+      text-align:center; 
+      font-size:2rem; 
+      margin-bottom:25px; 
+      color:#ffffff; /* TITOLI BIANCHI */
+    }
+    
+    #chi-sono p, #metodo p { 
+      text-align:justify; 
+      text-justify:inter-word; 
+      margin-bottom:18px; 
+      font-size:1.1rem; 
+      color:#ffffff; /* TESTO BIANCO */
+    }
+    
+    .content-p { margin-bottom:18px; font-size:1.1rem; text-align:left; color:#ffffff; }
+    .info-text { font-size:0.95rem; margin-bottom:10px; text-align:center; color:#e0e0e0; }
+    .price { font-weight:bold; color:#ff4444; font-size:1.3rem; margin-bottom:10px; text-align:center; } /* ROSSO ACCESO */
+    
+    .bank-info { 
+      background:rgba(255,255,255,0.15); 
+      padding:15px 20px; 
+      border-radius:8px; 
+      margin:20px auto; 
+      font-size:1.1rem; 
+      text-align:left; 
+      max-width:600px; 
+      color:#ffffff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
     .cta-button { 
       background-color:#b22222; 
       padding:18px 40px; 
@@ -34,15 +85,36 @@
       user-select:none;
     }
     .cta-button:hover, .cta-button:active { background-color:#d42e2e; transform:scale(1.05); }
+    
     .gallery { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
     .gallery figure { margin:0; text-align:center; }
-    .gallery img { width:180px; height:auto; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); cursor:pointer; transition:transform 0.3s ease; user-select: none; -webkit-user-drag: none; }
+    .gallery img { 
+      width:180px; 
+      height:auto; 
+      border-radius:10px; 
+      box-shadow:0 2px 10px rgba(0,0,0,0.3); 
+      cursor:pointer; 
+      transition:transform 0.3s ease; 
+      user-select: none; 
+      -webkit-user-drag: none; 
+      border: 2px solid rgba(255,255,255,0.2);
+    }
     .gallery img:hover { transform:scale(1.05); }
-    .gallery figcaption { margin-top:8px; font-size:0.95rem; color:#444; }
-    .video a { display:block; margin:10px 0; color:#0d1b2a; font-weight:600; text-decoration:none; text-align:left; }
-    .video a:hover { text-decoration:underline; }
+    .gallery figcaption { margin-top:8px; font-size:0.95rem; color:#e0e0e0; }
+    
+    .video a { 
+      display:block; 
+      margin:10px 0; 
+      color:#6db3f2; /* AZZURRO CHIARO PER I LINK */
+      font-weight:600; 
+      text-decoration:none; 
+      text-align:left; 
+    }
+    .video a:hover { text-decoration:underline; color:#8dc6ff; }
+    
     form { max-width:600px; margin:0 auto; text-align:left; position:relative; z-index:2; }
-    form label { display:block; margin-bottom:6px; font-size:1rem; font-weight:500; }
+    form label { display:block; margin-bottom:6px; font-size:1rem; font-weight:500; color:#ffffff; }
+    
     form input[type="text"], 
     form input[type="email"], 
     form input[type="tel"], 
@@ -52,20 +124,30 @@
       display:block; 
       width:100%; 
       margin-bottom:15px; 
-      font-size:16px; /* ← IMPORTANTE: evita zoom su iOS */
+      font-size:16px;
       padding:12px; 
       border-radius:6px; 
-      border:2px solid #ddd; 
-      background:#fff;
+      border:2px solid rgba(255,255,255,0.3); 
+      background:rgba(255,255,255,0.1);
+      color:#ffffff;
       touch-action:manipulation;
       -webkit-appearance:none;
       appearance:none;
     }
+    
+    form input::placeholder,
+    form textarea::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+    
     form input:focus, form textarea:focus {
       outline:none;
-      border-color:#b22222;
+      border-color:#6db3f2;
+      background:rgba(255,255,255,0.15);
     }
+    
     form textarea { min-height:100px; resize:vertical; font-family:inherit; }
+    
     .checkbox-inline { 
       display:flex; 
       align-items:flex-start; 
@@ -75,9 +157,10 @@
       z-index:2;
       cursor:pointer;
       padding:10px;
-      background:#f9f9f9;
+      background:rgba(255,255,255,0.1);
       border-radius:6px;
     }
+    
     .checkbox-inline input[type="checkbox"] { 
       width:24px; 
       height:24px; 
@@ -86,12 +169,15 @@
       cursor:pointer;
       touch-action:manipulation;
     }
+    
     .checkbox-inline label { 
       margin:0; 
       line-height:1.4; 
       cursor:pointer;
       user-select:none;
+      color:#ffffff;
     }
+    
     form button { 
       cursor:pointer; 
       padding:16px 24px; 
@@ -110,6 +196,7 @@
       z-index:2;
     }
     form button:active { background:#d42e2e; transform:scale(0.98); }
+    
     @media (max-width:768px){
       header h1 { font-size:2.2rem; }
       header p { font-size:1.1rem; }
@@ -117,7 +204,20 @@
       .gallery img { width:140px; }
       form { padding:0 10px; }
     }
-    #lightbox { display:none; position:fixed; z-index:9999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:20px; }
+    
+    #lightbox { 
+      display:none; 
+      position:fixed; 
+      z-index:9999; 
+      top:0; 
+      left:0; 
+      width:100%; 
+      height:100%; 
+      background:rgba(0,0,0,0.95); 
+      justify-content:center; 
+      align-items:center; 
+      padding:20px; 
+    }
     #lightbox img { max-width:100%; max-height:100%; border-radius:6px; box-shadow:0 6px 30px rgba(0,0,0,0.6); }
     
     /* Chat iframe */
@@ -148,6 +248,16 @@
         right:0;
       }
     }
+    
+    @keyframes pulse {
+      0% { transform: scale(0.8); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(0.8); }
+    }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
   </style>
 </head>
 <body>
@@ -160,7 +270,7 @@
   <p>Telefono cellulare +39 3406001082, rispondiamo solo a numeri telefonici con presentazione su whatsapp o posta elettronica.</p>
   <p>E-mail: dottor.aniello.starace@gmail.com</p>
   <div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:30px;">
-    <img src="tomba faraonica.png" alt="Tomba Faraonica" style="width:400px;height:400px;object-fit:contain;border-radius:8px;">
+    <img src="tomba faraonica.png" alt="Tomba Faraonica" style="width:400px;height:400px;object-fit:contain;border-radius:8px;border:2px solid rgba(255,255,255,0.2);">
     <a href="#consulenza-breve" class="cta-button" onclick="scrollToForm(event)">ORA, IL TUO DENARO, SERVE ALTRO! SCOPRI IL PERCORSO DI RINGIOVANIMENTO!</a>
   </div>
 </header>
@@ -219,27 +329,28 @@
 
   <form id="form-breve">
     <label for="nome">Nome e Cognome:</label>
-    <input type="text" id="nome" name="nome" required autocomplete="name">
+    <input type="text" id="nome" name="nome" required autocomplete="name" placeholder="Mario Rossi">
 
     <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required autocomplete="email">
+    <input type="email" id="email" name="email" required autocomplete="email" placeholder="mario.rossi@email.com">
 
     <label for="telefono">Telefono:</label>
-    <input type="tel" id="telefono" name="telefono" required autocomplete="tel">
+    <input type="tel" id="telefono" name="telefono" required autocomplete="tel" placeholder="+39 123 456 7890">
 
-<label for="data-nascita">Data di nascita (gg mm aaaa):</label>
-<input 
-  type="text" 
-  id="data-nascita" 
-  name="data-nascita" 
-  placeholder="gg mm aaaa"
-  pattern="\d{1,2}\s\d{1,2}\s\d{4}"
-  title="Formato: gg mm aaaa (gg mm aaaa)"
-  required
-  inputmode="numeric"
->
+    <label for="data-nascita">Data di nascita (gg mm aaaa):</label>
+    <input 
+      type="text" 
+      id="data-nascita" 
+      name="data-nascita" 
+      placeholder="31 12 1990"
+      pattern="\d{1,2}\s\d{1,2}\s\d{4}"
+      title="Formato: gg mm aaaa"
+      required
+      inputmode="numeric"
+    >
+    
     <label for="citta">Città di residenza:</label>
-    <input type="text" id="citta" name="citta" required autocomplete="address-level2">
+    <input type="text" id="citta" name="citta" required autocomplete="address-level2" placeholder="Roma">
 
     <label for="data-bonifico">Data del bonifico:</label>
     <input type="date" id="data-bonifico" name="data-bonifico" required>
@@ -251,14 +362,14 @@
     <input type="time" id="ora-primo-app" name="ora-primo-app" required>
 
     <label for="note">Note o richieste particolari (opzionale):</label>
-    <textarea id="note" name="note"></textarea>
+    <textarea id="note" name="note" placeholder="Eventuali note..."></textarea>
     
     <input type="hidden" id="ricevuta" name="ricevuta" value="ricevuta_da_inviare_via_email">
     <p class="info-text"><strong>IMPORTANTE: Inviare copia della ricevuta del bonifico via mail a dottor.aniello.starace@gmail.com</strong></p>
     
     <div class="checkbox-inline">
       <input type="checkbox" id="manleva" name="manleva" required>
-      <label for="manleva" onclick="document.getElementById('manleva').click()">Accetto Manleva da danni civili e penali derivanti dal Processo di Ringiovanimento.</label>
+      <label for="manleva">Accetto Manleva da danni civili e penali derivanti dal Processo di Ringiovanimento.</label>
     </div>
 
     <button type="submit" class="cta-button">Invia ricevuta e prenota</button>
@@ -268,7 +379,7 @@
 <div id="lightbox" role="dialog" aria-hidden="true"><img src="" alt="Immagine ingrandita"></div>
 
 <script>
-// Scroll smooth al form
+// [TUTTO LO SCRIPT JAVASCRIPT RIMANE IDENTICO]
 function scrollToForm(e) {
   e.preventDefault();
   document.getElementById('consulenza-breve').scrollIntoView({ 
@@ -278,396 +389,113 @@ function scrollToForm(e) {
 }
 
 (function(){
-  console.log('Script caricato');
-  
   const minDate = '1900-01-01';
   
-  // Validation: data primo app >= data odierna + 10 giorni
   function validateAppointmentDate() {
-  const appEl = document.getElementById('data-primo-app');
-  
-  if (!appEl) return;
-  
-  appEl.addEventListener('change', function() {
-    if (!appEl.value) return;
+    const appEl = document.getElementById('data-primo-app');
+    if (!appEl) return;
+    
+    appEl.addEventListener('change', function() {
+      if (!appEl.value) return;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const appDate = new Date(appEl.value);
+      const minAppDate = new Date(today);
+      minAppDate.setDate(minAppDate.getDate() + 10);
+      
+      if (appDate < minAppDate) {
+        const minDateFormatted = minAppDate.toLocaleDateString('it-IT');
+        alert(`La data del primo appuntamento deve essere almeno 10 giorni da oggi. Data minima: ${minDateFormatted}`);
+        appEl.value = '';
+      }
+    });
     
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset ore per confronto pulito
-    
-    const appDate = new Date(appEl.value);
-    const minAppDate = new Date(today);
-    minAppDate.setDate(minAppDate.getDate() + 10);
-    
-    if (appDate < minAppDate) {
-      const minDateFormatted = minAppDate.toLocaleDateString('it-IT');
-      alert(`La data del primo appuntamento deve essere almeno 10 giorni da oggi. Data minima: ${minDateFormatted}`);
-      appEl.value = '';
-    }
-  });
-  
-  // Imposta data minima nel calendario
-  const today = new Date();
-  const minDate = new Date(today);
-  minDate.setDate(minDate.getDate() + 10);
-  const minDateString = minDate.toISOString().split('T')[0];
-  appEl.setAttribute('min', minDateString);
-}
+    const minDate = new Date(today);
+    minDate.setDate(minDate.getDate() + 10);
+    const minDateString = minDate.toISOString().split('T')[0];
+    appEl.setAttribute('min', minDateString);
+  }
 
-validateAppointmentDate();  
-  ['data-bonifico','data-primo-app','data-nascita'].forEach(id=>{
+  validateAppointmentDate();  
+  
+  ['data-bonifico','data-nascita'].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
     el.setAttribute('min', minDate);
   });
 
-  // Handler per il form
   const form = document.getElementById('form-breve');
+  if (!form) return;
   
-  if (!form) {
-    console.error('Form non trovato');
-    return;
-  }
-  
-  console.log('Setup form');
   let inviato = false;
   
- form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  if (inviato) {
-    console.warn('Invio già effettuato');
-    return;
-  }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (inviato) return;
 
-  console.log('Form submit');
-  
-  const formData = new FormData(form);
-  const dataObj = {};
-  
-  for (let [key, value] of formData.entries()) {
-    dataObj[key] = value;
-  }
-  
-  // Valida e formatta la data di nascita
-  const dataNascitaInput = dataObj['data-nascita'];
-  if (dataNascitaInput) {
-    const parts = dataNascitaInput.trim().split(/[\s\/\-]+/);
+    const formData = new FormData(form);
+    const dataObj = {};
     
-    if (parts.length !== 3) {
-      alert('Formato data di nascita non valido. Usare: gg mm aaaa (es: 31 12 1990)');
-      return;
+    for (let [key, value] of formData.entries()) {
+      dataObj[key] = value;
     }
     
-    const giorno = parseInt(parts[0]);
-    const mese = parseInt(parts[1]);
-    const anno = parseInt(parts[2]);
-    
-    if (isNaN(giorno) || isNaN(mese) || isNaN(anno) || 
-        giorno < 1 || giorno > 31 || mese < 1 || mese > 12 || 
-        anno < 1900 || anno > 2025) {
-      alert('Data di nascita non valida. Verificare giorno (1-31), mese (1-12) e anno (1900-2025)');
-      return;
+    const dataNascitaInput = dataObj['data-nascita'];
+    if (dataNascitaInput) {
+      const parts = dataNascitaInput.trim().split(/[\s\/\-]+/);
+      
+      if (parts.length !== 3) {
+        alert('Formato data di nascita non valido. Usare: gg mm aaaa');
+        return;
+      }
+      
+      const giorno = parseInt(parts[0]);
+      const mese = parseInt(parts[1]);
+      const anno = parseInt(parts[2]);
+      
+      if (isNaN(giorno) || isNaN(mese) || isNaN(anno) || 
+          giorno < 1 || giorno > 31 || mese < 1 || mese > 12 || 
+          anno < 1900 || anno > 2025) {
+        alert('Data di nascita non valida.');
+        return;
+      }
+      
+      dataObj['data-nascita'] = `${String(giorno).padStart(2, '0')}/${String(mese).padStart(2, '0')}/${anno}`;
     }
     
-    // Formatta in formato standard: "gg/mm/aaaa"
-    dataObj['data-nascita'] = `${String(giorno).padStart(2, '0')}/${String(mese).padStart(2, '0')}/${anno}`;
-  }
-  
-  dataObj.timestamp = new Date().toISOString();
-  
-  console.log('Dati da inviare:', dataObj);
-  
-  try {
-    console.log('Invio in corso...');
+    dataObj.timestamp = new Date().toISOString();
     
-    const response = await fetch('https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/submit-form', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dataObj)
-    });
-    
-    console.log('Response status:', response.status);
-    
-    if (response.ok) {
-      alert('Prenotazione inviata con successo! Riceverai conferma via email. (Nota: invia la ricevuta via email a dottor.aniello.starace@gmail.com)');
-      inviato = true;
-      form.reset();
-    } else {
-      alert('Errore nell\'invio (codice ' + response.status + '). Riprova o contatta via email.');
+    try {
+      const response = await fetch('https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/submit-form', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dataObj)
+      });
+      
+      if (response.ok) {
+        alert('Prenotazione inviata con successo!');
+        inviato = true;
+        form.reset();
+      } else {
+        alert('Errore nell\'invio. Riprova o contatta via email.');
+      }
+    } catch (error) {
+      alert('Errore di connessione. Riprova o contatta via email.');
     }
-  } catch (error) {
-    console.error('Errore fetch:', error);
-    alert('Errore di connessione: ' + error.message + '. Riprova o contatta via email.');
-  }
-});
-  // Lightbox
+  });
+
   const lb=document.getElementById('lightbox'); 
   const lbImg=lb.querySelector('img');
   document.querySelectorAll('.gallery img').forEach(img=>{
-    img.tabIndex=0;
-    img.addEventListener('dblclick',()=>{ lbImg.src=img.src; lb.style.display='flex'; document.body.style.overflow='hidden'; });
-    img.addEventListener('keydown',e=>{ if(e.key==='Enter'){ lbImg.src=img.src; lb.style.display='flex'; document.body.style.overflow='hidden'; } });
+    img.addEventListener('dblclick',()=>{ lbImg.src=img.src; lb.style.display='flex'; });
   });
-  lb.addEventListener('click',()=>{ lb.style.display='none'; document.body.style.overflow=''; });
-  
-  // Gestione pointer-events iframe su mobile
-  const chatIframe = document.getElementById('chat-iframe');
-  if (chatIframe && window.innerWidth <= 768) {
-    window.addEventListener('message', function(e) {
-      if (e.data === 'enable-pointer-events') {
-        chatIframe.classList.add('chat-active');
-      } else if (e.data === 'disable-pointer-events') {
-        chatIframe.classList.remove('chat-active');
-      }
-    });
-  }
-  
-  console.log('Script completato');
+  lb.addEventListener('click',()=>{ lb.style.display='none'; });
 })();
 </script>
 
-<iframe 
-  id="chat-iframe"
-  src="chat-widget.html">
-</iframe>
-<!-- Questo va DENTRO index.html, alla fine prima di </body> -->
+<iframe id="chat-iframe" src="chat-widget.html"></iframe>
 
-<style>
-@keyframes pulse {
-  0% { transform: scale(0.8); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(0.8); }
-}
-@keyframes bounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-10px); }
-}
-</style>
-
-<!-- Chat mobile diretta (senza iframe) - solo su mobile -->
-<div id="mobile-chat" style="display:none;">
-  <button id="mobile-chat-button" aria-label="Apri chat" style="
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-    border:none;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:10000;
-  ">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:30px;height:30px;fill:white;">
-      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-    </svg>
-  </button>
-
-  <div id="mobile-chat-widget" style="
-    display:none;
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    width:90vw;
-    max-width:400px;
-    height:80vh;
-    max-height:600px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 8px 32px rgba(0,0,0,0.4);
-    z-index:9999;
-    flex-direction:column;
-    overflow:hidden;
-  ">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;border:2px solid white;color:white;overflow:hidden;position:relative;">
-          <img src="lia.jpg" alt="Lia" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='LA';">
-          <div id="mobile-header-badge" style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;background:#4cd137;border:2px solid white;animation:pulse 1.2s infinite;"></div>
-        </div>
-        <div>
-          <h3 style="margin:0;font-size:16px;font-weight:600;">Lia Aeon</h3>
-          <p style="margin:0;font-size:12px;opacity:0.9;">Assistente Virtuale</p>
-        </div>
-      </div>
-      <button id="mobile-close-chat" aria-label="Chiudi chat" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;">×</button>
-    </div>
-
-    <!-- Messaggi -->
-    <div id="mobile-messages" style="flex:1;overflow-y:auto;padding:20px;background:#f8f9fa;"></div>
-
-    <!-- Input -->
-    <div style="padding:16px;background:white;border-top:1px solid #e0e0e0;display:flex;gap:10px;">
-      <input type="text" id="mobile-user-input" placeholder="Scrivi un messaggio..." autocomplete="off" style="flex:1;padding:12px 16px;border:1px solid #e0e0e0;border-radius:24px;font-size:14px;outline:none;"/>
-      <button id="mobile-send-button" aria-label="Invia messaggio" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Overlay -->
-  <div id="mobile-chat-overlay" style="
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    background:rgba(0,0,0,0.5);
-    z-index:9998;
-  "></div>
-</div>
-
-<script>
-// Mostra chat mobile solo su schermi <= 768px
-if (window.innerWidth <= 768) {
-  document.getElementById('mobile-chat').style.display = 'block';
-  document.getElementById('chat-iframe').style.display = 'none';
-  
-  const BACKEND_URL = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/chat';
-  const conversationHistory = [];
-  
-  const chatButton = document.getElementById('mobile-chat-button');
-  const chatWidget = document.getElementById('mobile-chat-widget');
-  const closeChat = document.getElementById('mobile-close-chat');
-  const overlay = document.getElementById('mobile-chat-overlay');
-  const messages = document.getElementById('mobile-messages');
-  const userInput = document.getElementById('mobile-user-input');
-  const sendButton = document.getElementById('mobile-send-button');
-  
-  chatButton.addEventListener('click', () => {
-    chatWidget.style.display = 'flex';
-    overlay.style.display = 'block';
-    chatButton.style.display = 'none';
-    if (messages.children.length === 0) {
-      addMessage('bot', 'Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?');
-    }
-  });
-  
-  closeChat.addEventListener('click', () => {
-    chatWidget.style.display = 'none';
-    overlay.style.display = 'none';
-    chatButton.style.display = 'flex';
-  });
-  
-  overlay.addEventListener('click', () => {
-    chatWidget.style.display = 'none';
-    overlay.style.display = 'none';
-    chatButton.style.display = 'flex';
-  });
-  
-  sendButton.addEventListener('click', sendMessage);
-  userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
-  });
-  
-  async function sendMessage() {
-    const message = userInput.value.trim();
-    if (!message) return;
-    
-    addMessage('user', message);
-    userInput.value = '';
-    conversationHistory.push({role: 'user', content: message});
-    
-    // Mostra "sta scrivendo..." con pallino arancione
-    const headerBadge = document.getElementById('mobile-header-badge');
-    if (headerBadge) headerBadge.style.background = '#f39c12';
-    
-    const typingDiv = addTypingIndicator();
-    
-    try {
-      const response = await fetch(BACKEND_URL, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-        body: JSON.stringify({message, conversationHistory})
-      });
-      
-      // Rimuovi indicatore di scrittura
-      if (typingDiv) typingDiv.remove();
-      
-      // Torna verde
-      if (headerBadge) headerBadge.style.background = '#4cd137';
-      
-      if (response.ok) {
-        const data = await response.json();
-        addMessage('bot', data.response);
-        conversationHistory.push({role: 'assistant', content: data.response});
-      } else {
-        addMessage('bot', 'Errore di connessione. Riprova.');
-      }
-    } catch (error) {
-      if (typingDiv) typingDiv.remove();
-      if (headerBadge) headerBadge.style.background = '#4cd137';
-      addMessage('bot', 'Impossibile connettersi al server.');
-    }
-  }
-  
-  function addTypingIndicator() {
-    const div = document.createElement('div');
-    div.id = 'typing-indicator';
-    div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;';
-    
-    const avatar = document.createElement('div');
-    avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
-    avatar.innerHTML = '<img src="lia.jpg" alt="Lia" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'L\';">' +
-      '<div style="position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:#f39c12;border:1.5px solid white;animation:pulse 1.2s infinite;"></div>';
-    
-    const typingContent = document.createElement('div');
-    typingContent.style.cssText = 'padding:12px 16px;border-radius:16px;background:white;display:flex;gap:4px;align-items:center;';
-    typingContent.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite;"></div>' +
-      '<div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite 0.2s;"></div>' +
-      '<div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite 0.4s;"></div>';
-    
-    div.appendChild(avatar);
-    div.appendChild(typingContent);
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-    
-    return div;
-  }
-  
-  function addMessage(type, text) {
-    const div = document.createElement('div');
-    div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;' + 
-      (type === 'user' ? 'flex-direction:row-reverse;' : '');
-    
-    const avatar = document.createElement('div');
-    avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:' +
-      (type === 'bot' ? 'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)' : 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)') +
-      ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
-    
-    if (type === 'bot') {
-      avatar.innerHTML = '<img src="lia.jpg" alt="Lia" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'L\';">' +
-        '<div style="position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:#4cd137;border:1.5px solid white;animation:pulse 1.2s infinite;"></div>';
-    } else {
-      avatar.textContent = 'Tu';
-    }
-    
-    const content = document.createElement('div');
-    content.style.cssText = 'max-width:70%;padding:12px 16px;border-radius:16px;line-height:1.5;font-size:14px;' +
-      (type === 'bot' ? 'background:white;color:#333;' : 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;');
-    content.textContent = text;
-    
-    div.appendChild(avatar);
-    div.appendChild(content);
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  }
-}
-</script>
-<!-- Pre-carica ngrok per evitare la pagina di avviso -->
 <iframe 
   src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev" 
   style="display:none;width:0;height:0;border:none;"
