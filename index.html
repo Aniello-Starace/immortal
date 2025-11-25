@@ -339,17 +339,47 @@
     overlay.style.display = 'none';
   }
 
-  function checkPassword() {
-    if (passwordInput.value === correctPassword) {
+  async function checkPassword() {
+  const password = passwordInput.value.trim();
+  
+  if (!password) {
+    errorMessage.textContent = 'Inserisci una password';
+    errorMessage.style.display = 'block';
+    return;
+  }
+  
+  submitButton.disabled = true;
+  submitButton.textContent = 'Verifica...';
+  
+  try {
+    const response = await fetch('https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/verify-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
       sessionStorage.setItem('siteAccess', 'granted');
       overlay.style.display = 'none';
       errorMessage.style.display = 'none';
     } else {
+      errorMessage.textContent = 'Password errata. Riprova.';
       errorMessage.style.display = 'block';
       passwordInput.value = '';
       passwordInput.focus();
     }
+  } catch (error) {
+    errorMessage.textContent = 'Errore di connessione. Riprova.';
+    errorMessage.style.display = 'block';
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Accedi';
   }
+}
 
   submitButton.addEventListener('click', checkPassword);
   passwordInput.addEventListener('keypress', (e) => {
