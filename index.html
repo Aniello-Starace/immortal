@@ -528,7 +528,18 @@ function scrollToForm(e) {
 
 (function(){
   const minDate = '1900-01-01';
-  
+  // Gestione visualizzazione form
+const showFormButton = document.getElementById('show-form-button');
+const formContainer = document.getElementById('form-container');
+
+if (showFormButton && formContainer) {
+  showFormButton.addEventListener('click', () => {
+    formContainer.style.display = 'block';
+    showFormButton.style.display = 'none';
+    // Scroll al form
+    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
   function validateAppointmentDate() {
     const appEl = document.getElementById('data-primo-app');
     if (!appEl) return;
