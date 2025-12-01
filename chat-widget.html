@@ -12,7 +12,6 @@ body {
   background:transparent;
 }
 
-/* Pulsante di apertura - SEMPRE cliccabile */
 #chat-button { 
   position: fixed; 
   bottom: 20px; 
@@ -34,7 +33,6 @@ body {
 #chat-button:hover { transform:scale(1.1); }
 #chat-button svg { width:30px; height:30px; fill:white; pointer-events:none; }
 
-/* Contenitore chat - desktop */
 #chat-widget { 
   position: fixed; 
   bottom: 90px;
@@ -51,7 +49,6 @@ body {
   animation:slideUp 0.3s ease-out;
 }
 
-/* Mobile: chat centrata, 85% dello schermo */
 @media (max-width:768px) {
   #chat-widget {
     top: 50%;
@@ -69,10 +66,22 @@ body {
     bottom: 20px;
     right: 20px;
   }
+  
+  #chat-widget::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
 }
+
 @keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
 #chat-widget.active { display:flex; }
-/* Header */
+
 #chat-header { background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; padding:20px; display:flex; align-items:center; justify-content:space-between; }
 .header-info { display:flex; align-items:center; gap:12px; position:relative; }
 .avatar { width:45px; height:45px; border-radius:50%; background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; border:2px solid white; overflow:hidden; color:white; position:relative; }
@@ -84,7 +93,7 @@ body {
 .header-text p { margin:0; font-size:12px; opacity:0.9; }
 #close-chat { background:none; border:none; color:white; font-size:24px; cursor:pointer; padding:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:background 0.2s; }
 #close-chat:hover { background:rgba(255,255,255,0.2); }
-/* Messaggi */
+
 #messages { flex:1; overflow-y:auto; padding:20px; background:#f8f9fa; }
 .message { margin-bottom:16px; display:flex; gap:10px; animation:fadeIn 0.3s ease-out; }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
@@ -98,219 +107,503 @@ body {
 .message-content { max-width:70%; padding:12px 16px; border-radius:16px; line-height:1.5; font-size:14px; }
 .message.bot .message-content { background:white; color:#333; border-bottom-left-radius:4px; }
 .message.user .message-content { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border-bottom-right-radius:4px; }
-/* Input */
+
 #input-area { padding:16px; background:white; border-top:1px solid #e0e0e0; display:flex; gap:10px; }
 #user-input { flex:1; padding:12px 16px; border:1px solid #e0e0e0; border-radius:24px; font-size:14px; outline:none; transition:border-color 0.2s; }
 #user-input:focus { border-color:#667eea; }
-#send-button { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border:none; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 0.2s; }
+
+/* BOTTONI VOCALE E INVIO */
+.input-buttons { display:flex; gap:8px; }
+#voice-button { 
+  width:44px; 
+  height:44px; 
+  border-radius:50%; 
+  background:#fff;
+  border:2px solid #e0e0e0; 
+  color:#667eea; 
+  cursor:pointer; 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  transition: all 0.3s;
+}
+#voice-button:hover { 
+  border-color:#667eea;
+  transform:scale(1.05); 
+}
+#voice-button.recording { 
+  background:#ff4444;
+  border-color:#ff4444;
+  color:white;
+  animation:recordPulse 1s infinite;
+}
+@keyframes recordPulse {
+  0%, 100% { transform:scale(1); }
+  50% { transform:scale(1.1); }
+}
+#voice-button.loading {
+  background:#f39c12;
+  border-color:#f39c12;
+  color:white;
+  pointer-events:none;
+}
+
+#send-button { 
+  width:44px; 
+  height:44px; 
+  border-radius:50%; 
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
+  border:none; 
+  color:white; 
+  cursor:pointer; 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  transition: transform 0.2s; 
+}
 #send-button:hover { transform:scale(1.05); }
 #send-button:disabled { opacity:0.5; cursor:not-allowed; }
-/* Indicatori */
+
 .typing-indicator { display:none; align-items:center; gap:10px; padding:12px 16px; background:white; border-radius:16px; width:fit-content; border-bottom-left-radius:4px; }
 .typing-indicator.active { display:flex; }
 .typing-dot { width:8px; height:8px; border-radius:50%; background:#999; animation:bounce 1.4s infinite; }
 .typing-dot:nth-child(2) { animation-delay:0.2s; }
 .typing-dot:nth-child(3) { animation-delay:0.4s; }
 @keyframes bounce { 0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-10px);} }
-/* Errori */
+
 .error-message { background:#fee; color:#c33; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; }
-/* Responsive */
-@media (max-width:768px) { 
-  body {
-    width: 100vw;
-    height: 100vh;
-  }
-  
-  /* Overlay scuro dietro la chat su mobile */
-  #chat-widget::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: -1;
-  }
+.info-message { background:#e3f2fd; color:#1976d2; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; text-align:center; }
+
+/* OVERLAY CARICAMENTO MODELLO */
+#model-loading-overlay {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(255,255,255,0.95);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  flex-direction:column;
+  gap:20px;
+}
+#model-loading-overlay.active { display:flex; }
+.loading-spinner {
+  width:50px;
+  height:50px;
+  border:4px solid #e0e0e0;
+  border-top:4px solid #667eea;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform:rotate(360deg); }
+}
+.loading-text {
+  font-size:14px;
+  color:#666;
+  text-align:center;
+  max-width:250px;
 }
 </style>
 </head>
 <body>
-<!-- Bottone -->
+
 <button id="chat-button" aria-label="Apri chat">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
 </button>
 
-<!-- Chat -->
 <div id="chat-widget">
-<div id="chat-header">
-<div class="header-info">
-<div class="avatar">
-<img src="lia.jpg" alt="Lia Aeon" onerror="this.style.display='none'; this.parentElement.textContent='LA'">
-<div class="online-badge" id="header-badge"></div>
-</div>
-<div class="header-text">
-<h3>Lia Aeon</h3>
-<p>Assistente Virtuale</p>
-</div>
-</div>
-<button id="close-chat" aria-label="Chiudi chat">×</button>
+  <!-- Overlay caricamento modello -->
+  <div id="model-loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Caricamento modello vocale...<br>Attendere circa 30 secondi</div>
+  </div>
+
+  <div id="chat-header">
+    <div class="header-info">
+      <div class="avatar">
+        <img src="lia.jpg" alt="Lia Aeon" onerror="this.style.display='none'; this.parentElement.textContent='LA'">
+        <div class="online-badge" id="header-badge"></div>
+      </div>
+      <div class="header-text">
+        <h3>Lia Aeon</h3>
+        <p>Assistente Virtuale</p>
+      </div>
+    </div>
+    <button id="close-chat" aria-label="Chiudi chat">×</button>
+  </div>
+
+  <div id="messages"></div>
+
+  <div id="input-area">
+    <input type="text" id="user-input" placeholder="Scrivi o parla..." autocomplete="off" />
+    <div class="input-buttons">
+      <button id="voice-button" aria-label="Registra messaggio vocale" title="Registra messaggio vocale">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+      </button>
+      <button id="send-button" aria-label="Invia messaggio">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
 </div>
 
-<div id="messages"></div>
+<script type="module">
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
 
-<div id="input-area">
-<input type="text" id="user-input" placeholder="Scrivi un messaggio..." autocomplete="off" />
-<button id="send-button" aria-label="Invia messaggio">
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-</button>
-</div>
-</div>
+// Configura cache locale
+env.allowLocalModels = false;
+env.allowRemoteModels = true;
 
-<script>
-const BACKEND_URL='https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/chat';
-const conversationHistory=[];
-let typingIndicatorVisible=false;
-let lastSentTime=0;
+const BACKEND_URL = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/chat';
+const conversationHistory = [];
+let typingIndicatorVisible = false;
+let lastSentTime = 0;
 
-// Notifica la pagina padre quando la chat si apre/chiude
+// Variabili vocali
+let transcriber = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+let isModelLoading = false;
+
+const chatButton = document.getElementById('chat-button');
+const chatWidget = document.getElementById('chat-widget');
+const closeChat = document.getElementById('close-chat');
+const sendButton = document.getElementById('send-button');
+const voiceButton = document.getElementById('voice-button');
+const userInput = document.getElementById('user-input');
+const messagesContainer = document.getElementById('messages');
+const headerBadge = document.getElementById('header-badge');
+const modelLoadingOverlay = document.getElementById('model-loading-overlay');
+
 function notifyParent(action) {
   if (window.parent !== window) {
     window.parent.postMessage(action, '*');
   }
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-const chatButton=document.getElementById('chat-button');
-const chatWidget=document.getElementById('chat-widget');
-const closeChat=document.getElementById('close-chat');
-const sendButton=document.getElementById('send-button');
-const userInput=document.getElementById('user-input');
-const messagesContainer=document.getElementById('messages');
-const headerBadge=document.getElementById('header-badge');
-
-chatButton.addEventListener('click',()=>{
-chatWidget.classList.add('active');
-chatButton.style.display='none';
-notifyParent('chat-opened');
-// Attiva pointer-events sull'iframe parent
-if (window.parent !== window) {
-  window.parent.postMessage('enable-pointer-events', '*');
-}
-if(messagesContainer.children.length===0) sendWelcomeMessage();
+chatButton.addEventListener('click', () => {
+  chatWidget.classList.add('active');
+  chatButton.style.display = 'none';
+  notifyParent('chat-opened');
+  if (window.parent !== window) {
+    window.parent.postMessage('enable-pointer-events', '*');
+  }
+  if (messagesContainer.children.length === 0) sendWelcomeMessage();
 });
 
-closeChat.addEventListener('click',()=>{
-chatWidget.classList.remove('active');
-chatButton.style.display='flex';
-notifyParent('chat-closed');
-// Disattiva pointer-events sull'iframe parent
-if (window.parent !== window) {
-  window.parent.postMessage('disable-pointer-events', '*');
-}
+closeChat.addEventListener('click', () => {
+  chatWidget.classList.remove('active');
+  chatButton.style.display = 'flex';
+  notifyParent('chat-closed');
+  if (window.parent !== window) {
+    window.parent.postMessage('disable-pointer-events', '*');
+  }
 });
 
-sendButton.addEventListener('click',handleSendMessage);
-userInput.addEventListener('keypress',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendMessage();}});
-
-function sendWelcomeMessage(){setTimeout(()=>{addBotMessage("Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?");},300);}
-
-async function handleSendMessage(){
-const now=Date.now();
-if(now-lastSentTime<800) return;
-lastSentTime=now;
-
-const message=userInput.value.trim();
-if(!message) return;
-userInput.disabled=true;
-sendButton.disabled=true;
-addUserMessage(message);
-userInput.value='';
-conversationHistory.push({role:'user',content:message});
-showTypingIndicator();
-
-try{
-const controller=new AbortController();
-const timeout=setTimeout(()=>controller.abort(),30000);
-
-const response=await fetch(BACKEND_URL,{
-method:'POST',
-headers:{
-'Content-Type':'application/json'
-},
-body:JSON.stringify({message,conversationHistory}),
-signal:controller.signal
+sendButton.addEventListener('click', handleSendMessage);
+userInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleSendMessage();
+  }
 });
-clearTimeout(timeout);
 
-hideTypingIndicator();
-if(response.ok){
-const data=await response.json();
-if(data.response){
-addBotMessage(data.response);
-conversationHistory.push({role:'assistant',content:data.response});
-}else{
-addBotMessage("Mi dispiace, si è verificato un errore. Riprovi per favore.");
-}
-}else{
-throw new Error(`HTTP error! status: ${response.status}`);
-}
-}catch(error){
-hideTypingIndicator();
-addErrorMessage("Impossibile connettersi al server. Verifichi la connessione e riprovi.");
-}finally{
-userInput.disabled=false;
-sendButton.disabled=false;
-userInput.focus();
-}
+// GESTIONE VOCALE
+voiceButton.addEventListener('click', handleVoiceClick);
+
+async function handleVoiceClick() {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
 }
 
-function addUserMessage(text){
-const div=document.createElement('div');
-div.className='message user';
-div.innerHTML=`<div class="message-avatar">Tu</div><div class="message-content">${escapeHtml(text)}</div>`;
-messagesContainer.appendChild(div);
-scrollToBottom();
+async function startRecording() {
+  try {
+    // Carica modello se necessario
+    if (!transcriber && !isModelLoading) {
+      await loadModel();
+    }
+    
+    if (!transcriber) {
+      addInfoMessage('Modello vocale non ancora pronto. Riprova tra qualche secondo.');
+      return;
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+    
+    mediaRecorder.ondataavailable = (event) => {
+      audioChunks.push(event.data);
+    };
+    
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+      await processAudio(audioBlob);
+      
+      // Ferma lo stream
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    mediaRecorder.start();
+    isRecording = true;
+    voiceButton.classList.add('recording');
+    voiceButton.title = 'Clicca per fermare';
+    
+  } catch (error) {
+    console.error('Errore microfono:', error);
+    addErrorMessage('Impossibile accedere al microfono. Verifica i permessi del browser.');
+  }
 }
 
-function addBotMessage(text){
-const div=document.createElement('div');
-div.className='message bot';
-div.innerHTML=`<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge"></div></div><div class="message-content">${escapeHtml(text)}</div>`;
-messagesContainer.appendChild(div);
-scrollToBottom();
+function stopRecording() {
+  if (mediaRecorder && isRecording) {
+    mediaRecorder.stop();
+    isRecording = false;
+    voiceButton.classList.remove('recording');
+    voiceButton.classList.add('loading');
+    voiceButton.title = 'Elaborazione in corso...';
+  }
 }
 
-function addErrorMessage(text){
-const div=document.createElement('div');
-div.className='error-message';
-div.textContent=text;
-messagesContainer.appendChild(div);
-scrollToBottom();
+async function loadModel() {
+  if (isModelLoading) return;
+  
+  isModelLoading = true;
+  modelLoadingOverlay.classList.add('active');
+  
+  try {
+    console.log('Caricamento modello Wav2vec 2.0 italiano...');
+    
+    transcriber = await pipeline(
+      'automatic-speech-recognition',
+      'Xenova/wav2vec2-large-xlsr-53-italian',
+      {
+        quantized: true, // Usa versione quantizzata per performance migliori
+      }
+    );
+    
+    console.log('Modello caricato con successo!');
+    modelLoadingOverlay.classList.remove('active');
+    addInfoMessage('✓ Riconoscimento vocale attivo! Puoi parlare.');
+    
+  } catch (error) {
+    console.error('Errore caricamento modello:', error);
+    modelLoadingOverlay.classList.remove('active');
+    addErrorMessage('Errore nel caricamento del modello vocale. Riprova più tardi.');
+    transcriber = null;
+  } finally {
+    isModelLoading = false;
+  }
 }
 
-function showTypingIndicator(){
-if(typingIndicatorVisible) return;
-typingIndicatorVisible=true;
-headerBadge.classList.add('typing');
-const div=document.createElement('div');
-div.className='message bot';
-div.id='typing-indicator-msg';
-div.innerHTML=`<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge typing"></div></div><div class="typing-indicator active"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-messagesContainer.appendChild(div);
-scrollToBottom();
+async function processAudio(audioBlob) {
+  try {
+    // Converti blob in ArrayBuffer
+    const arrayBuffer = await audioBlob.arrayBuffer();
+    
+    // Decodifica audio
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    
+    // Estrai dati audio (mono, 16kHz come richiesto dal modello)
+    let audioData = audioBuffer.getChannelData(0);
+    
+    // Resample a 16kHz se necessario
+    if (audioBuffer.sampleRate !== 16000) {
+      audioData = resampleAudio(audioData, audioBuffer.sampleRate, 16000);
+    }
+    
+    // Trascrivi con Wav2vec
+    console.log('Trascrizione in corso...');
+    const result = await transcriber(audioData, {
+      language: 'italian',
+      task: 'transcribe',
+    });
+    
+    const transcription = result.text.trim();
+    
+    voiceButton.classList.remove('loading');
+    voiceButton.title = 'Registra messaggio vocale';
+    
+    if (transcription) {
+      userInput.value = transcription;
+      userInput.focus();
+      // Invia automaticamente
+      setTimeout(() => handleSendMessage(), 300);
+    } else {
+      addInfoMessage('Non ho capito. Riprova parlando più chiaramente.');
+    }
+    
+  } catch (error) {
+    console.error('Errore elaborazione audio:', error);
+    voiceButton.classList.remove('loading');
+    voiceButton.title = 'Registra messaggio vocale';
+    addErrorMessage('Errore nella trascrizione. Riprova.');
+  }
 }
 
-function hideTypingIndicator(){
-const indicator=document.getElementById('typing-indicator-msg');
-if(indicator) indicator.remove();
-headerBadge.classList.remove('typing');
-typingIndicatorVisible=false;
+function resampleAudio(audioData, originalRate, targetRate) {
+  const ratio = originalRate / targetRate;
+  const newLength = Math.round(audioData.length / ratio);
+  const result = new Float32Array(newLength);
+  
+  for (let i = 0; i < newLength; i++) {
+    const srcIndex = i * ratio;
+    const srcIndexFloor = Math.floor(srcIndex);
+    const srcIndexCeil = Math.min(srcIndexFloor + 1, audioData.length - 1);
+    const weight = srcIndex - srcIndexFloor;
+    
+    result[i] = audioData[srcIndexFloor] * (1 - weight) + audioData[srcIndexCeil] * weight;
+  }
+  
+  return result;
 }
 
-function scrollToBottom(){requestAnimationFrame(()=>{messagesContainer.scrollTop=messagesContainer.scrollHeight;});}
-function escapeHtml(text){const div=document.createElement('div');div.textContent=text;return div.innerHTML;}
-});
+function sendWelcomeMessage() {
+  setTimeout(() => {
+    addBotMessage("Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?");
+  }, 300);
+}
+
+async function handleSendMessage() {
+  const now = Date.now();
+  if (now - lastSentTime < 800) return;
+  lastSentTime = now;
+
+  const message = userInput.value.trim();
+  if (!message) return;
+  
+  userInput.disabled = true;
+  sendButton.disabled = true;
+  voiceButton.disabled = true;
+  
+  addUserMessage(message);
+  userInput.value = '';
+  conversationHistory.push({ role: 'user', content: message });
+  showTypingIndicator();
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+
+    const response = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, conversationHistory }),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeout);
+    hideTypingIndicator();
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.response) {
+        addBotMessage(data.response);
+        conversationHistory.push({ role: 'assistant', content: data.response });
+      } else {
+        addBotMessage("Mi dispiace, si è verificato un errore. Riprovi per favore.");
+      }
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    hideTypingIndicator();
+    addErrorMessage("Impossibile connettersi al server. Verifichi la connessione e riprovi.");
+  } finally {
+    userInput.disabled = false;
+    sendButton.disabled = false;
+    voiceButton.disabled = false;
+    userInput.focus();
+  }
+}
+
+function addUserMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'message user';
+  div.innerHTML = `<div class="message-avatar">Tu</div><div class="message-content">${escapeHtml(text)}</div>`;
+  messagesContainer.appendChild(div);
+  scrollToBottom();
+}
+
+function addBotMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'message bot';
+  div.innerHTML = `<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge"></div></div><div class="message-content">${escapeHtml(text)}</div>`;
+  messagesContainer.appendChild(div);
+  scrollToBottom();
+}
+
+function addErrorMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'error-message';
+  div.textContent = text;
+  messagesContainer.appendChild(div);
+  scrollToBottom();
+}
+
+function addInfoMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'info-message';
+  div.textContent = text;
+  messagesContainer.appendChild(div);
+  scrollToBottom();
+}
+
+function showTypingIndicator() {
+  if (typingIndicatorVisible) return;
+  typingIndicatorVisible = true;
+  headerBadge.classList.add('typing');
+  const div = document.createElement('div');
+  div.className = 'message bot';
+  div.id = 'typing-indicator-msg';
+  div.innerHTML = `<div class="message-avatar"><img src="lia.jpg" alt="Lia" onerror="this.style.display='none'; this.parentElement.textContent='LA'"><div class="online-badge typing"></div></div><div class="typing-indicator active"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  messagesContainer.appendChild(div);
+  scrollToBottom();
+}
+
+function hideTypingIndicator() {
+  const indicator = document.getElementById('typing-indicator-msg');
+  if (indicator) indicator.remove();
+  headerBadge.classList.remove('typing');
+  typingIndicatorVisible = false;
+}
+
+function scrollToBottom() {
+  requestAnimationFrame(() => {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Precarica il modello quando la chat viene aperta per la prima volta
+let modelPreloaded = false;
+chatButton.addEventListener('click', () => {
+  if (!modelPreloaded && !transcriber) {
+    modelPreloaded = true;
+    setTimeout(() => loadModel(), 1000);
+  }
+}, { once: true });
 </script>
+
 </body>
 </html>
