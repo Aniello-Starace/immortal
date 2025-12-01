@@ -174,7 +174,75 @@ body {
 .error-message { background:#fee; color:#c33; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; }
 .info-message { background:#e3f2fd; color:#1976d2; padding:10px; border-radius:8px; margin:10px 0; font-size:12px; text-align:center; }
 
-/* OVERLAY CARICAMENTO MODELLO */
+/* Selettore lingua */
+#language-selector {
+  position:absolute;
+  top:12px;
+  right:60px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(255,255,255,0.2);
+  padding:6px 12px;
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+}
+#language-selector label {
+  font-size:16px;
+  cursor:pointer;
+}
+#lang-select {
+  background:rgba(255,255,255,0.3);
+  border:none;
+  color:white;
+  padding:4px 8px;
+  border-radius:12px;
+  font-size:12px;
+  cursor:pointer;
+  outline:none;
+  font-weight:500;
+}
+#lang-select option {
+  background:#667eea;
+  color:white;
+}
+
+/* Forma d'onda */
+#waveform-container {
+  display:none;
+  position:absolute;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  width:90%;
+  max-width:320px;
+  height:60px;
+  background:rgba(255,255,255,0.95);
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  z-index:1000;
+}
+#waveform-container.active { display:block; }
+#waveform-canvas {
+  width:100%;
+  height:100%;
+  border-radius:6px;
+}
+.waveform-label {
+  position:absolute;
+  top:-25px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#ff4444;
+  color:white;
+  padding:4px 12px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:600;
+  white-space:nowrap;
+  animation:recordPulse 1s infinite;
+}
 #model-loading-overlay {
   position:absolute;
   top:0;
@@ -222,6 +290,18 @@ body {
     <div class="loading-text">Caricamento modello vocale...<br>Attendere circa 30 secondi</div>
   </div>
 
+  <!-- Selettore lingua -->
+  <div id="language-selector">
+    <label for="lang-select">🌐</label>
+    <select id="lang-select" title="Seleziona lingua">
+      <option value="italian">🇮🇹 Italiano</option>
+      <option value="english">🇬🇧 English</option>
+      <option value="spanish">🇪🇸 Español</option>
+      <option value="french">🇫🇷 Français</option>
+      <option value="german">🇩🇪 Deutsch</option>
+    </select>
+  </div>
+
   <div id="chat-header">
     <div class="header-info">
       <div class="avatar">
@@ -237,6 +317,12 @@ body {
   </div>
 
   <div id="messages"></div>
+
+  <!-- Contenitore forma d'onda -->
+  <div id="waveform-container">
+    <div class="waveform-label">● REGISTRAZIONE IN CORSO</div>
+    <canvas id="waveform-canvas"></canvas>
+  </div>
 
   <div id="input-area">
     <input type="text" id="user-input" placeholder="Scrivi o parla..." autocomplete="off" />
@@ -274,6 +360,52 @@ let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
 let isModelLoading = false;
+let currentLanguage = 'italian';
+let audioContext = null;
+let analyser = null;
+let animationId = null;
+
+// Suoni feedback
+const audioFeedback = {
+  start: null,
+  stop: null
+};
+
+// Crea suoni di feedback
+function createAudioFeedback() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  // Suono di inizio (beep corto)
+  const startBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+  const startData = startBuffer.getChannelData(0);
+  for (let i = 0; i < startData.length; i++) {
+    startData[i] = Math.sin(2 * Math.PI * 800 * i / ctx.sampleRate) * 0.3;
+  }
+  audioFeedback.start = startBuffer;
+  
+  // Suono di fine (beep doppio)
+  const stopBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+  const stopData = stopBuffer.getChannelData(0);
+  for (let i = 0; i < stopData.length; i++) {
+    const freq = i < stopData.length / 2 ? 600 : 800;
+    stopData[i] = Math.sin(2 * Math.PI * freq * i / ctx.sampleRate) * 0.3;
+  }
+  audioFeedback.stop = stopBuffer;
+  
+  return ctx;
+}
+
+function playFeedback(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = ctx.createBufferSource();
+    source.buffer = audioFeedback[type];
+    source.connect(ctx.destination);
+    source.start(0);
+  } catch (e) {
+    console.log('Audio feedback non disponibile');
+  }
+}
 
 const chatButton = document.getElementById('chat-button');
 const chatWidget = document.getElementById('chat-widget');
@@ -284,6 +416,31 @@ const userInput = document.getElementById('user-input');
 const messagesContainer = document.getElementById('messages');
 const headerBadge = document.getElementById('header-badge');
 const modelLoadingOverlay = document.getElementById('model-loading-overlay');
+const langSelect = document.getElementById('lang-select');
+const waveformContainer = document.getElementById('waveform-container');
+const waveformCanvas = document.getElementById('waveform-canvas');
+
+// Inizializza suoni
+createAudioFeedback();
+
+// Mappa lingue -> modelli
+const languageModels = {
+  italian: 'Xenova/wav2vec2-large-xlsr-53-italian',
+  english: 'Xenova/whisper-tiny.en',
+  spanish: 'Xenova/wav2vec2-large-xlsr-53-spanish',
+  french: 'Xenova/wav2vec2-large-xlsr-53-french',
+  german: 'Xenova/wav2vec2-large-xlsr-53-german'
+};
+
+// Cambio lingua
+langSelect.addEventListener('change', async (e) => {
+  currentLanguage = e.target.value;
+  // Ricarica modello se già caricato
+  if (transcriber) {
+    transcriber = null;
+    addInfoMessage(`Lingua cambiata: ${e.target.options[e.target.selectedIndex].text}`);
+  }
+});
 
 function notifyParent(action) {
   if (window.parent !== window) {
@@ -343,6 +500,17 @@ async function startRecording() {
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     
+    // Setup visualizzatore
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    const source = audioContext.createMediaStreamSource(stream);
+    source.connect(analyser);
+    analyser.fftSize = 256;
+    
+    // Mostra forma d'onda
+    waveformContainer.classList.add('active');
+    drawWaveform();
+    
     mediaRecorder = new MediaRecorder(stream);
     audioChunks = [];
     
@@ -354,8 +522,13 @@ async function startRecording() {
       const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
       await processAudio(audioBlob);
       
+      // Ferma visualizzatore
+      waveformContainer.classList.remove('active');
+      if (animationId) cancelAnimationFrame(animationId);
+      
       // Ferma lo stream
       stream.getTracks().forEach(track => track.stop());
+      if (audioContext) audioContext.close();
     };
     
     mediaRecorder.start();
@@ -363,10 +536,59 @@ async function startRecording() {
     voiceButton.classList.add('recording');
     voiceButton.title = 'Clicca per fermare';
     
+    // Feedback sonoro
+    playFeedback('start');
+    
   } catch (error) {
     console.error('Errore microfono:', error);
     addErrorMessage('Impossibile accedere al microfono. Verifica i permessi del browser.');
   }
+}
+
+function drawWaveform() {
+  const canvas = waveformCanvas;
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  const height = canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  
+  function draw() {
+    animationId = requestAnimationFrame(draw);
+    
+    analyser.getByteTimeDomainData(dataArray);
+    
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, width, height);
+    
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#667eea';
+    ctx.beginPath();
+    
+    const sliceWidth = width / bufferLength;
+    let x = 0;
+    
+    for (let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] / 128.0;
+      const y = v * height / 2;
+      
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+      
+      x += sliceWidth;
+    }
+    
+    ctx.lineTo(width, height / 2);
+    ctx.stroke();
+  }
+  
+  draw();
 }
 
 function stopRecording() {
@@ -376,6 +598,9 @@ function stopRecording() {
     voiceButton.classList.remove('recording');
     voiceButton.classList.add('loading');
     voiceButton.title = 'Elaborazione in corso...';
+    
+    // Feedback sonoro
+    playFeedback('stop');
   }
 }
 
@@ -386,19 +611,20 @@ async function loadModel() {
   modelLoadingOverlay.classList.add('active');
   
   try {
-    console.log('Caricamento modello Wav2vec 2.0 italiano...');
+    const modelName = languageModels[currentLanguage];
+    console.log(`Caricamento modello: ${modelName}...`);
     
     transcriber = await pipeline(
       'automatic-speech-recognition',
-      'Xenova/wav2vec2-large-xlsr-53-italian',
+      modelName,
       {
-        quantized: true, // Usa versione quantizzata per performance migliori
+        quantized: true,
       }
     );
     
     console.log('Modello caricato con successo!');
     modelLoadingOverlay.classList.remove('active');
-    addInfoMessage('✓ Riconoscimento vocale attivo! Puoi parlare.');
+    addInfoMessage(`✓ Riconoscimento vocale attivo (${langSelect.options[langSelect.selectedIndex].text})!`);
     
   } catch (error) {
     console.error('Errore caricamento modello:', error);
@@ -416,8 +642,8 @@ async function processAudio(audioBlob) {
     const arrayBuffer = await audioBlob.arrayBuffer();
     
     // Decodifica audio
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
     
     // Estrai dati audio (mono, 16kHz come richiesto dal modello)
     let audioData = audioBuffer.getChannelData(0);
@@ -427,10 +653,10 @@ async function processAudio(audioBlob) {
       audioData = resampleAudio(audioData, audioBuffer.sampleRate, 16000);
     }
     
-    // Trascrivi con Wav2vec
+    // Trascrivi
     console.log('Trascrizione in corso...');
     const result = await transcriber(audioData, {
-      language: 'italian',
+      language: currentLanguage,
       task: 'transcribe',
     });
     
