@@ -373,7 +373,7 @@ let analyser = null;
 let animationId = null;
 let silenceDetectionInterval = null;
 let lastSoundTime = 0;
-const SILENCE_THRESHOLD = 2000; // 2 secondi di silenzio
+const SILENCE_THRESHOLD = 1000; // 2 secondi di silenzio
 const VOLUME_THRESHOLD = 0.01; // Soglia volume per considerare "suono"
 
 // Suoni feedback
@@ -1180,3 +1180,4 @@ testConnectivity().then(ok => {
 
 </body>
 </html>
+
