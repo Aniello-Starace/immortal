@@ -691,7 +691,7 @@
         let lastSoundTime = 0;
         let hasSpeechStarted = false;
         let maxDurationTimeout = null;
-        const POST_SPEECH_SILENCE_THRESHOLD = 1000; // 1000ms (1 secondo) di silenzio DOPO aver parlato
+        const POST_SPEECH_SILENCE_THRESHOLD = 3000; // 3000ms (3 secondi) di silenzio DOPO aver parlato
         const MAX_RECORDING_DURATION = 30000; // 30 secondi massimo
         const VOLUME_THRESHOLD = 0.08; // Soglia volume per considerare "suono"
 
@@ -1464,5 +1464,4 @@
     </script>
 
 </body>
-
 </html>
