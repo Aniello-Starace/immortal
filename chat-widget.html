@@ -1162,10 +1162,18 @@
                     audioData = resampleAudio(audioData, audioBuffer.sampleRate, 16000);
                 }
 
-                // Normalizza audio (aiuta l'accuratezza)
-                const maxAmplitude = Math.max(...audioData.map(Math.abs));
+                // Normalizza audio (aiuta l'accuratezza) - usa loop per evitare stack overflow
+                let maxAmplitude = 0;
+                for (let i = 0; i < audioData.length; i++) {
+                    const abs = Math.abs(audioData[i]);
+                    if (abs > maxAmplitude) maxAmplitude = abs;
+                }
+
                 if (maxAmplitude > 0) {
-                    audioData = audioData.map(sample => sample / maxAmplitude * 0.95);
+                    // Normalizza in-place per efficienza
+                    for (let i = 0; i < audioData.length; i++) {
+                        audioData[i] = (audioData[i] / maxAmplitude) * 0.95;
+                    }
                 }
 
                 // Trascrivi con opzioni ottimizzate
