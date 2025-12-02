@@ -373,7 +373,8 @@ let analyser = null;
 let animationId = null;
 let silenceDetectionInterval = null;
 let lastSoundTime = 0;
-const SILENCE_THRESHOLD = 500; // 500ms di silenzio (era 2000)
+let hasSpokenYet = false; // Traccia se l'utente ha già parlato
+const SILENCE_THRESHOLD = 500; // 500ms di silenzio DOPO aver parlato
 const VOLUME_THRESHOLD = 0.01; // Soglia volume per considerare "suono"
 
 // Suoni feedback
@@ -533,6 +534,7 @@ async function startRecording() {
     
     // Inizia rilevamento silenzio
     lastSoundTime = Date.now();
+    hasSpokenYet = false; // Reset flag
     startSilenceDetection();
     
     mediaRecorder = new MediaRecorder(stream, {
@@ -603,17 +605,23 @@ function startSilenceDetection() {
     }
     const rms = Math.sqrt(sum / bufferLength);
     
-    // Se c'è suono, aggiorna timestamp
+    // Se c'è suono, aggiorna timestamp E marca che ha parlato
     if (rms > VOLUME_THRESHOLD) {
       lastSoundTime = Date.now();
+      if (!hasSpokenYet) {
+        hasSpokenYet = true;
+        console.log('🎤 Utente ha iniziato a parlare');
+      }
     }
     
-    // Controlla se è passato troppo tempo senza suono
-    const silenceDuration = Date.now() - lastSoundTime;
-    
-    if (silenceDuration > SILENCE_THRESHOLD) {
-      console.log('🔇 Silenzio rilevato per 500ms, fermo registrazione');
-      stopRecording();
+    // Controlla silenzio SOLO se ha già parlato almeno una volta
+    if (hasSpokenYet) {
+      const silenceDuration = Date.now() - lastSoundTime;
+      
+      if (silenceDuration > SILENCE_THRESHOLD) {
+        console.log('🔇 Silenzio rilevato per 500ms dopo aver parlato, fermo registrazione');
+        stopRecording();
+      }
     }
   }, 100); // Controlla ogni 100ms
 }
@@ -655,11 +663,17 @@ function drawWaveform() {
     const silencePercent = Math.min(100, (silenceDuration / SILENCE_THRESHOLD) * 100);
     
     if (waveformLabel) {
-      if (silenceDuration > 200) {
+      if (!hasSpokenYet) {
+        // Non ha ancora parlato
+        waveformLabel.classList.remove('silent');
+        waveformLabel.textContent = '🎤 IN ATTESA CHE PARLI...';
+      } else if (silenceDuration > 200) {
+        // Ha parlato ed è in silenzio
         waveformLabel.classList.add('silent');
         const remaining = Math.max(0, Math.ceil((SILENCE_THRESHOLD - silenceDuration) / 100) / 10);
         waveformLabel.textContent = `⏸️ SILENZIO (fermo tra ${remaining.toFixed(1)}s)`;
       } else {
+        // Sta parlando
         waveformLabel.classList.remove('silent');
         waveformLabel.textContent = '● REGISTRAZIONE IN CORSO';
       }
@@ -693,8 +707,8 @@ function drawWaveform() {
     ctx.lineTo(width, height / 2);
     ctx.stroke();
     
-    // Barra progresso silenzio
-    if (silenceDuration > 200) {
+    // Barra progresso silenzio (solo se ha già parlato)
+    if (hasSpokenYet && silenceDuration > 200) {
       ctx.fillStyle = '#ffa500';
       ctx.fillRect(0, height - 4, (width * silencePercent / 100), 4);
     }
