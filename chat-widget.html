@@ -423,13 +423,13 @@ const waveformCanvas = document.getElementById('waveform-canvas');
 // Inizializza suoni
 createAudioFeedback();
 
-// Mappa lingue -> modelli
+// Mappa lingue -> modelli (con fallback)
 const languageModels = {
-  italian: 'Xenova/wav2vec2-large-xlsr-53-italian',
-  english: 'Xenova/whisper-tiny.en',
-  spanish: 'Xenova/wav2vec2-large-xlsr-53-spanish',
-  french: 'Xenova/wav2vec2-large-xlsr-53-french',
-  german: 'Xenova/wav2vec2-large-xlsr-53-german'
+  italian: ['Xenova/wav2vec2-large-xlsr-53-italian', 'Xenova/whisper-small'],
+  english: ['Xenova/whisper-tiny.en', 'Xenova/whisper-tiny'],
+  spanish: ['Xenova/wav2vec2-large-xlsr-53-spanish', 'Xenova/whisper-small'],
+  french: ['Xenova/wav2vec2-large-xlsr-53-french', 'Xenova/whisper-small'],
+  german: ['Xenova/wav2vec2-large-xlsr-53-german', 'Xenova/whisper-small']
 };
 
 // Cambio lingua
@@ -610,30 +610,57 @@ async function loadModel() {
   isModelLoading = true;
   modelLoadingOverlay.classList.add('active');
   
-  try {
-    const modelName = languageModels[currentLanguage];
-    console.log(`Caricamento modello: ${modelName}...`);
-    
-    transcriber = await pipeline(
-      'automatic-speech-recognition',
-      modelName,
-      {
-        quantized: true,
+  const models = languageModels[currentLanguage];
+  let loadedModel = null;
+  let lastError = null;
+  
+  // Prova i modelli in ordine
+  for (const modelName of models) {
+    try {
+      console.log(`Tentativo caricamento: ${modelName}...`);
+      
+      const loadingText = document.querySelector('.loading-text');
+      if (loadingText) {
+        loadingText.innerHTML = `Caricamento ${modelName.split('/')[1]}...<br>Attendere circa 30 secondi`;
       }
-    );
-    
-    console.log('Modello caricato con successo!');
-    modelLoadingOverlay.classList.remove('active');
-    addInfoMessage(`✓ Riconoscimento vocale attivo (${langSelect.options[langSelect.selectedIndex].text})!`);
-    
-  } catch (error) {
-    console.error('Errore caricamento modello:', error);
-    modelLoadingOverlay.classList.remove('active');
-    addErrorMessage('Errore nel caricamento del modello vocale. Riprova più tardi.');
-    transcriber = null;
-  } finally {
-    isModelLoading = false;
+      
+      loadedModel = await pipeline(
+        'automatic-speech-recognition',
+        modelName,
+        {
+          quantized: true,
+          revision: 'default',
+          progress_callback: (progress) => {
+            if (loadingText && progress.progress) {
+              const percent = Math.round(progress.progress * 100);
+              loadingText.innerHTML = `Download: ${percent}%<br>Attendere...`;
+            }
+          }
+        }
+      );
+      
+      // Se arriviamo qui, il modello è caricato
+      transcriber = loadedModel;
+      console.log(`✓ Modello caricato: ${modelName}`);
+      break;
+      
+    } catch (error) {
+      console.warn(`Errore con ${modelName}:`, error);
+      lastError = error;
+      continue;
+    }
   }
+  
+  modelLoadingOverlay.classList.remove('active');
+  
+  if (transcriber) {
+    addInfoMessage(`✓ Riconoscimento vocale attivo (${langSelect.options[langSelect.selectedIndex].text})!`);
+  } else {
+    console.error('Tutti i modelli hanno fallito:', lastError);
+    addErrorMessage('Impossibile caricare il modello vocale. Verifica la connessione internet.');
+  }
+  
+  isModelLoading = false;
 }
 
 async function processAudio(audioBlob) {
@@ -655,17 +682,24 @@ async function processAudio(audioBlob) {
     
     // Trascrivi
     console.log('Trascrizione in corso...');
-    const result = await transcriber(audioData, {
-      language: currentLanguage,
+    
+    const options = {
       task: 'transcribe',
-    });
+      language: currentLanguage === 'italian' ? 'it' : 
+                currentLanguage === 'english' ? 'en' :
+                currentLanguage === 'spanish' ? 'es' :
+                currentLanguage === 'french' ? 'fr' :
+                currentLanguage === 'german' ? 'de' : 'it'
+    };
+    
+    const result = await transcriber(audioData, options);
     
     const transcription = result.text.trim();
     
     voiceButton.classList.remove('loading');
     voiceButton.title = 'Registra messaggio vocale';
     
-    if (transcription) {
+    if (transcription && transcription.length > 0) {
       userInput.value = transcription;
       userInput.focus();
       // Invia automaticamente
@@ -678,7 +712,7 @@ async function processAudio(audioBlob) {
     console.error('Errore elaborazione audio:', error);
     voiceButton.classList.remove('loading');
     voiceButton.title = 'Registra messaggio vocale';
-    addErrorMessage('Errore nella trascrizione. Riprova.');
+    addErrorMessage(`Errore trascrizione: ${error.message || 'Riprova'}`);
   }
 }
 
