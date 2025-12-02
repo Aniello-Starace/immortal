@@ -424,13 +424,13 @@ const waveformCanvas = document.getElementById('waveform-canvas');
 // Inizializza suoni
 createAudioFeedback();
 
-// Mappa lingue -> modelli (SOLO Whisper, più affidabile)
+// Mappa lingue -> modelli (modelli più grandi per migliore accuratezza)
 const languageModels = {
-  italian: ['Xenova/whisper-tiny', 'Xenova/whisper-base'],
-  english: ['Xenova/whisper-tiny.en', 'Xenova/whisper-tiny'],
-  spanish: ['Xenova/whisper-tiny', 'Xenova/whisper-base'],
-  french: ['Xenova/whisper-tiny', 'Xenova/whisper-base'],
-  german: ['Xenova/whisper-tiny', 'Xenova/whisper-base']
+  italian: ['Xenova/whisper-small', 'Xenova/whisper-base', 'Xenova/whisper-tiny'],
+  english: ['Xenova/whisper-small.en', 'Xenova/whisper-base.en', 'Xenova/whisper-tiny.en'],
+  spanish: ['Xenova/whisper-small', 'Xenova/whisper-base', 'Xenova/whisper-tiny'],
+  french: ['Xenova/whisper-small', 'Xenova/whisper-base', 'Xenova/whisper-tiny'],
+  german: ['Xenova/whisper-small', 'Xenova/whisper-base', 'Xenova/whisper-tiny']
 };
 
 // Cambio lingua
@@ -499,7 +499,16 @@ async function startRecording() {
       return;
     }
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Richiedi audio di alta qualità
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        channelCount: 1,
+        sampleRate: 16000,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    });
     
     // Setup visualizzatore
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -512,7 +521,10 @@ async function startRecording() {
     waveformContainer.classList.add('active');
     drawWaveform();
     
-    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'audio/webm;codecs=opus',
+      audioBitsPerSecond: 128000
+    });
     audioChunks = [];
     
     mediaRecorder.ondataavailable = (event) => {
@@ -520,7 +532,7 @@ async function startRecording() {
     };
     
     mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
       await processAudio(audioBlob);
       
       // Ferma visualizzatore
@@ -638,7 +650,10 @@ async function loadModel() {
         {
           quantized: true,
           device: 'auto',
-          dtype: 'q8'
+          dtype: {
+            encoder_model: 'fp32',  // Maggiore precisione
+            decoder_model_merged: 'q8'
+          }
         }
       );
       
@@ -705,7 +720,7 @@ async function processAudio(audioBlob) {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
     
-    // Estrai dati audio (mono, 16kHz come richiesto dal modello)
+    // Estrai dati audio (mono, 16kHz)
     let audioData = audioBuffer.getChannelData(0);
     
     // Resample a 16kHz se necessario
@@ -713,32 +728,58 @@ async function processAudio(audioBlob) {
       audioData = resampleAudio(audioData, audioBuffer.sampleRate, 16000);
     }
     
-    // Trascrivi
+    // Normalizza audio (aiuta l'accuratezza)
+    const maxAmplitude = Math.max(...audioData.map(Math.abs));
+    if (maxAmplitude > 0) {
+      audioData = audioData.map(sample => sample / maxAmplitude * 0.95);
+    }
+    
+    // Trascrivi con opzioni ottimizzate
     console.log('Trascrizione in corso...');
     
-    const options = {
+    const result = await transcriber(audioData, {
+      language: currentLanguage === 'italian' ? 'italian' : 
+                currentLanguage === 'english' ? 'english' :
+                currentLanguage === 'spanish' ? 'spanish' :
+                currentLanguage === 'french' ? 'french' :
+                currentLanguage === 'german' ? 'german' : 'italian',
       task: 'transcribe',
-      language: currentLanguage === 'italian' ? 'it' : 
-                currentLanguage === 'english' ? 'en' :
-                currentLanguage === 'spanish' ? 'es' :
-                currentLanguage === 'french' ? 'fr' :
-                currentLanguage === 'german' ? 'de' : 'it'
-    };
+      chunk_length_s: 30,
+      stride_length_s: 5,
+      return_timestamps: false,
+      // Opzioni per migliorare l'accuratezza
+      temperature: 0.0,  // Più deterministico
+      compression_ratio_threshold: 2.4,
+      logprob_threshold: -1.0,
+      no_speech_threshold: 0.6
+    });
     
-    const result = await transcriber(audioData, options);
+    let transcription = result.text.trim();
     
-    const transcription = result.text.trim();
+    // Post-processing per italiano
+    if (currentLanguage === 'italian') {
+      transcription = postProcessItalian(transcription);
+    }
     
     voiceButton.classList.remove('loading');
     voiceButton.title = 'Registra messaggio vocale';
     
     if (transcription && transcription.length > 0) {
+      console.log('Trascrizione:', transcription);
       userInput.value = transcription;
       userInput.focus();
-      // Invia automaticamente
-      setTimeout(() => handleSendMessage(), 300);
+      
+      // Mostra preview prima di inviare
+      addInfoMessage(`📝 Trascritto: "${transcription}"`);
+      
+      // Invia dopo 2 secondi (tempo per correggere se necessario)
+      setTimeout(() => {
+        if (userInput.value === transcription) {
+          handleSendMessage();
+        }
+      }, 2000);
     } else {
-      addInfoMessage('Non ho capito. Riprova parlando più chiaramente.');
+      addInfoMessage('Non ho capito. Riprova parlando più chiaramente e più vicino al microfono.');
     }
     
   } catch (error) {
@@ -747,6 +788,54 @@ async function processAudio(audioBlob) {
     voiceButton.title = 'Registra messaggio vocale';
     addErrorMessage(`Errore trascrizione: ${error.message || 'Riprova'}`);
   }
+}
+
+// Post-processing per migliorare trascrizioni italiane
+function postProcessItalian(text) {
+  let result = text;
+  
+  // Correzioni comuni
+  const corrections = {
+    // Nomi propri spesso sbagliati
+    'señor': 'signor',
+    'senor': 'signor',
+    'señora': 'signora',
+    'di no': 'Dino',
+    'dino': 'Dino',
+    'risi': 'Risi',
+    
+    // Correzioni comuni
+    'sono il': 'Sono il',
+    'sono la': 'Sono la',
+    'mi chiamo': 'Mi chiamo',
+    'buongiorno': 'Buongiorno',
+    'buonasera': 'Buonasera',
+    
+    // Rimuovi artefatti comuni
+    'um': '',
+    'uh': '',
+    'eh': '',
+    'mm': ''
+  };
+  
+  // Applica correzioni
+  for (const [wrong, correct] of Object.entries(corrections)) {
+    const regex = new RegExp(wrong, 'gi');
+    result = result.replace(regex, correct);
+  }
+  
+  // Capitalizza prima lettera
+  result = result.charAt(0).toUpperCase() + result.slice(1);
+  
+  // Pulisci spazi multipli
+  result = result.replace(/\s+/g, ' ').trim();
+  
+  // Aggiungi punto finale se manca
+  if (!/[.!?]$/.test(result)) {
+    result += '.';
+  }
+  
+  return result;
 }
 
 function resampleAudio(audioData, originalRate, targetRate) {
