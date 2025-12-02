@@ -562,10 +562,19 @@ async function startRecording() {
     mediaRecorder.start();
     isRecording = true;
     voiceButton.classList.add('recording');
-    voiceButton.title = 'Parlando... (si ferma dopo 2s di silenzio)';
+    voiceButton.title = 'Parlando... (max 30s, si ferma dopo 2s di silenzio)';
     
     // Feedback sonoro
     playFeedback('start');
+    
+    // Safety: ferma dopo 30 secondi massimo
+    setTimeout(() => {
+      if (isRecording) {
+        console.log('⏱️ Timeout 30 secondi raggiunto');
+        stopRecording();
+        addInfoMessage('Registrazione fermata automaticamente dopo 30 secondi.');
+      }
+    }, 30000);
     
   } catch (error) {
     console.error('Errore microfono:', error);
@@ -806,6 +815,15 @@ async function loadModel() {
 
 async function processAudio(audioBlob) {
   try {
+    // Limita dimensione audio (max 30 secondi)
+    const maxSize = 30 * 16000 * 2; // 30 secondi a 16kHz, 2 bytes per sample
+    if (audioBlob.size > maxSize) {
+      addErrorMessage('Registrazione troppo lunga. Massimo 30 secondi.');
+      voiceButton.classList.remove('loading');
+      voiceButton.title = 'Registra messaggio vocale';
+      return;
+    }
+    
     // Converti blob in ArrayBuffer
     const arrayBuffer = await audioBlob.arrayBuffer();
     
@@ -813,22 +831,54 @@ async function processAudio(audioBlob) {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
     
+    // Verifica durata
+    if (audioBuffer.duration > 30) {
+      addErrorMessage('Registrazione troppo lunga. Parla per massimo 30 secondi.');
+      voiceButton.classList.remove('loading');
+      voiceButton.title = 'Registra messaggio vocale';
+      return;
+    }
+    
     // Estrai dati audio (mono, 16kHz)
     let audioData = audioBuffer.getChannelData(0);
     
+    // Limita lunghezza array
+    const maxSamples = 30 * 16000; // 30 secondi a 16kHz
+    if (audioData.length > maxSamples) {
+      console.warn('Audio troncato a 30 secondi');
+      audioData = audioData.slice(0, maxSamples);
+    }
+    
     // Resample a 16kHz se necessario
     if (audioBuffer.sampleRate !== 16000) {
+      console.log(`Resampling da ${audioBuffer.sampleRate}Hz a 16000Hz...`);
       audioData = resampleAudio(audioData, audioBuffer.sampleRate, 16000);
     }
     
-    // Normalizza audio (aiuta l'accuratezza)
-    const maxAmplitude = Math.max(...audioData.map(Math.abs));
+    // Normalizza audio in chunks per evitare stack overflow
+    const chunkSize = 4096;
+    let maxAmplitude = 0;
+    
+    for (let i = 0; i < audioData.length; i += chunkSize) {
+      const end = Math.min(i + chunkSize, audioData.length);
+      for (let j = i; j < end; j++) {
+        maxAmplitude = Math.max(maxAmplitude, Math.abs(audioData[j]));
+      }
+    }
+    
     if (maxAmplitude > 0) {
-      audioData = audioData.map(sample => sample / maxAmplitude * 0.95);
+      const normalizedData = new Float32Array(audioData.length);
+      for (let i = 0; i < audioData.length; i += chunkSize) {
+        const end = Math.min(i + chunkSize, audioData.length);
+        for (let j = i; j < end; j++) {
+          normalizedData[j] = audioData[j] / maxAmplitude * 0.95;
+        }
+      }
+      audioData = normalizedData;
     }
     
     // Trascrivi con opzioni ottimizzate
-    console.log('Trascrizione in corso...');
+    console.log(`Trascrizione ${audioData.length} samples...`);
     
     const result = await transcriber(audioData, {
       language: currentLanguage === 'italian' ? 'italian' : 
@@ -840,8 +890,7 @@ async function processAudio(audioBlob) {
       chunk_length_s: 30,
       stride_length_s: 5,
       return_timestamps: false,
-      // Opzioni per migliorare l'accuratezza
-      temperature: 0.0,  // Più deterministico
+      temperature: 0.0,
       compression_ratio_threshold: 2.4,
       logprob_threshold: -1.0,
       no_speech_threshold: 0.6
@@ -877,9 +926,16 @@ async function processAudio(audioBlob) {
     
   } catch (error) {
     console.error('Errore elaborazione audio:', error);
+    console.error('Stack trace:', error.stack);
     voiceButton.classList.remove('loading');
     voiceButton.title = 'Registra messaggio vocale';
-    addErrorMessage(`Errore trascrizione: ${error.message || 'Riprova'}`);
+    
+    // Messaggio più specifico
+    if (error.message.includes('stack')) {
+      addErrorMessage('Audio troppo lungo o complesso. Prova con frasi più brevi (max 20 secondi).');
+    } else {
+      addErrorMessage(`Errore trascrizione: ${error.message || 'Riprova con audio più breve'}`);
+    }
   }
 }
 
@@ -932,17 +988,28 @@ function postProcessItalian(text) {
 }
 
 function resampleAudio(audioData, originalRate, targetRate) {
+  if (originalRate === targetRate) {
+    return audioData;
+  }
+  
   const ratio = originalRate / targetRate;
   const newLength = Math.round(audioData.length / ratio);
   const result = new Float32Array(newLength);
   
-  for (let i = 0; i < newLength; i++) {
-    const srcIndex = i * ratio;
-    const srcIndexFloor = Math.floor(srcIndex);
-    const srcIndexCeil = Math.min(srcIndexFloor + 1, audioData.length - 1);
-    const weight = srcIndex - srcIndexFloor;
+  // Usa chunks per evitare stack overflow
+  const chunkSize = 4096;
+  
+  for (let start = 0; start < newLength; start += chunkSize) {
+    const end = Math.min(start + chunkSize, newLength);
     
-    result[i] = audioData[srcIndexFloor] * (1 - weight) + audioData[srcIndexCeil] * weight;
+    for (let i = start; i < end; i++) {
+      const srcIndex = i * ratio;
+      const srcIndexFloor = Math.floor(srcIndex);
+      const srcIndexCeil = Math.min(srcIndexFloor + 1, audioData.length - 1);
+      const weight = srcIndex - srcIndexFloor;
+      
+      result[i] = audioData[srcIndexFloor] * (1 - weight) + audioData[srcIndexCeil] * weight;
+    }
   }
   
   return result;
