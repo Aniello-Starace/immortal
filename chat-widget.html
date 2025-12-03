@@ -842,6 +842,28 @@
 
             const utterance = new SpeechSynthesisUtterance(text);
 
+            // FORZATURA VOCE FEMMINILE - Riseleziona ogni volta per essere sicuri
+            const allVoices = speechSynthesis.getVoices();
+            const youngFemaleNames = ['Google italiano', 'Microsoft Elsa', 'Elsa', 'Alice', 'Samantha', 'Zira', 'Paulina', 'Anna', 'Federica', 'Paola'];
+
+            let femaleVoice = null;
+            for (const name of youngFemaleNames) {
+                femaleVoice = allVoices.find(v => v.lang.startsWith('it') && v.name.includes(name));
+                if (femaleVoice) break;
+            }
+
+            if (!femaleVoice) {
+                femaleVoice = allVoices.find(v => v.lang.startsWith('it') && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('donna')));
+            }
+
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+                console.log('✅ Usando voce femminile:', femaleVoice.name);
+            } else {
+                console.warn('⚠️ Voce femminile non trovata, usando voce selezionata di default');
+                if (selectedVoice) utterance.voice = selectedVoice;
+            }
+
             // Configurazione voce sensuale
             utterance.lang = 'it-IT';
             utterance.rate = 0.85;  // Molto più lenta per tono sensuale
