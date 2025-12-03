@@ -790,11 +790,35 @@
 
         // Inizializza voci TTS quando disponibili
         function initializeTTSVoices() {
-            const voices = speechSynthesis.getVoices();
-            // Cerca la miglior voce italiana femminile
-            selectedVoice = voices.find(v =>
-                v.lang.startsWith('it') && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('donna'))
-            ) || voices.find(v => v.lang.startsWith('it')) || voices[0];
+           const voices = speechSynthesis.getVoices();
+
+console.log('📢 Voci italiane disponibili:');
+voices.forEach((v, i) => {
+    if (v.lang.startsWith('it')) console.log(`  [${i}] ${v.name} (${v.lang})`);
+});
+
+// Lista prioritaria di voci femminili giovani
+const youngFemaleNames = ['Google italiano', 'Microsoft Elsa', 'Elsa', 'Alice', 'Samantha', 'Zira', 'Paulina', 'Anna', 'Federica', 'Paola'];
+
+// 1. Cerca voci prioritarie
+for (const name of youngFemaleNames) {
+    selectedVoice = voices.find(v => v.lang.startsWith('it') && v.name.includes(name));
+    if (selectedVoice) {
+        console.log('✅ Trovata voce prioritaria:', selectedVoice.name);
+        break;
+    }
+}
+
+// 2. Fallback: cerca "female" o "donna"
+if (!selectedVoice) {
+    selectedVoice = voices.find(v => v.lang.startsWith('it') && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('donna')));
+}
+
+// 3. Fallback: prima voce italiana
+if (!selectedVoice) selectedVoice = voices.find(v => v.lang.startsWith('it'));
+
+// 4. Fallback finale  
+if (!selectedVoice) selectedVoice = voices[0];
 
             if (selectedVoice) {
                 console.log('🔊 Voce TTS selezionata:', selectedVoice.name, selectedVoice.lang);
@@ -1578,3 +1602,4 @@
 </body>
 
 </html>
+
