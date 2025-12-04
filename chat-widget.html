@@ -872,9 +872,11 @@
                 console.log('✅ Usando voce femminile:', femaleVoice.name);
             } else {
                 console.warn('⚠️ Voce femminile non trovata, usando voce selezionata di default');
-                utterance.voice = selectedVoice;
-            } else {
-                console.warn('⚠️ Nessuna voce specificata, usando default del browser');
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                } else {
+                    console.warn('⚠️ Nessuna voce specificata, usando default del browser');
+                }
             }
 
             // Configurazione voce sensuale
