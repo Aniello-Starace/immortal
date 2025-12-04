@@ -791,10 +791,21 @@
         // Inizializza voci TTS quando disponibili
         function initializeTTSVoices() {
             const voices = speechSynthesis.getVoices();
-            // Cerca la miglior voce italiana femminile
-            selectedVoice = voices.find(v =>
-                v.lang.startsWith('it') && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('donna'))
-            ) || voices.find(v => v.lang.startsWith('it')) || voices[0];
+
+            // Lista di nomi di voci femminili conosciute
+            const femaleVoiceNames = ['Microsoft Elsa', 'Elsa', 'Alice', 'Samantha', 'Google italiano', 'Zira', 'Paulina', 'Anna', 'Federica', 'Paola', 'female', 'donna'];
+
+            // 1. Cerca voci che contengono i nomi femminili
+            for (const femaleName of femaleVoiceNames) {
+                selectedVoice = voices.find(v => v.lang.startsWith('it') && v.name.toLowerCase().includes(femaleName.toLowerCase()));
+                if (selectedVoice) break;
+            }
+
+            // 2. Se non trovata, prendi la seconda voce italiana (spesso la prima è maschile)
+            if (!selectedVoice) {
+                const italianVoices = voices.filter(v => v.lang.startsWith('it'));
+                selectedVoice = italianVoices[1] || italianVoices[0] || voices[0];
+            }
 
             if (selectedVoice) {
                 console.log('🔊 Voce TTS selezionata:', selectedVoice.name, selectedVoice.lang);
@@ -867,7 +878,7 @@
             // Configurazione voce sensuale
             utterance.lang = 'it-IT';
             utterance.rate = 0.85;  // Molto più lenta per tono sensuale
-            utterance.pitch = 1.4;  // Pitch più alto per voce femminile
+            utterance.pitch = 1.8;  // Pitch molto più alto per voce femminile sensuale
             utterance.volume = 1.0; // Volume massimo
 
             console.log('🎙️ Voce in uso:', selectedVoice ? selectedVoice.name : 'default', 'Rate:', utterance.rate, 'Pitch:', utterance.pitch);
