@@ -870,6 +870,20 @@
             if (femaleVoice) {
                 utterance.voice = femaleVoice;
                 console.log('✅ Usando voce femminile:', femaleVoice.name);
+            } else {
+                console.warn('⚠️ Voce femminile non trovata, usando voce selezionata di default');
+                if (selectedVoice) utterance.voice = selectedVoice;
+            }
+
+            // Configurazione voce sensuale
+            utterance.lang = 'it-IT';
+            utterance.rate = 0.85;  // Molto più lenta per tono sensuale
+            utterance.pitch = 2.0;  // PITCH MASSIMO per voce femminile sensuale
+            utterance.volume = 1.0; // Volume massimo
+
+            console.log('🎙️ Voce in uso:', selectedVoice ? selectedVoice.name : 'default', 'Rate:', utterance.rate, 'Pitch:', utterance.pitch);
+
+            if (selectedVoice) {
                 utterance.voice = selectedVoice;
             } else {
                 console.warn('⚠️ Nessuna voce specificata, usando default del browser');
