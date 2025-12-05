@@ -689,7 +689,8 @@
                             d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
                     </svg>
                 </button>
-                <button id="tts-toggle" aria-label="Attiva/Disattiva voce" title="Attiva voce">🔇</button>
+                <button id="tts-toggle" class="active" aria-label="Attiva/Disattiva voce"
+                    title="Disattiva voce">�</button>
             </div>
         </div>
     </div>
@@ -726,7 +727,7 @@
         const VOLUME_THRESHOLD = 0.08; // Soglia volume per considerare "suono"
 
         // Variabili TTS
-        let ttsEnabled = false;
+        let ttsEnabled = true; // TTS attivo di default
         let selectedVoice = null;
 
         // Suoni feedback
