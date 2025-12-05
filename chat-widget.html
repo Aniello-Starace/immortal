@@ -844,48 +844,53 @@
             }
         }
 
-        // Funzione TTS per far parlare Lia
-        function speakLiaResponse(text) {
+        // Funzione TTS per far parlare Lia (usa Piper TTS)
+        const TTS_SERVER_URL = 'http://localhost:5002/api/tts';
+        let currentAudio = null;
+
+        async function speakLiaResponse(text) {
             if (!ttsEnabled) return;
 
-            // Ferma eventuali speech in corso
-            speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-
-            // FORZATURA VOCE FEMMINILE - Riseleziona ogni volta per essere sicuri
-            const allVoices = speechSynthesis.getVoices();
-            const youngFemaleNames = ['Google italiano', 'Microsoft Elsa', 'Elsa', 'Alice', 'Samantha', 'Zira', 'Paulina', 'Anna', 'Federica', 'Paola'];
-
-            let femaleVoice = null;
-            for (const name of youngFemaleNames) {
-                femaleVoice = allVoices.find(v => v.lang.startsWith('it') && v.name.includes(name));
-                if (femaleVoice) break;
+            // Ferma eventuali audio in corso
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
             }
 
-            if (!femaleVoice) {
-                femaleVoice = allVoices.find(v => v.lang.startsWith('it') && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('donna')));
+            try {
+                console.log('🎤 Invio testo a Piper TTS...');
+
+                const response = await fetch(TTS_SERVER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                if (!response.ok) throw new Error(`TTS error: ${response.status}`);
+
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+
+                currentAudio = new Audio(audioUrl);
+                currentAudio.onended = () => {
+                    URL.revokeObjectURL(audioUrl);
+                    currentAudio = null;
+                };
+
+                console.log('✅ Audio Piper ricevuto, riproduzione...');
+                currentAudio.play();
+
+            } catch (error) {
+                console.error('❌ Errore TTS Piper:', error);
+                // Fallback a Web Speech API
+                console.log('⚠️ Fallback a Web Speech API');
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'it-IT';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.4;
+                speechSynthesis.speak(utterance);
             }
-
-            if (femaleVoice) {
-                utterance.voice = femaleVoice;
-                console.log('✅ Usando voce femminile:', femaleVoice.name);
-            } else {
-                console.warn('⚠️ Voce femminile non trovata, usando voce selezionata di default');
-                if (selectedVoice) {
-                    utterance.voice = selectedVoice;
-                } else {
-                    console.warn('⚠️ Nessuna voce specificata, usando default del browser');
-                }
-            }
-
-            // Configurazione voce sensuale
-            utterance.lang = 'it-IT';
-            utterance.rate = 1.3;   // Moderatamente veloce
-            utterance.pitch = 2.0;  // Pitch massimo per voce femminile
-            utterance.volume = 1.0; // Volume massimo
-
-            speechSynthesis.speak(utterance);
         }
 
         // Toggle TTS
