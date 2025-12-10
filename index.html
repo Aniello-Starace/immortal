@@ -336,17 +336,65 @@
         }
 
         /* Chat iframe - Full Screen Transparent Overlay */
+        /* Chat iframe - Dynamic Sizing */
         #chat-iframe {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            bottom: 0px;
+            right: 0px;
+            width: 120px;
+            /* Start small, covering only the button area */
+            height: 120px;
             border: none;
             z-index: 9998;
             /* Just below password overlay */
+            background: transparent;
+            pointer-events: auto;
+            /* Allow clicks on the button */
+        }
+
+        #chat-iframe.expanded {
+            width: 100% !important;
+            height: 100% !important;
+            top: 0;
+            left: 0;
             pointer-events: none;
-            /* Let clicks pass through, iframe content handles its own events */
+            /* Let clicks pass through transparent areas if possible, but widget needs events. */
+            /* Actually, if expanded, we want to block interaction with page behind? 
+               The widget has an overlay for mobile, but on desktop it's just a box.
+               If I set pointer-events: auto here, the whole screen is blocked by the iframe info.
+               The iframe body is transparent. 
+               The only way to allow clicks through a transparent iframe body is if the iframe itself passes them? No.
+               Browsers treat iframe as a layer.
+               
+               However, if the widget inside handles the layout (e.g. small box), then the rest of the iframe is empty space.
+               Standard practice: 
+               The backend 'chat-widget.html' seems to be a full page overlay on mobile or a fixed box on desktop.
+               Let's look at `chat-widget.html`.
+               Desktop: `#chat-widget` is 360x520 fixed bottom right.
+               If iframe is full screen, and user clicks outside widget, does it close?
+               The backend `chat-widget.html` does NOT have an overlay to close on click outside for desktop.
+               Close button exists.
+               
+               So if I expand iframe to 100%, I block the page.
+               Ideally, I should only expand to the size of the open widget.
+               Widget size: width: 360px; height: 520px; bottom: 90px; right: 20px.
+               Plus button: 60x60.
+               
+               So I can just resize the iframe to match the widget box?
+               Yes.
+            */
+            width: 400px !important;
+            height: 650px !important;
+            /* Enough for widget + button */
+        }
+
+        @media (max-width: 768px) {
+            #chat-iframe.expanded {
+                width: 100% !important;
+                height: 100% !important;
+                top: 0;
+                left: 0;
+            }
         }
 
         @keyframes pulse {
@@ -772,6 +820,19 @@
                 img.addEventListener('dblclick', () => { lbImg.src = img.src; lb.style.display = 'flex'; });
             });
             lb.addEventListener('click', () => { lb.style.display = 'none'; });
+
+            // Gestione ridimensionamento Iframe chat
+            const chatIframe = document.getElementById('chat-iframe');
+
+            window.addEventListener('message', (event) => {
+                // if (event.origin !== "https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev") return;
+
+                if (event.data === 'chat-opened' || event.data === 'enable-pointer-events') {
+                    chatIframe.classList.add('expanded');
+                } else if (event.data === 'chat-closed' || event.data === 'disable-pointer-events') {
+                    chatIframe.classList.remove('expanded');
+                }
+            });
         })();
     </script>
 
