@@ -827,37 +827,128 @@
         })();
     </script>
 
-    <!-- 
-  INTEGRAZIONE WIDGET CHAT BACKEND
-  Caricato tramite iframe full-screen trasparente.
-  Il contenuto è servito direttamente dal backend locale via ngrok.
--->
-    <iframe id="chat-iframe" src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/chat-widget.html"
-        title="Lia Chat Widget" allow="microphone; autoplay; clipboard-write">
-    </iframe>
-
-    <script>
-        // Move iframe logic outside to ensure it runs even if lightbox script has issues
-        (function () {
-            const chatIframe = document.getElementById('chat-iframe');
-
+ <!-- ================== LIA CHAT WIDGET (Nuova Implementazione) ================== -->
+      <style>
+        /* Stili per il contenitore dell'iframe */
+        #lia-chat-container {
+          position: fixed;
+          bottom: 0px; /* Partenza dal bordo inferiore */
+          right: 20px;
+          z-index: 9999;
+          width: 380px; /* Larghezza del widget */
+         height: 60px; /* Altezza iniziale per il bottone */
+         transition: height 0.3s ease-out, bottom 0.3s ease-out; /* Animazione per apertura/chiusura */
+         overflow: hidden; /* Nasconde il contenuto extra quando è chiuso */
+       }
+    
+       /* Stili per l'iframe stesso */
+       #lia-iframe-new { /* ID cambiato per evitare conflitti */
+         width: 100%;
+         height: calc(100% - 60px); /* L'altezza dell'iframe sarà l'altezza del container meno l'altezza del bottone */
+         border: none;
+         border-radius: 16px;
+         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+         display: block; /* Assicura che sia sempre un blocco */
+         visibility: hidden; /* Inizialmente nascosto */
+         opacity: 0;
+         transition: visibility 0.3s ease-out, opacity 0.3s ease-out;
+       }
+    
+       /* Stili per il bottone che apre la chat */
+       #lia-chat-button-iframe {
+         width: 60px;
+         height: 60px;
+         border-radius: 50%;
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         border: none;
+         cursor: pointer;
+         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         color: white;
+         font-size: 30px;
+         position: absolute; /* Posiziona il bottone all'interno del container */
+         bottom: 0;
+         right: 0;
+       }
+    
+       #lia-chat-button-iframe:hover {
+         transform: scale(1.1);
+       }
+    
+       /* Stato aperto del widget */
+       #lia-chat-container.open {
+         height: 600px; /* Altezza finale del widget aperto */
+         bottom: 20px; /* Solleva il widget sopra il bordo */
+       }
+    
+       #lia-chat-container.open #lia-iframe-new {
+         visibility: visible;
+         opacity: 1;
+       }
+    
+       #lia-chat-container.open #lia-chat-button-iframe {
+         bottom: 540px; /* Sposta il bottone in cima al widget */
+         right: 10px;
+         background: #dc3545; /* Colore per chiusura */
+         transform: rotate(45deg); /* Gira la X per un effetto chiusura */
+       }
+    
+       #lia-chat-button-iframe svg {
+         width: 30px;
+         height: 30px;
+         fill: white;
+       }
+     </style>
+    
+     <div id="lia-chat-container">
+         <button id="lia-chat-button-iframe">
+             <!-- Icona della chat -->
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                 <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+             </svg>
+         </button>
+         <iframe id="lia-iframe-new" src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev">
+         </iframe>
+     </div>
+    
+     <script>
+         document.addEventListener('DOMContentLoaded', () => {
+             const chatContainer = document.getElementById('lia-chat-container');
+             const chatButton = document.getElementById('lia-chat-button-iframe');
+             const chatIframe = document.getElementById('lia-iframe-new'); // ID cambiato
+    
+             let isOpen = false;
+    
+             chatButton.addEventListener('click', () => {
+                 isOpen = !isOpen;
+                 if (isOpen) {
+                     chatContainer.classList.add('open');
+                     // Carica l'iframe solo quando si apre la chat
+                    chatIframe.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev';
+                } else {
+                    chatContainer.classList.remove('open');
+                }
+                // Cambia l'icona del bottone
+                chatButton.innerHTML = isOpen ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5
+       6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d=
+       "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
+            });
+   
+            // Opzionale: gestire messaggi dall'iframe per la chiusura
             window.addEventListener('message', (event) => {
-                console.log('📩 Message received from iframe:', event.data, 'Origin:', event.origin);
-
-                // Optional: Check origin if needed for security in production
-                // if (event.origin !== "https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev") return;
-
-                if (event.data === 'chat-opened' || event.data === 'enable-pointer-events') {
-                    console.log('✅ Expanding chat iframe');
-                    chatIframe.classList.add('expanded');
-                } else if (event.data === 'chat-closed' || event.data === 'disable-pointer-events') {
-                    console.log('🔻 Shrinking chat iframe');
-                    chatIframe.classList.remove('expanded');
+                // Controlla l'origine per sicurezza
+                if (event.origin === 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev' && event.data === 'chat-closed') {
+                    isOpen = false;
+                    chatContainer.classList.remove('open');
+                    chatButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0
+       2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
                 }
             });
-        })();
+        });
     </script>
-
+    <!-- ================ FINE LIA CHAT WIDGET (Nuova Implementazione) ================ -->
 </body>
 
 </html>
