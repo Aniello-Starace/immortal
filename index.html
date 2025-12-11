@@ -912,38 +912,42 @@
          <iframe id="lia-iframe-new" src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev">
          </iframe>
      </div>
-    
-     <script>
-         document.addEventListener('DOMContentLoaded', () => {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
              const chatContainer = document.getElementById('lia-chat-container');
              const chatButton = document.getElementById('lia-chat-button-iframe');
-             const chatIframe = document.getElementById('lia-iframe-new'); // ID cambiato
+             const chatIframe = document.getElementById('lia-iframe-new');
     
-             let isOpen = false;
+             // Definiamo le icone come variabili per un codice più pulito
     
-             chatButton.addEventListener('click', () => {
-                 isOpen = !isOpen;
-                 if (isOpen) {
-                     chatContainer.classList.add('open');
-                     // Carica l'iframe solo quando si apre la chat
-                    chatIframe.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev';
+          const chatIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9
+      2-2V4c0-1.1-.9-2-2-2z"/></svg>';
+             const closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.
+      6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+   
+            let isOpen = false;
+   
+            chatButton.addEventListener('click', () => {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    chatContainer.classList.add('open');
+                    chatButton.innerHTML = closeIcon;
+                    // Carica l'iframe solo la prima volta che si apre la chat, per ottimizzare
+                    if (chatIframe.src === 'about:blank' || !chatIframe.src.includes('ngrok')) {
+                       chatIframe.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev';
+                    }
                 } else {
                     chatContainer.classList.remove('open');
+                    chatButton.innerHTML = chatIcon;
                 }
-                // Cambia l'icona del bottone
-                chatButton.innerHTML = isOpen ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5
-       6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d=
-       "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
             });
    
-            // Opzionale: gestire messaggi dall'iframe per la chiusura
+            // Gestisce la chiusura dall'interno dell'iframe
             window.addEventListener('message', (event) => {
-                // Controlla l'origine per sicurezza
                 if (event.origin === 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev' && event.data === 'chat-closed') {
                     isOpen = false;
                     chatContainer.classList.remove('open');
-                    chatButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0
-       2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
+                    chatButton.innerHTML = chatIcon;
                 }
             });
         });
