@@ -827,132 +827,252 @@
         })();
     </script>
 
- <!-- ================== LIA CHAT WIDGET (Nuova Implementazione) ================== -->
-      <style>
-        /* Stili per il contenitore dell'iframe */
-        #lia-chat-container {
-          position: fixed;
-          bottom: 0px; /* Partenza dal bordo inferiore */
-          right: 20px;
-          z-index: 9999;
-          width: 380px; /* Larghezza del widget */
-         height: 60px; /* Altezza iniziale per il bottone */
-         transition: height 0.3s ease-out, bottom 0.3s ease-out; /* Animazione per apertura/chiusura */
-         overflow: hidden; /* Nasconde il contenuto extra quando è chiuso */
-       }
-    
-       /* Stili per l'iframe stesso */
-       #lia-iframe-new { /* ID cambiato per evitare conflitti */
-         width: 100%;
-         height: calc(100% - 60px); /* L'altezza dell'iframe sarà l'altezza del container meno l'altezza del bottone */
-         border: none;
-         border-radius: 16px;
-         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-         display: block; /* Assicura che sia sempre un blocco */
-         visibility: hidden; /* Inizialmente nascosto */
-         opacity: 0;
-         transition: visibility 0.3s ease-out, opacity 0.3s ease-out;
-       }
-    
-       /* Stili per il bottone che apre la chat */
-       #lia-chat-button-iframe {
-         width: 60px;
-         height: 60px;
-         border-radius: 50%;
-         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-         border: none;
-         cursor: pointer;
-         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         color: white;
-         font-size: 30px;
-         position: absolute; /* Posiziona il bottone all'interno del container */
-         bottom: 0;
-         right: 0;
-       }
-    
-       #lia-chat-button-iframe:hover {
-         transform: scale(1.1);
-       }
-    
-       /* Stato aperto del widget */
-       #lia-chat-container.open {
-         height: 600px; /* Altezza finale del widget aperto */
-         bottom: 20px; /* Solleva il widget sopra il bordo */
-       }
-    
-       #lia-chat-container.open #lia-iframe-new {
-         visibility: visible;
-         opacity: 1;
-       }
-    
-       #lia-chat-container.open #lia-chat-button-iframe {
-         bottom: 540px; /* Sposta il bottone in cima al widget */
-         right: 10px;
-         background: #dc3545; /* Colore per chiusura */
-         transform: rotate(45deg); /* Gira la X per un effetto chiusura */
-       }
-    
-       #lia-chat-button-iframe svg {
-         width: 30px;
-         height: 30px;
-         fill: white;
-       }
-     </style>
-    
-     <div id="lia-chat-container">
-         <button id="lia-chat-button-iframe">
-             <!-- Icona della chat -->
-             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                 <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
-             </svg>
-         </button>
-         <iframe id="lia-iframe-new" src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev">
-         </iframe>
-     </div>
+    <iframe 
+  id="chat-iframe"
+  src="chat-widget.html">
+</iframe>
+<!-- Questo va DENTRO index.html, alla fine prima di </body> -->
 
-     <script>
-         document.addEventListener('DOMContentLoaded', () => {
-             const chatContainer = document.getElementById('lia-chat-container');
-             const chatButton = document.getElementById('lia-chat-button-iframe');
-             const chatIframe = document.getElementById('lia-iframe-new');
+<style>
+@keyframes pulse {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(0.8); }
+}
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-10px); }
+}
+</style>
+
+<!-- Chat mobile diretta (senza iframe) - solo su mobile -->
+<div id="mobile-chat" style="display:none;">
+  <button id="mobile-chat-button" aria-label="Apri chat" style="
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    border:none;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10000;
+  ">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:30px;height:30px;fill:white;">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+    </svg>
+  </button>
+
+  <div id="mobile-chat-widget" style="
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:90vw;
+    max-width:400px;
+    height:80vh;
+    max-height:600px;
+    background:white;
+    border-radius:16px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    z-index:9999;
+    flex-direction:column;
+    overflow:hidden;
+  ">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;border:2px solid white;color:white;overflow:hidden;position:relative;">
+          <img src="lia.jpg" alt="Lia" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='LA';">
+          <div id="mobile-header-badge" style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;background:#4cd137;border:2px solid white;animation:pulse 1.2s infinite;"></div>
+        </div>
+        <div>
+          <h3 style="margin:0;font-size:16px;font-weight:600;">Lia Aeon</h3>
+          <p style="margin:0;font-size:12px;opacity:0.9;">Assistente Virtuale</p>
+        </div>
+      </div>
+      <button id="mobile-close-chat" aria-label="Chiudi chat" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;">×</button>
+    </div>
+
+    <!-- Messaggi -->
+    <div id="mobile-messages" style="flex:1;overflow-y:auto;padding:20px;background:#f8f9fa;"></div>
+
+    <!-- Input -->
+    <div style="padding:16px;background:white;border-top:1px solid #e0e0e0;display:flex;gap:10px;">
+      <input type="text" id="mobile-user-input" placeholder="Scrivi un messaggio..." autocomplete="off" style="flex:1;padding:12px 16px;border:1px solid #e0e0e0;border-radius:24px;font-size:14px;outline:none;"/>
+      <button id="mobile-send-button" aria-label="Invia messaggio" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div id="mobile-chat-overlay" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background:rgba(0,0,0,0.5);
+    z-index:9998;
+  "></div>
+</div>
+
+<script>
+// Mostra chat mobile solo su schermi <= 768px
+if (window.innerWidth <= 768) {
+  document.getElementById('mobile-chat').style.display = 'block';
+  document.getElementById('chat-iframe').style.display = 'none';
+  
+  const BACKEND_URL = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/chat';
+  const conversationHistory = [];
+  
+  const chatButton = document.getElementById('mobile-chat-button');
+  const chatWidget = document.getElementById('mobile-chat-widget');
+  const closeChat = document.getElementById('mobile-close-chat');
+  const overlay = document.getElementById('mobile-chat-overlay');
+  const messages = document.getElementById('mobile-messages');
+  const userInput = document.getElementById('mobile-user-input');
+  const sendButton = document.getElementById('mobile-send-button');
+  
+  chatButton.addEventListener('click', () => {
+    chatWidget.style.display = 'flex';
+    overlay.style.display = 'block';
+    chatButton.style.display = 'none';
+    if (messages.children.length === 0) {
+      addMessage('bot', 'Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?');
+    }
+  });
+  
+  closeChat.addEventListener('click', () => {
+    chatWidget.style.display = 'none';
+    overlay.style.display = 'none';
+    chatButton.style.display = 'flex';
+  });
+  
+  overlay.addEventListener('click', () => {
+    chatWidget.style.display = 'none';
+    overlay.style.display = 'none';
+    chatButton.style.display = 'flex';
+  });
+  
+  sendButton.addEventListener('click', sendMessage);
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+  
+  async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
     
-             // Definiamo le icone come variabili per un codice più pulito e su una sola riga per evitare errori di sintassi.
-             const chatIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9
-      2-2V4c0-1.1-.9-2-2-2z"/></svg>';
-             const closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.
-      6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
-   
-            let isOpen = false;
-   
-            chatButton.addEventListener('click', () => {
-                isOpen = !isOpen;
-                if (isOpen) {
-                    chatContainer.classList.add('open');
-                    chatButton.innerHTML = closeIcon;
-                    // Carica l'iframe solo la prima volta che si apre la chat, per ottimizzare
-                    if (chatIframe.src === 'about:blank' || !chatIframe.src.includes('ngrok')) {
-                       chatIframe.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev';
-                    }
-                } else {
-                    chatContainer.classList.remove('open');
-                    chatButton.innerHTML = chatIcon;
-                }
-            });
-   
-            // Gestisce la chiusura dall'interno dell'iframe
-            window.addEventListener('message', (event) => {
-                if (event.origin === 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev' && event.data === 'chat-closed') {
-                    isOpen = false;
-                    chatContainer.classList.remove('open');
-                    chatButton.innerHTML = chatIcon;
-                }
-            });
-        });
-    </script>
-    <!-- ================ FINE LIA CHAT WIDGET (Nuova Implementazione) ================ -->
+    addMessage('user', message);
+    userInput.value = '';
+    conversationHistory.push({role: 'user', content: message});
+    
+    // Mostra "sta scrivendo..." con pallino arancione
+    const headerBadge = document.getElementById('mobile-header-badge');
+    if (headerBadge) headerBadge.style.background = '#f39c12';
+    
+    const typingDiv = addTypingIndicator();
+    
+    try {
+      const response = await fetch(BACKEND_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+        body: JSON.stringify({message, conversationHistory})
+      });
+      
+      // Rimuovi indicatore di scrittura
+      if (typingDiv) typingDiv.remove();
+      
+      // Torna verde
+      if (headerBadge) headerBadge.style.background = '#4cd137';
+      
+      if (response.ok) {
+        const data = await response.json();
+        addMessage('bot', data.response);
+        conversationHistory.push({role: 'assistant', content: data.response});
+      } else {
+        addMessage('bot', 'Errore di connessione. Riprova.');
+      }
+    } catch (error) {
+      if (typingDiv) typingDiv.remove();
+      if (headerBadge) headerBadge.style.background = '#4cd137';
+      addMessage('bot', 'Impossibile connettersi al server.');
+    }
+  }
+  
+  function addTypingIndicator() {
+    const div = document.createElement('div');
+    div.id = 'typing-indicator';
+    div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;';
+    
+    const avatar = document.createElement('div');
+    avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
+    avatar.innerHTML = '<img src="lia.jpg" alt="Lia" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'L\';">' +
+      '<div style="position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:#f39c12;border:1.5px solid white;animation:pulse 1.2s infinite;"></div>';
+    
+    const typingContent = document.createElement('div');
+    typingContent.style.cssText = 'padding:12px 16px;border-radius:16px;background:white;display:flex;gap:4px;align-items:center;';
+    typingContent.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite;"></div>' +
+      '<div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite 0.2s;"></div>' +
+      '<div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite 0.4s;"></div>';
+    
+    div.appendChild(avatar);
+    div.appendChild(typingContent);
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+    
+    return div;
+  }
+  
+  function addMessage(type, text) {
+    const div = document.createElement('div');
+    div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;' + 
+      (type === 'user' ? 'flex-direction:row-reverse;' : '');
+    
+    const avatar = document.createElement('div');
+    avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:' +
+      (type === 'bot' ? 'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)' : 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)') +
+      ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
+    
+    if (type === 'bot') {
+      avatar.innerHTML = '<img src="lia.jpg" alt="Lia" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'L\';">' +
+        '<div style="position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:#4cd137;border:1.5px solid white;animation:pulse 1.2s infinite;"></div>';
+    } else {
+      avatar.textContent = 'Tu';
+    }
+    
+    const content = document.createElement('div');
+    content.style.cssText = 'max-width:70%;padding:12px 16px;border-radius:16px;line-height:1.5;font-size:14px;' +
+      (type === 'bot' ? 'background:white;color:#333;' : 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;');
+    content.textContent = text;
+    
+    div.appendChild(avatar);
+    div.appendChild(content);
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+}
+</script>
+<!-- Pre-carica ngrok per evitare la pagina di avviso -->
+<iframe 
+  src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev" 
+  style="display:none;width:0;height:0;border:none;"
+  title="ngrok preload">
+</iframe>
+
 </body>
 
 </html>
