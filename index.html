@@ -827,85 +827,84 @@
         })();
     </script>
 
- <!-- ================== LIA CHAT WIDGET (Desktop) ================== -->
-     <!-- Questo iframe è per schermi grandi (desktop) -->
-     <iframe
-       id="chat-iframe"
-       src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev"
-       title="Lia Chat Widget"
-       allow="microphone; autoplay; clipboard-write; fullscreen"
-       style="
-         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 400px;
-        height: 600px; /* Altezza del widget */
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-        z-index: 9999;
-        display: none; /* Inizialmente nascosto */
-      "
-    ></iframe>
+<!-- ================== LIA CHAT WIDGET (Desktop) ================== -->
+        <!-- Questo iframe è per schermi grandi (desktop) -->
+        <iframe
+          id="chat-iframe"
+          src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev"
+          title="Lia Chat Widget"
+          allow="microphone; autoplay; clipboard-write; fullscreen"
+          style="
+            position: fixed;
+           bottom: 20px;
+           right: 20px;
+           width: 400px;
+           height: 600px; /* Altezza del widget */
+           border: none;
+           border-radius: 16px;
+           box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+           z-index: 9999;
+           display: none; /* Inizialmente nascosto */
+         "
+       ></iframe>
    
-   <script>
-         document.addEventListener('DOMContentLoaded', () => {
-             const desktopChatIframe = document.getElementById('chat-iframe');
-             const mobileChatDiv = document.getElementById('mobile-chat');
-    
-             // Questo è il bottone che viene creato dinamicamente per la vista desktop.
-             let desktopChatButton = document.getElementById('desktop-chat-button');
-             if (!desktopChatButton) {
-                desktopChatButton = document.createElement('button');
-                desktopChatButton.id = 'desktop-chat-button';
-                desktopChatButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style="width:30px;height:30px;"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
-                 desktopChatButton.style.cssText = `
-                    position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%;
-                    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border:none; cursor:pointer;
-                    box-shadow:0 4px 12px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center;
-                    z-index:10000; transition:transform 0.3s ease;`;
-                document.body.appendChild(desktopChatButton);
-            }
+       <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const desktopChatIframe = document.getElementById('chat-iframe');
+                const mobileChatDiv = document.getElementById('mobile-chat'); // Il tuo div mobile
    
-            // ***** LA CORREZIONE È QUI *****
-            // Ora usiamo la classe 'expanded' per mostrare, nascondere ED ESPANDERE l'iframe.
-            function toggleDesktopChat() {
-                desktopChatIframe.classList.toggle('expanded');
-            }
-   
-            desktopChatButton.addEventListener('click', toggleDesktopChat);
-   
-            // Questa funzione gestisce cosa mostrare (chat mobile o desktop) in base alla larghezza dello schermo.
-            function manageChatDisplay() {
-                if (window.innerWidth > 768) {
-                    if (mobileChatDiv) mobileChatDiv.style.display = 'none';
-                    if (desktopChatButton) desktopChatButton.style.display = 'flex';
-                } else {
-                    if (mobileChatDiv) mobileChatDiv.style.display = 'block';
-                    if (desktopChatButton) desktopChatButton.style.display = 'none';
-                    desktopChatIframe.classList.remove('expanded'); // Chiude l'iframe desktop su mobile.
+                // Funzione per mostrare/nascondere la chat desktop
+                function toggleDesktopChat() {
+                    desktopChatIframe.classList.toggle('expanded');
                 }
-            }
    
-            // Eseguiamo la funzione al caricamento e ogni volta che la finestra viene ridimensionata.
-            manageChatDisplay();
-            window.addEventListener('resize', manageChatDisplay);
-   
-            // Questo listener serve per permettere alla chat di chiudersi dall'interno (opzionale ma utile).
-            window.addEventListener('message', (event) => {
-                if (event.origin === 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev' && event.data === 'chat-closed') {
-                    desktopChatIframe.classList.remove('expanded');
+                // Questo è il bottone che viene creato dinamicamente per la vista desktop.
+                let desktopChatButton = document.getElementById('desktop-chat-button');
+                if (!desktopChatButton) {
+                    desktopChatButton = document.createElement('button');
+                    desktopChatButton.id = 'desktop-chat-button';
+                    desktopChatButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style="width:30px;height:30px><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
+                    desktopChatButton.style.cssText = `
+                        position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%;
+                        background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border:none; cursor:pointer;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center;
+                        z-index:10000; transition:transform 0.3s ease;`;
+                    document.body.appendChild(desktopChatButton);
                 }
+   
+                desktopChatButton.addEventListener('click', toggleDesktopChat);
+   
+                // Questa funzione gestisce cosa mostrare (chat mobile o desktop) in base alla larghezza dello schermo.
+                function manageChatDisplay() {
+                    if (window.innerWidth > 768) {
+                        if (mobileChatDiv) mobileChatDiv.style.display = 'none';
+                        if (desktopChatButton) desktopChatButton.style.display = 'flex';
+                    } else {
+                        if (mobileChatDiv) mobileChatDiv.style.display = 'block';
+                        if (desktopChatButton) desktopChatButton.style.display = 'none';
+                        desktopChatIframe.classList.remove('expanded'); // Chiude l'iframe desktop su mobile.
+                    }
+                }
+   
+                // Eseguiamo la funzione al caricamento e ogni volta che la finestra viene ridimensionata.
+                manageChatDisplay();
+                window.addEventListener('resize', manageChatDisplay);
+   
+                // Questo listener serve per permettere alla chat di chiudersi dall'interno (opzionale ma utile).
+                window.addEventListener('message', (event) => {
+                    if (event.origin === 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev' && event.data === 'chat-closed') {
+                        desktopChatIframe.classList.remove('expanded');
+                    }
+                });
             });
-        });
-    </script>
+        </script>
     <!-- Pre-carica ngrok per evitare la pagina di avviso -->
-<iframe 
-  src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev" 
-  style="display:none;width:0;height:0;border:none;"
-  title="ngrok preload">
-</iframe>
-
+    <iframe
+      src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev"
+      style="display:none;width:0;height:0;border:none;"
+      title="ngrok preload">
+    </iframe>
+    
 </body>
 
 </html>
