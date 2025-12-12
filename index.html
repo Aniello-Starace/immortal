@@ -848,73 +848,54 @@
       "
     ></iframe>
    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const desktopChatIframe = document.getElementById('chat-iframe');
-            const mobileChatDiv = document.getElementById('mobile-chat'); // Il tuo div mobile
-   
-            // Funzione per mostrare/nascondere la chat desktop
-            function toggleDesktopChat() {
-                if (desktopChatIframe.style.display === 'none') {
-                    desktopChatIframe.style.display = 'block';
-                } else {
-                    desktopChatIframe.style.display = 'none';
-                }
-            }
-   
-            // Questo è il bottone che tu avevi nel tuo CSS originale per la chat desktop.
-            // Lo stiamo aggiungendo dinamicamente, perché non lo vedo nell'HTML del tuo listato.
-            // Se hai un bottone esistente, potremmo usare quello.
-            let desktopChatButton = document.getElementById('desktop-chat-button');
-            if (!desktopChatButton) {
+   <script>
+         document.addEventListener('DOMContentLoaded', () => {
+             const desktopChatIframe = document.getElementById('chat-iframe');
+             const mobileChatDiv = document.getElementById('mobile-chat');
+    
+             // Questo è il bottone che viene creato dinamicamente per la vista desktop.
+             let desktopChatButton = document.getElementById('desktop-chat-button');
+             if (!desktopChatButton) {
                 desktopChatButton = document.createElement('button');
                 desktopChatButton.id = 'desktop-chat-button';
-                desktopChatButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1
-      2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
+                desktopChatButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style="width:30px;height:30px;"><
+      path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
                 desktopChatButton.style.cssText = `
-                    position:fixed;
-                    bottom:20px;
-                    right:20px;
-                    width:60px;
-                    height:60px;
-                    border-radius:50%;
-                    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-                    border:none;
-                    cursor:pointer;
-                    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    z-index:10000;
-                    transition:transform 0.3s ease;
-                `;
+                    position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%;
+                    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border:none; cursor:pointer;
+                    box-shadow:0 4px 12px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center;
+                    z-index:10000; transition:transform 0.3s ease;`;
                 document.body.appendChild(desktopChatButton);
             }
    
-            desktopChatButton.addEventListener('click', () => {
-                toggleDesktopChat();
-            });
+            // ***** LA CORREZIONE È QUI *****
+            // Ora usiamo la classe 'expanded' per mostrare, nascondere ED ESPANDERE l'iframe.
+            function toggleDesktopChat() {
+                desktopChatIframe.classList.toggle('expanded');
+            }
    
-            // Nascondi il bottone mobile e mostra quello desktop su schermi grandi
+            desktopChatButton.addEventListener('click', toggleDesktopChat);
+   
+            // Questa funzione gestisce cosa mostrare (chat mobile o desktop) in base alla larghezza dello schermo.
             function manageChatDisplay() {
                 if (window.innerWidth > 768) {
                     if (mobileChatDiv) mobileChatDiv.style.display = 'none';
                     if (desktopChatButton) desktopChatButton.style.display = 'flex';
                 } else {
-                    if (mobileChatDiv) mobileChatDiv.style.display = 'block'; // Il tuo script mobile lo gestirà
+                    if (mobileChatDiv) mobileChatDiv.style.display = 'block';
                     if (desktopChatButton) desktopChatButton.style.display = 'none';
-                    desktopChatIframe.style.display = 'none'; // Assicurati che l'iframe desktop sia nascosto su mobile
+                    desktopChatIframe.classList.remove('expanded'); // Chiude l'iframe desktop su mobile.
                 }
             }
    
-            // Esegui la gestione al caricamento e al ridimensionamento
+            // Eseguiamo la funzione al caricamento e ogni volta che la finestra viene ridimensionata.
             manageChatDisplay();
             window.addEventListener('resize', manageChatDisplay);
    
-            // Aggiungi un listener per messaggi dall'iframe (per chiusura)
+            // Questo listener serve per permettere alla chat di chiudersi dall'interno (opzionale ma utile).
             window.addEventListener('message', (event) => {
                 if (event.origin === 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev' && event.data === 'chat-closed') {
-                    desktopChatIframe.style.display = 'none';
+                    desktopChatIframe.classList.remove('expanded');
                 }
             });
         });
