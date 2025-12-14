@@ -935,6 +935,7 @@
             let currentUtterance = null;
             let isListening = false;
             let recognition = null;
+            let shouldKeepListening = true;
 
             const chatButton = document.getElementById('mobile-chat-button');
             const chatWidget = document.getElementById('mobile-chat-widget');
@@ -950,24 +951,46 @@
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
                 recognition.lang = 'it-IT';
-                recognition.continuous = false;
+                recognition.continuous = true; // Cambiato a true per ascolto continuo
                 recognition.interimResults = false;
 
                 recognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
+                    const transcript = event.results[event.results.length - 1][0].transcript;
                     userInput.value = transcript;
+                    
+                    // Ferma temporaneamente l'ascolto per inviare
+                    shouldKeepListening = false;
+                    recognition.stop();
+                    
                     sendMessage();
                 };
 
                 recognition.onerror = (event) => {
                     console.error('Speech recognition error:', event.error);
-                    isListening = false;
-                    if (headerBadge) headerBadge.style.background = '#4cd137';
+                    
+                    // Riavvia se l'errore non è fatale
+                    if (event.error !== 'aborted' && shouldKeepListening && !isSpeaking) {
+                        setTimeout(() => {
+                            if (shouldKeepListening && !isSpeaking) {
+                                startListening();
+                            }
+                        }, 1000);
+                    }
                 };
 
                 recognition.onend = () => {
                     isListening = false;
-                    if (headerBadge) headerBadge.style.background = '#4cd137';
+                    
+                    // Riavvia automaticamente l'ascolto se la chat è ancora aperta
+                    if (shouldKeepListening && !isSpeaking && chatWidget.style.display === 'flex') {
+                        setTimeout(() => {
+                            if (shouldKeepListening && !isSpeaking) {
+                                startListening();
+                            }
+                        }, 500);
+                    } else if (!isSpeaking) {
+                        if (headerBadge) headerBadge.style.background = '#4cd137';
+                    }
                 };
             }
 
@@ -975,6 +998,8 @@
                 chatWidget.style.display = 'flex';
                 overlay.style.display = 'block';
                 chatButton.style.display = 'none';
+                shouldKeepListening = true;
+                
                 if (messages.children.length === 0) {
                     addMessage('bot', 'Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?');
                     speakText('Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?');
@@ -986,6 +1011,8 @@
             overlay.addEventListener('click', closeWidget);
 
             function closeWidget() {
+                shouldKeepListening = false;
+                
                 if (isSpeaking) {
                     window.speechSynthesis.cancel();
                     isSpeaking = false;
@@ -1024,7 +1051,6 @@
                     });
 
                     if (typingDiv) typingDiv.remove();
-                    if (headerBadge) headerBadge.style.background = '#4cd137';
 
                     if (response.ok) {
                         const data = await response.json();
@@ -1035,11 +1061,24 @@
                         speakText(data.response);
                     } else {
                         addMessage('bot', 'Errore di connessione. Riprova.');
+                        if (headerBadge) headerBadge.style.background = '#4cd137';
+                        
+                        // Riavvia ascolto anche in caso di errore
+                        shouldKeepListening = true;
+                        if (recognition && !isSpeaking) {
+                            setTimeout(() => startListening(), 1000);
+                        }
                     }
                 } catch (error) {
                     if (typingDiv) typingDiv.remove();
-                    if (headerBadge) headerBadge.style.background = '#4cd137';
                     addMessage('bot', 'Impossibile connettersi al server.');
+                    if (headerBadge) headerBadge.style.background = '#4cd137';
+                    
+                    // Riavvia ascolto anche in caso di errore
+                    shouldKeepListening = true;
+                    if (recognition && !isSpeaking) {
+                        setTimeout(() => startListening(), 1000);
+                    }
                 }
             }
 
@@ -1049,15 +1088,24 @@
                 div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;';
 
                 const avatar = document.createElement('div');
-                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;';
+                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
                 
                 const img = document.createElement('img');
                 img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
-                img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-                img.onerror = function() {
-                    this.style.display = 'none';
+                img.alt = 'Lia';
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = function() {
+                    console.log('✅ Immagine Lia caricata con successo (typing)');
+                };
+                
+                img.onerror = function(e) {
+                    console.error('❌ Errore caricamento immagine Lia (typing):', e);
+                    this.remove();
                     avatar.textContent = 'L';
                 };
+                
                 avatar.appendChild(img);
 
                 const typingContent = document.createElement('div');
@@ -1079,16 +1127,25 @@
                 const avatar = document.createElement('div');
                 avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:' +
                     (type === 'bot' ? 'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)' : 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)') +
-                    ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;';
+                    ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
 
                 if (type === 'bot') {
                     const img = document.createElement('img');
                     img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
-                    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-                    img.onerror = function() {
-                        this.style.display = 'none';
+                    img.alt = 'Lia';
+                    img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
+                    img.crossOrigin = 'anonymous';
+                    
+                    img.onload = function() {
+                        console.log('✅ Immagine Lia caricata con successo (message)');
+                    };
+                    
+                    img.onerror = function(e) {
+                        console.error('❌ Errore caricamento immagine Lia (message):', e);
+                        this.remove();
                         avatar.textContent = 'L';
                     };
+                    
                     avatar.appendChild(img);
                 } else {
                     avatar.textContent = 'Tu';
@@ -1137,12 +1194,14 @@
 
                 utterance.onend = () => {
                     isSpeaking = false;
-                    if (headerBadge) headerBadge.style.background = '#4cd137';
                     
                     // Avvia ascolto automatico dopo che Lia finisce di parlare
+                    shouldKeepListening = true;
                     if (recognition && !isListening) {
                         setTimeout(() => {
-                            startListening();
+                            if (shouldKeepListening && !isSpeaking) {
+                                startListening();
+                            }
                         }, 500);
                     }
                 };
@@ -1164,10 +1223,19 @@
                     isListening = true;
                     if (headerBadge) headerBadge.style.background = '#e74c3c'; // Rosso per ascolto
                     recognition.start();
+                    console.log('🎤 Ascolto avviato');
                 } catch (error) {
                     console.error('Error starting recognition:', error);
                     isListening = false;
-                    if (headerBadge) headerBadge.style.background = '#4cd137';
+                    
+                    // Riprova dopo un secondo
+                    if (shouldKeepListening && !isSpeaking) {
+                        setTimeout(() => {
+                            if (shouldKeepListening && !isSpeaking) {
+                                startListening();
+                            }
+                        }, 1000);
+                    }
                 }
             }
 
