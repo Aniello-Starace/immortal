@@ -946,19 +946,23 @@
             const sendButton = document.getElementById('mobile-send-button');
             const headerBadge = document.getElementById('mobile-header-badge');
 
+            // Aggiungi placeholder
+            if (userInput) {
+                userInput.placeholder = 'Scrivi o parla...';
+            }
+
             // Inizializza riconoscimento vocale
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
                 recognition.lang = 'it-IT';
-                recognition.continuous = true; // Cambiato a true per ascolto continuo
+                recognition.continuous = true;
                 recognition.interimResults = false;
 
                 recognition.onresult = (event) => {
                     const transcript = event.results[event.results.length - 1][0].transcript;
                     userInput.value = transcript;
                     
-                    // Ferma temporaneamente l'ascolto per inviare
                     shouldKeepListening = false;
                     recognition.stop();
                     
@@ -968,7 +972,6 @@
                 recognition.onerror = (event) => {
                     console.error('Speech recognition error:', event.error);
                     
-                    // Riavvia se l'errore non è fatale
                     if (event.error !== 'aborted' && shouldKeepListening && !isSpeaking) {
                         setTimeout(() => {
                             if (shouldKeepListening && !isSpeaking) {
@@ -981,7 +984,6 @@
                 recognition.onend = () => {
                     isListening = false;
                     
-                    // Riavvia automaticamente l'ascolto se la chat è ancora aperta
                     if (shouldKeepListening && !isSpeaking && chatWidget.style.display === 'flex') {
                         setTimeout(() => {
                             if (shouldKeepListening && !isSpeaking) {
@@ -1039,7 +1041,6 @@
                 userInput.value = '';
                 conversationHistory.push({ role: 'user', content: message });
 
-                // Mostra "sta scrivendo..."
                 if (headerBadge) headerBadge.style.background = '#f39c12';
                 const typingDiv = addTypingIndicator();
 
@@ -1057,13 +1058,11 @@
                         addMessage('bot', data.response);
                         conversationHistory.push({ role: 'assistant', content: data.response });
                         
-                        // Avvia TTS per la risposta del bot
                         speakText(data.response);
                     } else {
                         addMessage('bot', 'Errore di connessione. Riprova.');
                         if (headerBadge) headerBadge.style.background = '#4cd137';
                         
-                        // Riavvia ascolto anche in caso di errore
                         shouldKeepListening = true;
                         if (recognition && !isSpeaking) {
                             setTimeout(() => startListening(), 1000);
@@ -1074,7 +1073,6 @@
                     addMessage('bot', 'Impossibile connettersi al server.');
                     if (headerBadge) headerBadge.style.background = '#4cd137';
                     
-                    // Riavvia ascolto anche in caso di errore
                     shouldKeepListening = true;
                     if (recognition && !isSpeaking) {
                         setTimeout(() => startListening(), 1000);
@@ -1088,25 +1086,8 @@
                 div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;';
 
                 const avatar = document.createElement('div');
-                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
-                
-                const img = document.createElement('img');
-                img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
-                img.alt = 'Lia';
-                img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
-                img.crossOrigin = 'anonymous';
-                
-                img.onload = function() {
-                    console.log('✅ Immagine Lia caricata con successo (typing)');
-                };
-                
-                img.onerror = function(e) {
-                    console.error('❌ Errore caricamento immagine Lia (typing):', e);
-                    this.remove();
-                    avatar.textContent = 'L';
-                };
-                
-                avatar.appendChild(img);
+                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:#f093fb;';
+                avatar.innerHTML = '<img src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" onload="console.log(\'Img loaded\')" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div style=\\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:50%;\\\'>L</div>\';">';
 
                 const typingContent = document.createElement('div');
                 typingContent.style.cssText = 'padding:12px 16px;border-radius:16px;background:white;display:flex;gap:4px;align-items:center;';
@@ -1125,28 +1106,11 @@
                 div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;' + (type === 'user' ? 'flex-direction:row-reverse;' : '');
 
                 const avatar = document.createElement('div');
-                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:' +
-                    (type === 'bot' ? 'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)' : 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)') +
-                    ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;position:relative;';
+                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;' +
+                    (type === 'bot' ? 'background:#f093fb;' : 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;');
 
                 if (type === 'bot') {
-                    const img = document.createElement('img');
-                    img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
-                    img.alt = 'Lia';
-                    img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
-                    img.crossOrigin = 'anonymous';
-                    
-                    img.onload = function() {
-                        console.log('✅ Immagine Lia caricata con successo (message)');
-                    };
-                    
-                    img.onerror = function(e) {
-                        console.error('❌ Errore caricamento immagine Lia (message):', e);
-                        this.remove();
-                        avatar.textContent = 'L';
-                    };
-                    
-                    avatar.appendChild(img);
+                    avatar.innerHTML = '<img src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" onload="console.log(\'Img loaded msg\')" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div style=\\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:50%;\\\'>L</div>\';">';
                 } else {
                     avatar.textContent = 'Tu';
                 }
@@ -1162,14 +1126,24 @@
                 messages.scrollTop = messages.scrollHeight;
             }
 
-            // Funzione TTS per Mobile
-            function speakText(text) {
+            // Funzione TTS per Mobile con voce specifica
+            async function speakText(text) {
                 if (!text || text.trim() === '') return;
 
-                // Ferma eventuale speech in corso
                 if (isSpeaking) {
                     window.speechSynthesis.cancel();
                     isSpeaking = false;
+                }
+
+                // Attendi il caricamento delle voci
+                let voices = window.speechSynthesis.getVoices();
+                if (voices.length === 0) {
+                    await new Promise(resolve => {
+                        window.speechSynthesis.onvoiceschanged = () => {
+                            voices = window.speechSynthesis.getVoices();
+                            resolve();
+                        };
+                    });
                 }
 
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -1177,14 +1151,28 @@
                 utterance.rate = 0.9;
                 utterance.pitch = 1.1;
 
-                // Cerca voce italiana femminile
-                const voices = window.speechSynthesis.getVoices();
-                const italianVoice = voices.find(voice =>
-                    voice.lang.startsWith('it') && voice.name.toLowerCase().includes('female')
-                ) || voices.find(voice => voice.lang.startsWith('it'));
+                // Cerca la stessa voce del web (priorità: Google italiano, poi qualsiasi italiana femminile)
+                let selectedVoice = voices.find(voice => 
+                    voice.name.includes('Google') && voice.lang.startsWith('it')
+                );
+                
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice =>
+                        voice.lang.startsWith('it') && 
+                        (voice.name.toLowerCase().includes('female') || 
+                         voice.name.toLowerCase().includes('donna') ||
+                         voice.name.toLowerCase().includes('alice') ||
+                         voice.name.toLowerCase().includes('federica'))
+                    );
+                }
+                
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('it'));
+                }
 
-                if (italianVoice) {
-                    utterance.voice = italianVoice;
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                    console.log('🔊 Voce selezionata:', selectedVoice.name);
                 }
 
                 utterance.onstart = () => {
@@ -1195,7 +1183,6 @@
                 utterance.onend = () => {
                     isSpeaking = false;
                     
-                    // Avvia ascolto automatico dopo che Lia finisce di parlare
                     shouldKeepListening = true;
                     if (recognition && !isListening) {
                         setTimeout(() => {
@@ -1215,20 +1202,18 @@
                 window.speechSynthesis.speak(utterance);
             }
 
-            // Funzione per avviare l'ascolto
             function startListening() {
                 if (!recognition || isListening || isSpeaking) return;
 
                 try {
                     isListening = true;
-                    if (headerBadge) headerBadge.style.background = '#e74c3c'; // Rosso per ascolto
+                    if (headerBadge) headerBadge.style.background = '#e74c3c';
                     recognition.start();
                     console.log('🎤 Ascolto avviato');
                 } catch (error) {
                     console.error('Error starting recognition:', error);
                     isListening = false;
                     
-                    // Riprova dopo un secondo
                     if (shouldKeepListening && !isSpeaking) {
                         setTimeout(() => {
                             if (shouldKeepListening && !isSpeaking) {
@@ -1239,14 +1224,15 @@
                 }
             }
 
-            // Carica voci al caricamento
+            // Carica voci
+            window.speechSynthesis.getVoices();
             if (window.speechSynthesis.onvoiceschanged !== undefined) {
                 window.speechSynthesis.onvoiceschanged = () => {
-                    window.speechSynthesis.getVoices();
+                    const voices = window.speechSynthesis.getVoices();
+                    console.log('📢 Voci disponibili:', voices.map(v => v.name + ' (' + v.lang + ')'));
                 };
             }
-        })();
-        
+        })();        
     </script>
 
     <style>
