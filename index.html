@@ -924,19 +924,21 @@
             });
         })();
 
-        // Chat Mobile - solo su schermi <= 768px
+       // Chat Mobile - solo su schermi <= 768px
         (function () {
             if (window.innerWidth > 768) return; // Solo mobile
 
             document.getElementById('mobile-chat').style.display = 'block';
 
             const BACKEND_URL = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/api/chat';
+            const LIA_IMAGE_URL = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
             const conversationHistory = [];
             let isSpeaking = false;
             let currentUtterance = null;
             let isListening = false;
             let recognition = null;
             let shouldKeepListening = true;
+            let imageDataUrl = null; // Cache dell'immagine
 
             const chatButton = document.getElementById('mobile-chat-button');
             const chatWidget = document.getElementById('mobile-chat-widget');
@@ -947,10 +949,32 @@
             const sendButton = document.getElementById('mobile-send-button');
             const headerBadge = document.getElementById('mobile-header-badge');
 
-            // Aggiungi placeholder
+            // Placeholder
             if (userInput) {
                 userInput.placeholder = 'Scrivi o parla...';
             }
+
+            // Precarica l'immagine come Data URL
+            async function preloadImage() {
+                try {
+                    const response = await fetch(LIA_IMAGE_URL);
+                    const blob = await response.blob();
+                    const reader = new FileReader();
+                    reader.onloadend = function() {
+                        imageDataUrl = reader.result;
+                        console.log('✅ Immagine Lia precaricata come Data URL');
+                    };
+                    reader.onerror = function() {
+                        console.error('❌ Errore conversione immagine a Data URL');
+                    };
+                    reader.readAsDataURL(blob);
+                } catch (error) {
+                    console.error('❌ Errore precaricamento immagine Lia:', error);
+                }
+            }
+
+            // Precarica l'immagine all'avvio
+            preloadImage();
 
             // Inizializza riconoscimento vocale
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -1083,37 +1107,33 @@
                 }
             }
 
+            function createLiaAvatar() {
+                const avatarContainer = document.createElement('div');
+                avatarContainer.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;';
+                
+                if (imageDataUrl) {
+                    const img = document.createElement('img');
+                    img.src = imageDataUrl;
+                    img.alt = 'Lia';
+                    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                    img.onerror = function() {
+                        console.error('❌ Errore rendering immagine Lia');
+                        avatarContainer.textContent = 'L';
+                    };
+                    avatarContainer.appendChild(img);
+                } else {
+                    avatarContainer.textContent = 'L';
+                }
+                
+                return avatarContainer;
+            }
+
             function addTypingIndicator() {
                 const div = document.createElement('div');
                 div.id = 'typing-indicator';
                 div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;';
 
-                const avatarContainer = document.createElement('div');
-                avatarContainer.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;';
-                
-                // Prova a caricare l'immagine
-                fetch('https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg', { mode: 'no-cors' })
-                    .then(() => {
-                        const img = new Image();
-                        img.crossOrigin = 'anonymous';
-                        img.onload = function() {
-                            avatarContainer.innerHTML = '';
-                            this.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-                            avatarContainer.appendChild(this);
-                            console.log('✅ Immagine Lia caricata (typing)');
-                        };
-                        img.onerror = function() {
-                            avatarContainer.textContent = 'L';
-                            console.log('❌ Errore caricamento immagine Lia (typing)');
-                        };
-                        img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
-                    })
-                    .catch(() => {
-                        avatarContainer.textContent = 'L';
-                        console.log('❌ Fetch immagine fallito (typing)');
-                    });
-                
-                avatarContainer.textContent = 'L';
+                const avatarContainer = createLiaAvatar();
 
                 const typingContent = document.createElement('div');
                 typingContent.style.cssText = 'padding:12px 16px;border-radius:16px;background:white;display:flex;gap:4px;align-items:center;';
@@ -1131,36 +1151,13 @@
                 const div = document.createElement('div');
                 div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;' + (type === 'user' ? 'flex-direction:row-reverse;' : '');
 
-                const avatarContainer = document.createElement('div');
-                avatarContainer.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;' +
-                    (type === 'bot' 
-                        ? 'background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;'
-                        : 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;');
-
+                let avatarContainer;
+                
                 if (type === 'bot') {
-                    fetch('https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg', { mode: 'no-cors' })
-                        .then(() => {
-                            const img = new Image();
-                            img.crossOrigin = 'anonymous';
-                            img.onload = function() {
-                                avatarContainer.innerHTML = '';
-                                this.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-                                avatarContainer.appendChild(this);
-                                console.log('✅ Immagine Lia caricata (message)');
-                            };
-                            img.onerror = function() {
-                                avatarContainer.textContent = 'L';
-                                console.log('❌ Errore caricamento immagine Lia (message)');
-                            };
-                            img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
-                        })
-                        .catch(() => {
-                            avatarContainer.textContent = 'L';
-                            console.log('❌ Fetch immagine fallito (message)');
-                        });
-                    
-                    avatarContainer.textContent = 'L';
+                    avatarContainer = createLiaAvatar();
                 } else {
+                    avatarContainer = document.createElement('div');
+                    avatarContainer.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;';
                     avatarContainer.textContent = 'Tu';
                 }
 
@@ -1175,7 +1172,7 @@
                 messages.scrollTop = messages.scrollHeight;
             }
 
-            // Funzione TTS con voce Paola di Piper
+            // Funzione TTS con voce Paola/Piper
             async function speakText(text) {
                 if (!text || text.trim() === '') return;
 
@@ -1189,21 +1186,22 @@
                 if (voices.length === 0) {
                     await new Promise(resolve => {
                         let resolved = false;
-                        window.speechSynthesis.onvoiceschanged = () => {
-                            if (!resolved) {
-                                voices = window.speechSynthesis.getVoices();
-                                resolved = true;
-                                resolve();
-                            }
-                        };
-                        // Timeout di sicurezza
-                        setTimeout(() => {
+                        const timeout = setTimeout(() => {
                             if (!resolved) {
                                 voices = window.speechSynthesis.getVoices();
                                 resolved = true;
                                 resolve();
                             }
                         }, 1000);
+                        
+                        window.speechSynthesis.onvoiceschanged = () => {
+                            if (!resolved) {
+                                clearTimeout(timeout);
+                                voices = window.speechSynthesis.getVoices();
+                                resolved = true;
+                                resolve();
+                            }
+                        };
                     });
                 }
 
@@ -1212,31 +1210,32 @@
                 utterance.rate = 0.9;
                 utterance.pitch = 1.1;
 
-                // Cerca ESATTAMENTE la voce Paola (Piper)
-                let selectedVoice = voices.find(voice => 
-                    voice.name.toLowerCase().includes('paola') || 
-                    voice.name.toLowerCase().includes('piper')
+                // CERCA ESATTAMENTE PAOLA/PIPER
+                let selectedVoice = voices.find(v => 
+                    v.name.toLowerCase().includes('paola') || 
+                    v.name.toLowerCase().includes('piper')
                 );
                 
-                // Se non trova Paola, cerca altre voci italiane
+                // Fallback su altre voci italiane di qualità
                 if (!selectedVoice) {
-                    selectedVoice = voices.find(voice =>
-                        voice.lang.startsWith('it') && 
-                        (voice.name.toLowerCase().includes('google') ||
-                         voice.name.toLowerCase().includes('alice') ||
-                         voice.name.toLowerCase().includes('federica'))
+                    selectedVoice = voices.find(v =>
+                        v.lang.startsWith('it') && 
+                        (v.name.toLowerCase().includes('google') ||
+                         v.name.toLowerCase().includes('alice') ||
+                         v.name.toLowerCase().includes('federica') ||
+                         v.name.toLowerCase().includes('enhanced'))
                     );
                 }
                 
                 if (!selectedVoice) {
-                    selectedVoice = voices.find(voice => voice.lang.startsWith('it'));
+                    selectedVoice = voices.find(v => v.lang.startsWith('it'));
                 }
 
                 if (selectedVoice) {
                     utterance.voice = selectedVoice;
-                    console.log('🔊 Voce TTS selezionata:', selectedVoice.name, '|', selectedVoice.lang);
+                    console.log('🔊 Voce selezionata:', selectedVoice.name);
                 } else {
-                    console.warn('⚠️ Nessuna voce italiana trovata');
+                    console.warn('⚠️ Nessuna voce trovata');
                 }
 
                 utterance.onstart = () => {
@@ -1276,7 +1275,7 @@
                     recognition.start();
                     console.log('🎤 Ascolto avviato');
                 } catch (error) {
-                    console.error('❌ Recognition start error:', error);
+                    console.error('❌ Start listening error:', error);
                     isListening = false;
                     
                     if (shouldKeepListening && !isSpeaking) {
@@ -1289,17 +1288,19 @@
                 }
             }
 
-            // Carica voci all'avvio
-            window.speechSynthesis.getVoices();
+            // Log voci disponibili
+            setTimeout(() => {
+                const voices = window.speechSynthesis.getVoices();
+                console.log('📢 === VOCI ITALIANE DISPONIBILI ===');
+                voices.filter(v => v.lang.startsWith('it')).forEach(v => {
+                    console.log(`  ${v.name} (${v.lang}) ${v.default ? '[DEFAULT]' : ''}`);
+                });
+                console.log('=====================================');
+            }, 1000);
+
             if (window.speechSynthesis.onvoiceschanged !== undefined) {
                 window.speechSynthesis.onvoiceschanged = () => {
-                    const voices = window.speechSynthesis.getVoices();
-                    console.log('📢 Voci TTS disponibili sul dispositivo:');
-                    voices.forEach(v => {
-                        if (v.lang.startsWith('it')) {
-                            console.log(`  - ${v.name} (${v.lang}) ${v.default ? '[DEFAULT]' : ''}`);
-                        }
-                    });
+                    window.speechSynthesis.getVoices();
                 };
             }
         })();
