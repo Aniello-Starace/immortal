@@ -933,6 +933,8 @@
             const conversationHistory = [];
             let isSpeaking = false;
             let currentUtterance = null;
+            let isListening = false;
+            let recognition = null;
 
             const chatButton = document.getElementById('mobile-chat-button');
             const chatWidget = document.getElementById('mobile-chat-widget');
@@ -942,6 +944,32 @@
             const userInput = document.getElementById('mobile-user-input');
             const sendButton = document.getElementById('mobile-send-button');
             const headerBadge = document.getElementById('mobile-header-badge');
+
+            // Inizializza riconoscimento vocale
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'it-IT';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    userInput.value = transcript;
+                    sendMessage();
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    isListening = false;
+                    if (headerBadge) headerBadge.style.background = '#4cd137';
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    if (headerBadge) headerBadge.style.background = '#4cd137';
+                };
+            }
 
             chatButton.addEventListener('click', () => {
                 chatWidget.style.display = 'flex';
@@ -961,6 +989,10 @@
                 if (isSpeaking) {
                     window.speechSynthesis.cancel();
                     isSpeaking = false;
+                }
+                if (isListening && recognition) {
+                    recognition.stop();
+                    isListening = false;
                 }
                 chatWidget.style.display = 'none';
                 overlay.style.display = 'none';
@@ -1018,7 +1050,15 @@
 
                 const avatar = document.createElement('div');
                 avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;';
-                avatar.innerHTML = '<img src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.parentElement.textContent=\'L\';">';
+                
+                const img = document.createElement('img');
+                img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    avatar.textContent = 'L';
+                };
+                avatar.appendChild(img);
 
                 const typingContent = document.createElement('div');
                 typingContent.style.cssText = 'padding:12px 16px;border-radius:16px;background:white;display:flex;gap:4px;align-items:center;';
@@ -1042,7 +1082,14 @@
                     ';display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;overflow:hidden;';
 
                 if (type === 'bot') {
-                    avatar.innerHTML = '<img src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.parentElement.textContent=\'L\';">';
+                    const img = document.createElement('img');
+                    img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
+                    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                        avatar.textContent = 'L';
+                    };
+                    avatar.appendChild(img);
                 } else {
                     avatar.textContent = 'Tu';
                 }
@@ -1091,6 +1138,13 @@
                 utterance.onend = () => {
                     isSpeaking = false;
                     if (headerBadge) headerBadge.style.background = '#4cd137';
+                    
+                    // Avvia ascolto automatico dopo che Lia finisce di parlare
+                    if (recognition && !isListening) {
+                        setTimeout(() => {
+                            startListening();
+                        }, 500);
+                    }
                 };
 
                 utterance.onerror = () => {
@@ -1102,6 +1156,21 @@
                 window.speechSynthesis.speak(utterance);
             }
 
+            // Funzione per avviare l'ascolto
+            function startListening() {
+                if (!recognition || isListening || isSpeaking) return;
+
+                try {
+                    isListening = true;
+                    if (headerBadge) headerBadge.style.background = '#e74c3c'; // Rosso per ascolto
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    isListening = false;
+                    if (headerBadge) headerBadge.style.background = '#4cd137';
+                }
+            }
+
             // Carica voci al caricamento
             if (window.speechSynthesis.onvoiceschanged !== undefined) {
                 window.speechSynthesis.onvoiceschanged = () => {
@@ -1109,7 +1178,6 @@
                 };
             }
         })();
-
         
     </script>
 
