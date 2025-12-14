@@ -923,7 +923,8 @@
                 }
             });
         })();
-// Chat Mobile - solo su schermi <= 768px
+
+        // Chat Mobile - solo su schermi <= 768px
         (function () {
             if (window.innerWidth > 768) return; // Solo mobile
 
@@ -970,7 +971,7 @@
                 };
 
                 recognition.onerror = (event) => {
-                    console.error('Speech recognition error:', event.error);
+                    console.error('🎤 Speech recognition error:', event.error);
                     
                     if (event.error !== 'aborted' && shouldKeepListening && !isSpeaking) {
                         setTimeout(() => {
@@ -1003,8 +1004,9 @@
                 shouldKeepListening = true;
                 
                 if (messages.children.length === 0) {
-                    addMessage('bot', 'Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?');
-                    speakText('Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?');
+                    const welcomeMsg = 'Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?';
+                    addMessage('bot', welcomeMsg);
+                    speakText(welcomeMsg);
                 }
                 userInput.focus();
             });
@@ -1069,6 +1071,7 @@
                         }
                     }
                 } catch (error) {
+                    console.error('❌ Fetch error:', error);
                     if (typingDiv) typingDiv.remove();
                     addMessage('bot', 'Impossibile connettersi al server.');
                     if (headerBadge) headerBadge.style.background = '#4cd137';
@@ -1083,17 +1086,40 @@
             function addTypingIndicator() {
                 const div = document.createElement('div');
                 div.id = 'typing-indicator';
-                div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;';
+                div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;';
 
-                const avatar = document.createElement('div');
-                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:#f093fb;';
-                avatar.innerHTML = '<img src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" onload="console.log(\'Img loaded\')" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div style=\\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:50%;\\\'>L</div>\';">';
+                const avatarContainer = document.createElement('div');
+                avatarContainer.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;';
+                
+                // Prova a caricare l'immagine
+                fetch('https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg', { mode: 'no-cors' })
+                    .then(() => {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = function() {
+                            avatarContainer.innerHTML = '';
+                            this.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                            avatarContainer.appendChild(this);
+                            console.log('✅ Immagine Lia caricata (typing)');
+                        };
+                        img.onerror = function() {
+                            avatarContainer.textContent = 'L';
+                            console.log('❌ Errore caricamento immagine Lia (typing)');
+                        };
+                        img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
+                    })
+                    .catch(() => {
+                        avatarContainer.textContent = 'L';
+                        console.log('❌ Fetch immagine fallito (typing)');
+                    });
+                
+                avatarContainer.textContent = 'L';
 
                 const typingContent = document.createElement('div');
                 typingContent.style.cssText = 'padding:12px 16px;border-radius:16px;background:white;display:flex;gap:4px;align-items:center;';
                 typingContent.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite;"></div><div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite 0.2s;"></div><div style="width:8px;height:8px;border-radius:50%;background:#999;animation:bounce 1.4s infinite 0.4s;"></div>';
 
-                div.appendChild(avatar);
+                div.appendChild(avatarContainer);
                 div.appendChild(typingContent);
                 messages.appendChild(div);
                 messages.scrollTop = messages.scrollHeight;
@@ -1103,16 +1129,39 @@
 
             function addMessage(type, text) {
                 const div = document.createElement('div');
-                div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;' + (type === 'user' ? 'flex-direction:row-reverse;' : '');
+                div.style.cssText = 'margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;' + (type === 'user' ? 'flex-direction:row-reverse;' : '');
 
-                const avatar = document.createElement('div');
-                avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;' +
-                    (type === 'bot' ? 'background:#f093fb;' : 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;');
+                const avatarContainer = document.createElement('div');
+                avatarContainer.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;' +
+                    (type === 'bot' 
+                        ? 'background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;'
+                        : 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;');
 
                 if (type === 'bot') {
-                    avatar.innerHTML = '<img src="https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" onload="console.log(\'Img loaded msg\')" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div style=\\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:50%;\\\'>L</div>\';">';
+                    fetch('https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg', { mode: 'no-cors' })
+                        .then(() => {
+                            const img = new Image();
+                            img.crossOrigin = 'anonymous';
+                            img.onload = function() {
+                                avatarContainer.innerHTML = '';
+                                this.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                                avatarContainer.appendChild(this);
+                                console.log('✅ Immagine Lia caricata (message)');
+                            };
+                            img.onerror = function() {
+                                avatarContainer.textContent = 'L';
+                                console.log('❌ Errore caricamento immagine Lia (message)');
+                            };
+                            img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
+                        })
+                        .catch(() => {
+                            avatarContainer.textContent = 'L';
+                            console.log('❌ Fetch immagine fallito (message)');
+                        });
+                    
+                    avatarContainer.textContent = 'L';
                 } else {
-                    avatar.textContent = 'Tu';
+                    avatarContainer.textContent = 'Tu';
                 }
 
                 const content = document.createElement('div');
@@ -1120,13 +1169,13 @@
                     (type === 'bot' ? 'background:white;color:#333;' : 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;');
                 content.textContent = text;
 
-                div.appendChild(avatar);
+                div.appendChild(avatarContainer);
                 div.appendChild(content);
                 messages.appendChild(div);
                 messages.scrollTop = messages.scrollHeight;
             }
 
-            // Funzione TTS per Mobile con voce specifica
+            // Funzione TTS con voce Paola di Piper
             async function speakText(text) {
                 if (!text || text.trim() === '') return;
 
@@ -1135,14 +1184,26 @@
                     isSpeaking = false;
                 }
 
-                // Attendi il caricamento delle voci
+                // Attendi caricamento voci
                 let voices = window.speechSynthesis.getVoices();
                 if (voices.length === 0) {
                     await new Promise(resolve => {
+                        let resolved = false;
                         window.speechSynthesis.onvoiceschanged = () => {
-                            voices = window.speechSynthesis.getVoices();
-                            resolve();
+                            if (!resolved) {
+                                voices = window.speechSynthesis.getVoices();
+                                resolved = true;
+                                resolve();
+                            }
                         };
+                        // Timeout di sicurezza
+                        setTimeout(() => {
+                            if (!resolved) {
+                                voices = window.speechSynthesis.getVoices();
+                                resolved = true;
+                                resolve();
+                            }
+                        }, 1000);
                     });
                 }
 
@@ -1151,16 +1212,17 @@
                 utterance.rate = 0.9;
                 utterance.pitch = 1.1;
 
-                // Cerca la stessa voce del web (priorità: Google italiano, poi qualsiasi italiana femminile)
+                // Cerca ESATTAMENTE la voce Paola (Piper)
                 let selectedVoice = voices.find(voice => 
-                    voice.name.includes('Google') && voice.lang.startsWith('it')
+                    voice.name.toLowerCase().includes('paola') || 
+                    voice.name.toLowerCase().includes('piper')
                 );
                 
+                // Se non trova Paola, cerca altre voci italiane
                 if (!selectedVoice) {
                     selectedVoice = voices.find(voice =>
                         voice.lang.startsWith('it') && 
-                        (voice.name.toLowerCase().includes('female') || 
-                         voice.name.toLowerCase().includes('donna') ||
+                        (voice.name.toLowerCase().includes('google') ||
                          voice.name.toLowerCase().includes('alice') ||
                          voice.name.toLowerCase().includes('federica'))
                     );
@@ -1172,7 +1234,9 @@
 
                 if (selectedVoice) {
                     utterance.voice = selectedVoice;
-                    console.log('🔊 Voce selezionata:', selectedVoice.name);
+                    console.log('🔊 Voce TTS selezionata:', selectedVoice.name, '|', selectedVoice.lang);
+                } else {
+                    console.warn('⚠️ Nessuna voce italiana trovata');
                 }
 
                 utterance.onstart = () => {
@@ -1193,7 +1257,8 @@
                     }
                 };
 
-                utterance.onerror = () => {
+                utterance.onerror = (event) => {
+                    console.error('❌ TTS error:', event.error);
                     isSpeaking = false;
                     if (headerBadge) headerBadge.style.background = '#4cd137';
                 };
@@ -1211,7 +1276,7 @@
                     recognition.start();
                     console.log('🎤 Ascolto avviato');
                 } catch (error) {
-                    console.error('Error starting recognition:', error);
+                    console.error('❌ Recognition start error:', error);
                     isListening = false;
                     
                     if (shouldKeepListening && !isSpeaking) {
@@ -1224,15 +1289,20 @@
                 }
             }
 
-            // Carica voci
+            // Carica voci all'avvio
             window.speechSynthesis.getVoices();
             if (window.speechSynthesis.onvoiceschanged !== undefined) {
                 window.speechSynthesis.onvoiceschanged = () => {
                     const voices = window.speechSynthesis.getVoices();
-                    console.log('📢 Voci disponibili:', voices.map(v => v.name + ' (' + v.lang + ')'));
+                    console.log('📢 Voci TTS disponibili sul dispositivo:');
+                    voices.forEach(v => {
+                        if (v.lang.startsWith('it')) {
+                            console.log(`  - ${v.name} (${v.lang}) ${v.default ? '[DEFAULT]' : ''}`);
+                        }
+                    });
                 };
             }
-        })();        
+        })();
     </script>
 
     <style>
