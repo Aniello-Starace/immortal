@@ -954,28 +954,6 @@
                 userInput.placeholder = 'Scrivi o parla...';
             }
 
-            // Precarica l'immagine come Data URL
-            async function preloadImage() {
-                try {
-                    const response = await fetch(LIA_IMAGE_URL);
-                    const blob = await response.blob();
-                    const reader = new FileReader();
-                    reader.onloadend = function() {
-                        imageDataUrl = reader.result;
-                        console.log('✅ Immagine Lia precaricata come Data URL');
-                    };
-                    reader.onerror = function() {
-                        console.error('❌ Errore conversione immagine a Data URL');
-                    };
-                    reader.readAsDataURL(blob);
-                } catch (error) {
-                    console.error('❌ Errore precaricamento immagine Lia:', error);
-                }
-            }
-
-            // Precarica l'immagine all'avvio
-            preloadImage();
-
             // Inizializza riconoscimento vocale
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
