@@ -1086,26 +1086,34 @@
                 }
             }
 
-            function createLiaAvatar() {
+           function createLiaAvatar() {
     const avatarContainer = document.createElement('div');
     avatarContainer.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;';
     
-    // Usa lo stesso metodo dell'header HTML che funziona
+    console.log('🖼️ createLiaAvatar chiamata');
+    
     const img = document.createElement('img');
     img.src = 'https://mirthlessly-noncrustaceous-alisa.ngrok-free.dev/lia.jpg';
     img.alt = 'Lia';
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-    img.onerror = function() {
-        console.error('❌ Errore caricamento immagine Lia');
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    
+    img.onload = function() {
+        console.log('✅ Immagine Lia CARICATA con successo!', img.naturalWidth, 'x', img.naturalHeight);
+    };
+    
+    img.onerror = function(e) {
+        console.error('❌ ERRORE caricamento immagine Lia:', e);
+        console.error('❌ URL:', img.src);
+        console.error('❌ Complete:', img.complete);
         this.style.display = 'none';
         avatarContainer.textContent = 'L';
     };
     
+    console.log('🖼️ Immagine creata, src:', img.src);
     avatarContainer.appendChild(img);
     
     return avatarContainer;
 }
-
             function addTypingIndicator() {
                 const div = document.createElement('div');
                 div.id = 'typing-indicator';
