@@ -1256,28 +1256,6 @@
                 });
             }, 1000);
         })();
-```
-
----
-
-## 🎯 Cosa Fa Questo Codice:
-
-1. **Precarica l'immagine** con `fetch()` + header `ngrok-skip-browser-warning`
-2. **Converte in Blob URL** (nessun problema CORS)
-3. **Usa `createLiaAvatar()`** per creare avatar con immagine precaricata
-4. **Mantiene tutto il resto** (TTS, recognition, ecc.)
-
----
-
-## ✅ Dopo la Sostituzione:
-
-1. **Salva** index.html
-2. **Fai commit** e push su GitHub
-3. **Ricarica** la pagina mobile
-4. **Controlla console** - dovresti vedere:
-```
-   🖼️ Precarico immagine Lia...
-   ✅ Immagine Lia precaricata!
     </script>
 
     <style>
