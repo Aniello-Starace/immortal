@@ -1263,7 +1263,8 @@
                         return;
                     }
 
-                    // Seleziona voce italiana
+                    // Seleziona voce italiana - prova SENZA impostare voice
+                    // Su alcuni browser mobile, impostare la voce causa errori
                     let voice = voices.find(v => 
                         v.lang === 'it-IT' || 
                         v.lang === 'it_IT'
@@ -1273,23 +1274,14 @@
                         voice = voices.find(v => v.lang.startsWith('it'));
                     }
                     
-                    if (!voice) {
-                        voice = voices.find(v => 
-                            v.name.toLowerCase().includes('paola') || 
-                            v.name.toLowerCase().includes('alice')
-                        );
-                    }
+                    // NON impostiamo la voce, lasciamo che il browser scelga
+                    // utterance.voice = voice; // Commentato
                     
-                    if (!voice && voices.length > 0) {
-                        voice = voices[0];
-                        console.warn('⚠️ Uso voce di fallback:', voice.name);
-                    }
-
                     if (voice) {
-                        utterance.voice = voice;
-                        console.log('🔊 Voce:', voice.name, voice.lang);
+                        console.log('🔊 Voce disponibile (non impostata):', voice.name, voice.lang);
+                    } else {
+                        console.warn('⚠️ Nessuna voce italiana, uso default browser');
                     }
-
                     let errorOccurred = false;
 
                     utterance.onstart = () => {
