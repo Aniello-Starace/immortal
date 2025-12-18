@@ -1287,8 +1287,12 @@
                     }
 
                     if (voice) {
-                        utterance.voice = voice;
-                        console.log('🔊 Voce:', voice.name, voice.lang);
+                        try {
+                            utterance.voice = voice;
+                            console.log('🔊 Voce:', voice.name, voice.lang);
+                        } catch (err) {
+                            console.warn('⚠️ Impossibile impostare voce, uso default:', err);
+                        }
                     }
                     let errorOccurred = false;
 
