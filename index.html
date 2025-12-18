@@ -1209,9 +1209,9 @@
                     }
 
                     // Limita lunghezza testo per evitare errori su mobile
-                    if (text.length > 300) {
-                        text = text.substring(0, 297) + '...';
-                        console.warn('⚠️ Testo troncato a 300 caratteri');
+                    if (text.length > 200) {
+                        text = text.substring(0, 197) + '...';
+                        console.warn('⚠️ Testo troncato a 200 caratteri');
                     }
 
                     let voices = window.speechSynthesis.getVoices();
@@ -1219,21 +1219,20 @@
                     // IMPORTANTE: Crea utterance PRIMA di qualsiasi await
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'it-IT';
-                    utterance.rate = 1.3;
-                    utterance.pitch = 1.1;
+                    utterance.rate = 1.2; // Rallentato leggermente
+                    utterance.pitch = 1.0; // Normalizzato
                     utterance.volume = 1.0;
                     
-                    // Se non ci sono voci, caricale SENZA bloccare
+                    // Se non ci sono voci, caricale rapidamente
                     if (voices.length === 0) {
                         voices = window.speechSynthesis.getVoices();
                         
-                        // Se ancora non ci sono, usa un timeout breve
                         if (voices.length === 0) {
                             await new Promise(resolve => {
                                 const timeout = setTimeout(() => {
                                     voices = window.speechSynthesis.getVoices();
                                     resolve();
-                                }, 100);
+                                }, 50); // Timeout ridotto a 50ms
                                 
                                 if (window.speechSynthesis.onvoiceschanged !== undefined) {
                                     window.speechSynthesis.onvoiceschanged = () => {
@@ -1248,7 +1247,7 @@
 
                     if (voices.length === 0) {
                         console.warn('⚠️ Nessuna voce TTS disponibile');
-                        ttsFailCount++;
+                        ttsFailCount += 2; // Incrementa di 2 per disabilitare più velocemente
                         
                         if (ttsFailCount >= 3) {
                             console.warn('⚠️ TTS disabilitato permanentemente');
@@ -1267,14 +1266,18 @@
                     // Seleziona voce italiana
                     let voice = voices.find(v => 
                         v.lang === 'it-IT' || 
-                        v.lang === 'it_IT' ||
-                        v.name.toLowerCase().includes('paola') || 
-                        v.name.toLowerCase().includes('alice') ||
-                        v.name.toLowerCase().includes('piper')
+                        v.lang === 'it_IT'
                     );
                     
                     if (!voice) {
                         voice = voices.find(v => v.lang.startsWith('it'));
+                    }
+                    
+                    if (!voice) {
+                        voice = voices.find(v => 
+                            v.name.toLowerCase().includes('paola') || 
+                            v.name.toLowerCase().includes('alice')
+                        );
                     }
                     
                     if (!voice && voices.length > 0) {
@@ -1284,44 +1287,52 @@
 
                     if (voice) {
                         utterance.voice = voice;
-                        console.log('🔊 Voce selezionata:', voice.name, voice.lang);
+                        console.log('🔊 Voce:', voice.name, voice.lang);
                     }
 
+                    let errorOccurred = false;
+
                     utterance.onstart = () => {
-                        isSpeaking = true;
-                        ttsFailCount = 0;
-                        if (headerBadge) headerBadge.style.background = '#f39c12';
-                        console.log('🔊 TTS avviato con successo');
+                        if (!errorOccurred) {
+                            isSpeaking = true;
+                            ttsFailCount = 0;
+                            if (headerBadge) headerBadge.style.background = '#f39c12';
+                            console.log('🔊 TTS avviato');
+                        }
                     };
 
                     utterance.onend = () => {
-                        isSpeaking = false;
-                        console.log('✅ TTS completato');
-                        
-                        shouldKeepListening = true;
-                        if (recognition && !isListening) {
-                            setTimeout(() => {
-                                if (shouldKeepListening && !isSpeaking) {
-                                    startListening();
-                                }
-                            }, 500);
+                        if (!errorOccurred) {
+                            isSpeaking = false;
+                            console.log('✅ TTS completato');
+                            
+                            shouldKeepListening = true;
+                            if (recognition && !isListening) {
+                                setTimeout(() => {
+                                    if (shouldKeepListening && !isSpeaking) {
+                                        startListening();
+                                    }
+                                }, 500);
+                            }
                         }
                     };
 
                     utterance.onerror = (event) => {
-                        console.error('❌ TTS error:', event.error, 'Event:', event);
+                        errorOccurred = true;
+                        console.error('❌ TTS error:', event.error);
                         isSpeaking = false;
-                        ttsFailCount++;
                         
-                        // Ignora errori "interrupted" e "cancelled" (normali)
+                        // Ignora solo "interrupted" e "cancelled"
                         if (event.error === 'interrupted' || event.error === 'cancelled') {
-                            console.log('ℹ️ TTS interrotto/cancellato (normale)');
-                            ttsFailCount--;
+                            console.log('ℹ️ TTS interrotto (normale)');
                             return;
                         }
                         
+                        // Tutti gli altri errori contano doppio
+                        ttsFailCount += 2;
+                        
                         if (ttsFailCount >= 3) {
-                            console.warn('⚠️ TTS disabilitato dopo 3 errori consecutivi');
+                            console.warn('⚠️ TTS disabilitato dopo errori');
                             ttsAvailable = false;
                             showTTSDisabledWarning();
                         }
@@ -1338,17 +1349,17 @@
                         }
                     };
 
-                    // CHIAVE: Speak IMMEDIATAMENTE senza await
-                    console.log('🎙️ Avvio sintesi vocale...');
+                    // Speak immediatamente
+                    console.log('🎙️ Avvio TTS...');
                     window.speechSynthesis.speak(utterance);
                     
                 } catch (error) {
                     console.error('❌ Errore generale TTS:', error);
                     isSpeaking = false;
-                    ttsFailCount++;
+                    ttsFailCount += 2;
                     
                     if (ttsFailCount >= 3) {
-                        console.warn('⚠️ TTS disabilitato dopo errori ripetuti');
+                        console.warn('⚠️ TTS disabilitato');
                         ttsAvailable = false;
                         showTTSDisabledWarning();
                     }
