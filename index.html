@@ -1208,23 +1208,42 @@
                         return;
                     }
 
+                    // Limita lunghezza testo per evitare errori su mobile
+                    if (text.length > 300) {
+                        text = text.substring(0, 297) + '...';
+                        console.warn('⚠️ Testo troncato a 300 caratteri');
+                    }
+
                     let voices = window.speechSynthesis.getVoices();
                     
+                    // IMPORTANTE: Crea utterance PRIMA di qualsiasi await
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'it-IT';
+                    utterance.rate = 1.3;
+                    utterance.pitch = 1.1;
+                    utterance.volume = 1.0;
+                    
+                    // Se non ci sono voci, caricale SENZA bloccare
                     if (voices.length === 0) {
-                        await new Promise(resolve => {
-                            const timeout = setTimeout(() => {
-                                voices = window.speechSynthesis.getVoices();
-                                resolve();
-                            }, 200);
-                            
-                            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-                                window.speechSynthesis.onvoiceschanged = () => {
-                                    clearTimeout(timeout);
+                        voices = window.speechSynthesis.getVoices();
+                        
+                        // Se ancora non ci sono, usa un timeout breve
+                        if (voices.length === 0) {
+                            await new Promise(resolve => {
+                                const timeout = setTimeout(() => {
                                     voices = window.speechSynthesis.getVoices();
                                     resolve();
-                                };
-                            }
-                        });
+                                }, 100);
+                                
+                                if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                                    window.speechSynthesis.onvoiceschanged = () => {
+                                        clearTimeout(timeout);
+                                        voices = window.speechSynthesis.getVoices();
+                                        resolve();
+                                    };
+                                }
+                            });
+                        }
                     }
 
                     if (voices.length === 0) {
@@ -1245,13 +1264,10 @@
                         return;
                     }
 
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'it-IT';
-                    utterance.rate = 1.3;
-                    utterance.pitch = 1.1;
-                    utterance.volume = 1.0;
-
+                    // Seleziona voce italiana
                     let voice = voices.find(v => 
+                        v.lang === 'it-IT' || 
+                        v.lang === 'it_IT' ||
                         v.name.toLowerCase().includes('paola') || 
                         v.name.toLowerCase().includes('alice') ||
                         v.name.toLowerCase().includes('piper')
@@ -1268,14 +1284,14 @@
 
                     if (voice) {
                         utterance.voice = voice;
-                        console.log('🔊 Voce selezionata:', voice.name);
+                        console.log('🔊 Voce selezionata:', voice.name, voice.lang);
                     }
 
                     utterance.onstart = () => {
                         isSpeaking = true;
                         ttsFailCount = 0;
                         if (headerBadge) headerBadge.style.background = '#f39c12';
-                        console.log('🔊 TTS avviato');
+                        console.log('🔊 TTS avviato con successo');
                     };
 
                     utterance.onend = () => {
@@ -1293,9 +1309,16 @@
                     };
 
                     utterance.onerror = (event) => {
-                        console.error('❌ TTS error:', event.error);
+                        console.error('❌ TTS error:', event.error, 'Event:', event);
                         isSpeaking = false;
                         ttsFailCount++;
+                        
+                        // Ignora errori "interrupted" e "cancelled" (normali)
+                        if (event.error === 'interrupted' || event.error === 'cancelled') {
+                            console.log('ℹ️ TTS interrotto/cancellato (normale)');
+                            ttsFailCount--;
+                            return;
+                        }
                         
                         if (ttsFailCount >= 3) {
                             console.warn('⚠️ TTS disabilitato dopo 3 errori consecutivi');
@@ -1315,6 +1338,8 @@
                         }
                     };
 
+                    // CHIAVE: Speak IMMEDIATAMENTE senza await
+                    console.log('🎙️ Avvio sintesi vocale...');
                     window.speechSynthesis.speak(utterance);
                     
                 } catch (error) {
@@ -1336,7 +1361,6 @@
                     }
                 }
             }
-
             function startListening() {
                 if (!recognition || isListening || isSpeaking) return;
 
