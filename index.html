@@ -956,7 +956,7 @@
                 userInput.placeholder = 'Scrivi o parla...';
             }
 
-            async function preloadLiaImage() {
+           async function preloadLiaImage() {
                 try {
                     console.log('🖼️ Precarico immagine Lia...');
                     const response = await fetch(LIA_IMAGE_URL, {
@@ -973,8 +973,31 @@
                     const blob = await response.blob();
                     liaImageBlobUrl = URL.createObjectURL(blob);
                     console.log('✅ Immagine Lia precaricata!');
+                    
+                    // Aggiorna SUBITO l'header se esiste
+                    updateHeaderImage();
                 } catch (error) {
                     console.error('❌ Errore precaricamento immagine:', error);
+                }
+            }
+
+            function updateHeaderImage() {
+                if (!liaImageBlobUrl) return;
+                
+                const headerImg = document.querySelector('#mobile-chat-widget img[alt="Lia"]');
+                if (headerImg) {
+                    headerImg.src = liaImageBlobUrl;
+                    console.log('✅ Immagine header aggiornata');
+                } else {
+                    console.warn('⚠️ Header img non trovato, riprovo...');
+                    // Riprova dopo un attimo se l'header non è ancora renderizzato
+                    setTimeout(() => {
+                        const img = document.querySelector('#mobile-chat-widget img[alt="Lia"]');
+                        if (img && liaImageBlobUrl) {
+                            img.src = liaImageBlobUrl;
+                            console.log('✅ Immagine header aggiornata (secondo tentativo)');
+                        }
+                    }, 100);
                 }
             }
 
