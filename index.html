@@ -1002,14 +1002,7 @@
             }
 
            // Precarica e aggiorna anche l'header
-            preloadLiaImage().then(() => {
-                // Aggiorna anche l'immagine nell'header
-                const headerImg = document.querySelector('#mobile-chat-widget img[alt="Lia"]');
-                if (headerImg && liaImageBlobUrl) {
-                    headerImg.src = liaImageBlobUrl;
-                    console.log('✅ Immagine header aggiornata');
-                }
-            });
+            preloadLiaImage();
 
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
