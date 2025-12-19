@@ -1040,11 +1040,14 @@
                 };
             }
 
-            chatButton.addEventListener('click', () => {
+chatButton.addEventListener('click', () => {
                 chatWidget.style.display = 'flex';
                 overlay.style.display = 'block';
                 chatButton.style.display = 'none';
                 shouldKeepListening = true;
+                
+                // Aggiorna l'header quando la chat si apre
+                updateHeaderImage();
                 
                 if (messages.children.length === 0) {
                     const msg = 'Salve, mi chiamo Lia, sono la segretaria virtuale del dottor Aniello Starace. Con chi ho il piacere di parlare?';
@@ -1056,7 +1059,6 @@
                 }
                 userInput.focus();
             });
-
             closeChat.addEventListener('click', closeWidget);
             overlay.addEventListener('click', closeWidget);
 
