@@ -982,21 +982,25 @@
             function updateHeaderImage() {
                 if (!liaImageBlobUrl) return;
                 
-                const headerImg = document.querySelector('#mobile-chat-widget img[alt="Lia"]');
-                if (headerImg) {
-                    headerImg.src = liaImageBlobUrl;
-                    console.log('✅ Immagine header aggiornata');
-                } else {
-                    console.warn('⚠️ Header img non trovato, riprovo...');
-                    // Riprova dopo un attimo se l'header non è ancora renderizzato
-                    setTimeout(() => {
-                        const img = document.querySelector('#mobile-chat-widget img[alt="Lia"]');
-                        if (img && liaImageBlobUrl) {
-                            img.src = liaImageBlobUrl;
-                            console.log('✅ Immagine header aggiornata (secondo tentativo)');
-                        }
-                    }, 100);
+                const placeholder = document.getElementById('header-lia-placeholder');
+                if (!placeholder) {
+                    console.warn('⚠️ Placeholder header non trovato');
+                    return;
                 }
+                
+                // Crea l'immagine
+                const img = document.createElement('img');
+                img.src = liaImageBlobUrl;
+                img.alt = 'Lia';
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                img.onerror = function() {
+                    console.error('❌ Errore caricamento immagine header');
+                    placeholder.textContent = 'L';
+                };
+                
+                // Sostituisci il placeholder con l'immagine
+                placeholder.replaceWith(img);
+                console.log('✅ Immagine header caricata');
             }
 
            // Precarica e aggiorna anche l'header
