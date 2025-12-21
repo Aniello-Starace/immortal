@@ -955,12 +955,11 @@
             }
 
 async function preloadLiaImage() {
-    console.log('🖼️ [1/6] Inizio precaricamento immagine Lia');
-    console.log('🖼️ [2/6] URL:', LIA_IMAGE_URL);
-    
     try {
-        console.log('🖼️ [3/6] Invio richiesta fetch...');
+        console.log('🖼️ [1/7] Inizio precaricamento immagine Lia');
+        console.log('🖼️ [2/7] URL:', LIA_IMAGE_URL);
         
+        console.log('🖼️ [3/7] Invio richiesta fetch...');
         const response = await fetch(LIA_IMAGE_URL, {
             method: 'GET',
             headers: {
@@ -968,27 +967,38 @@ async function preloadLiaImage() {
             }
         });
         
-        console.log('🖼️ [4/6] Risposta ricevuta. Status:', response.status, 'OK:', response.ok);
-        console.log('🖼️ [4/6] Headers:', response.headers);
-        console.log('🖼️ [4/6] Content-Type:', response.headers.get('content-type'));
+        console.log('🖼️ [4/7] Risposta ricevuta. Status:', response.status);
+        console.log('🖼️ [4/7] Content-Type:', response.headers.get('content-type'));
+        
+        const contentType = response.headers.get('content-type');
+        
+        // DETECT: Se ngrok restituisce HTML invece di immagine
+        if (contentType && contentType.includes('text/html')) {
+            console.warn('⚠️ [4/7] Rilevata schermata ngrok warning! Provo bypass...');
+            
+            // Mostra messaggio all'utente
+            addMessage('system', '⚠️ Primo accesso rilevato. Per caricare l\'immagine di Lia, apri questo link in una nuova scheda e clicca "Visit Site": ' + LIA_IMAGE_URL);
+            
+            return false;
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
         
-        console.log('🖼️ [5/6] Converto in blob...');
+        console.log('🖼️ [5/7] Converto in blob...');
         const blob = await response.blob();
         
-        console.log('🖼️ [5/6] Blob creato. Size:', blob.size, 'Type:', blob.type);
+        console.log('🖼️ [5/7] Blob creato. Size:', blob.size, 'Type:', blob.type);
         
         if (!blob || blob.size === 0) {
             throw new Error('Blob vuoto o non valido');
         }
         
-        console.log('🖼️ [6/6] Creo Object URL...');
+        console.log('🖼️ [6/7] Creo Object URL...');
         liaImageBlobUrl = URL.createObjectURL(blob);
         
-        console.log('✅ Immagine precaricata! Blob URL:', liaImageBlobUrl);
+        console.log('✅ [7/7] Immagine precaricata! Blob URL:', liaImageBlobUrl);
         
         updateHeaderImage();
         return true;
@@ -998,7 +1008,6 @@ async function preloadLiaImage() {
         console.error('  - Tipo:', error.constructor.name);
         console.error('  - Messaggio:', error.message);
         console.error('  - Stack:', error.stack);
-        console.error('  - Oggetto completo:', error);
         return false;
     }
 }
