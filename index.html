@@ -954,31 +954,54 @@
                 userInput.placeholder = 'Scrivi o parla...';
             }
 
-           async function preloadLiaImage() {
-                try {
-                    console.log('🖼️ Precarico immagine Lia...');
-                    const response = await fetch(LIA_IMAGE_URL, {
-                        method: 'GET',
-                        headers: {
-                            'ngrok-skip-browser-warning': 'true'
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    
-                    const blob = await response.blob();
-                    liaImageBlobUrl = URL.createObjectURL(blob);
-                    console.log('✅ Immagine Lia precaricata!');
-                    
-                    // Aggiorna SUBITO l'header se esiste
-                    updateHeaderImage();
-                } catch (error) {
-                    console.error('❌ Errore precaricamento immagine:', error);
-                }
+async function preloadLiaImage() {
+    console.log('🖼️ [1/6] Inizio precaricamento immagine Lia');
+    console.log('🖼️ [2/6] URL:', LIA_IMAGE_URL);
+    
+    try {
+        console.log('🖼️ [3/6] Invio richiesta fetch...');
+        
+        const response = await fetch(LIA_IMAGE_URL, {
+            method: 'GET',
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
             }
-
+        });
+        
+        console.log('🖼️ [4/6] Risposta ricevuta. Status:', response.status, 'OK:', response.ok);
+        console.log('🖼️ [4/6] Headers:', response.headers);
+        console.log('🖼️ [4/6] Content-Type:', response.headers.get('content-type'));
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        console.log('🖼️ [5/6] Converto in blob...');
+        const blob = await response.blob();
+        
+        console.log('🖼️ [5/6] Blob creato. Size:', blob.size, 'Type:', blob.type);
+        
+        if (!blob || blob.size === 0) {
+            throw new Error('Blob vuoto o non valido');
+        }
+        
+        console.log('🖼️ [6/6] Creo Object URL...');
+        liaImageBlobUrl = URL.createObjectURL(blob);
+        
+        console.log('✅ Immagine precaricata! Blob URL:', liaImageBlobUrl);
+        
+        updateHeaderImage();
+        return true;
+        
+    } catch (error) {
+        console.error('❌ ERRORE DETTAGLIATO:');
+        console.error('  - Tipo:', error.constructor.name);
+        console.error('  - Messaggio:', error.message);
+        console.error('  - Stack:', error.stack);
+        console.error('  - Oggetto completo:', error);
+        return false;
+    }
+}
 function updateHeaderImage() {
     if (!liaImageBlobUrl) {
         console.log('ℹ️ Blob URL non ancora disponibile per header');
