@@ -1207,7 +1207,30 @@ chatButton.addEventListener('click', () => {
             }
 
             async function speakText(text) {
-                if (!text || text.trim() === '') return;
+    // Wrapper protettivo per evitare che errori TTS blocchino altre funzionalità
+    try {
+        await speakTextInternal(text);
+    } catch (error) {
+        console.error('❌ Errore critico TTS (wrapper):', error);
+        isSpeaking = false;
+        ttsFailCount += 2;
+        
+        if (ttsFailCount >= 3) {
+            console.warn('⚠️ TTS disabilitato dopo errori');
+            ttsAvailable = false;
+            showTTSDisabledWarning();
+        }
+        
+        if (headerBadge) headerBadge.style.background = '#4cd137';
+        shouldKeepListening = true;
+        if (recognition && !isListening) {
+            setTimeout(() => startListening(), 500);
+        }
+    }
+}
+
+async function speakTextInternal(text) {
+    if (!text || text.trim() === '') return;
                 
                 if (!ttsAvailable) {
                     console.warn('⚠️ TTS disabilitato dopo multipli errori');
