@@ -1418,19 +1418,21 @@ async function speakTextInternal(text) {
                         }
                     };
 
-                    utterance.onerror = (event) => {
-                        errorOccurred = true;
-                        console.error('❌ TTS error:', event.error);
-                        isSpeaking = false;
-                        
-                        // Ignora solo "interrupted" e "cancelled"
-                        if (event.error === 'interrupted' || event.error === 'cancelled') {
-                            console.log('ℹ️ TTS interrotto (normale)');
-                            return;
-                        }
-                        
-                        // Tutti gli altri errori contano doppio
-                        ttsFailCount += 2;
+                  utterance.onerror = (event) => {
+    errorOccurred = true;
+    isSpeaking = false;
+    
+    // Ignora "interrupted" e "cancelled" - sono normali
+    if (event.error === 'interrupted' || event.error === 'cancelled') {
+        console.log('ℹ️ TTS interrotto (normale) - Tipo:', event.error);
+        return;
+    }
+    
+    // Solo gli errori veri vengono loggati come errori
+    console.error('❌ TTS error:', event.error);
+    
+    // Tutti gli altri errori contano doppio
+    ttsFailCount += 2;
                         
                         if (ttsFailCount >= 3) {
                             console.warn('⚠️ TTS disabilitato dopo errori');
