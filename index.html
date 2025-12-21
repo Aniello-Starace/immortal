@@ -979,30 +979,41 @@
                 }
             }
 
-            function updateHeaderImage() {
-                if (!liaImageBlobUrl) return;
-                
-                const placeholder = document.getElementById('header-lia-placeholder');
-                if (!placeholder) {
-                    console.warn('⚠️ Placeholder header non trovato');
-                    return;
-                }
-                
-                // Crea l'immagine
-                const img = document.createElement('img');
-                img.src = liaImageBlobUrl;
-                img.alt = 'Lia';
-                img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-                img.onerror = function() {
-                    console.error('❌ Errore caricamento immagine header');
-                    placeholder.textContent = 'L';
-                };
-                
-                // Sostituisci il placeholder con l'immagine
-                placeholder.replaceWith(img);
-                console.log('✅ Immagine header caricata');
-            }
-
+function updateHeaderImage() {
+    if (!liaImageBlobUrl) {
+        console.log('ℹ️ Blob URL non ancora disponibile per header');
+        return;
+    }
+    
+    const placeholder = document.getElementById('header-lia-placeholder');
+    if (!placeholder) {
+        console.warn('⚠️ Placeholder header non trovato');
+        return;
+    }
+    
+    try {
+        // Crea l'immagine
+        const img = document.createElement('img');
+        img.src = liaImageBlobUrl;
+        img.alt = 'Lia';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+        img.onerror = function() {
+            console.error('❌ Errore caricamento immagine header');
+            // Ripristina il placeholder se l'immagine fallisce
+            const newPlaceholder = document.createElement('span');
+            newPlaceholder.id = 'header-lia-placeholder';
+            newPlaceholder.style.cssText = 'font-size:20px;color:white;';
+            newPlaceholder.textContent = 'L';
+            placeholder.replaceWith(newPlaceholder);
+        };
+        
+        // Sostituisci il placeholder con l'immagine
+        placeholder.replaceWith(img);
+        console.log('✅ Immagine header caricata');
+    } catch (error) {
+        console.error('❌ Errore update header:', error);
+    }
+}
            // Precarica e aggiorna anche l'header - ATTENDE il completamento
 (async function() {
     await preloadLiaImage();
