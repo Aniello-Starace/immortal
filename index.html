@@ -1003,8 +1003,11 @@
                 console.log('✅ Immagine header caricata');
             }
 
-           // Precarica e aggiorna anche l'header
-            preloadLiaImage();
+           // Precarica e aggiorna anche l'header - ATTENDE il completamento
+(async function() {
+    await preloadLiaImage();
+    console.log('✅ Setup immagini completato');
+})();
 
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
