@@ -1132,20 +1132,25 @@ chatButton.addEventListener('click', () => {
                 const avatarDiv = document.createElement('div');
                 avatarDiv.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;';
                 
-                if (liaImageBlobUrl) {
-                    const img = document.createElement('img');
-                    img.src = liaImageBlobUrl;
-                    img.alt = 'Lia';
-                    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-                    img.onerror = function() {
-                        console.error('❌ Errore rendering immagine Lia');
-                        avatarDiv.textContent = 'L';
-                    };
-                    avatarDiv.appendChild(img);
-                } else {
-                    avatarDiv.textContent = 'L';
-                }
-                
+if (liaImageBlobUrl) {
+    try {
+        const img = document.createElement('img');
+        img.src = liaImageBlobUrl;
+        img.alt = 'Lia';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+        img.onerror = function() {
+            console.error('❌ Errore rendering immagine Lia');
+            avatarDiv.textContent = 'L';
+        };
+        avatarDiv.appendChild(img);
+    } catch (error) {
+        console.error('❌ Errore creazione immagine:', error);
+        avatarDiv.textContent = 'L';
+    }
+} else {
+    console.log('ℹ️ Blob URL non disponibile, uso fallback L');
+    avatarDiv.textContent = 'L';
+}                
                 return avatarDiv;
             }
 
