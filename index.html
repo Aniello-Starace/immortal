@@ -1310,11 +1310,11 @@ async function speakTextInternal(text) {
                         return;
                     }
 
-                    // Limita lunghezza testo per evitare errori su mobile
-                    if (text.length > 200) {
-                        text = text.substring(0, 197) + '...';
-                        console.warn('⚠️ Testo troncato a 200 caratteri');
-                    }
+                     // Limita lunghezza testo per evitare errori su mobile
+                     // if (text.length > 200) {
+                     //   text = text.substring(0, 197) + '...';
+                     // console.warn('⚠️ Testo troncato a 200 caratteri');
+                    //}
 
                     let voices = window.speechSynthesis.getVoices();
                     
