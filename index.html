@@ -909,17 +909,21 @@
         (function () {
             const chatIframe = document.getElementById('chat-iframe');
 
-            window.addEventListener('message', (event) => {
-                console.log('📩 Message received from iframe:', event.data, 'Origin:', event.origin);
+window.addEventListener('message', (event) => {
+    console.log('📩 Message received from iframe:', event.data, 'Origin:', event.origin);
 
-                if (event.data === 'chat-opened' || event.data === 'enable-pointer-events') {
-                    console.log('✅ Expanding chat iframe');
-                    chatIframe.classList.add('expanded');
-                } else if (event.data === 'chat-closed' || event.data === 'disable-pointer-events') {
-                    console.log('🔻 Shrinking chat iframe');
-                    chatIframe.classList.remove('expanded');
-                }
-            });
+    if (event.data === 'chat-opened' || event.data === 'enable-pointer-events') {
+        console.log('✅ Expanding chat iframe');
+        chatIframe.classList.add('expanded');
+    } else if (event.data === 'chat-closed' || event.data === 'disable-pointer-events') {
+        console.log('🔻 Shrinking chat iframe');
+        chatIframe.classList.remove('expanded');
+        
+        // IMPORTANTE: Invia segnale all'iframe per fermare l'ascolto
+        console.log('🛑 Invio comando stop-listening all\'iframe');
+        chatIframe.contentWindow.postMessage('stop-listening', '*');
+    }
+});
         })();
 
       // Chat Mobile - solo su schermi <= 768px
