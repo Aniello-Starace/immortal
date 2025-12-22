@@ -918,10 +918,6 @@ window.addEventListener('message', (event) => {
     } else if (event.data === 'chat-closed' || event.data === 'disable-pointer-events') {
         console.log('🔻 Shrinking chat iframe');
         chatIframe.classList.remove('expanded');
-        
-        // IMPORTANTE: Invia segnale all'iframe per fermare l'ascolto
-        console.log('🛑 Invio comando stop-listening all\'iframe');
-        chatIframe.contentWindow.postMessage('stop-listening', '*');
     }
 });
         })();
